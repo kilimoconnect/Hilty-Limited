@@ -1,26 +1,88 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/*
+  Hilty Paint & Coatings Centre — design tokens.
+  Professional, dependable, modern, practical. Blue primary keeps a clear
+  distance from the Hilti (red/black) construction brand. Replace values here
+  once the official approved brand hex + logo are supplied.
+*/
+@theme {
+  /* Brand blue */
+  --color-brand-50: #eef5fc;
+  --color-brand-100: #d9e8f8;
+  --color-brand-200: #b3d1f1;
+  --color-brand-300: #85b3e6;
+  --color-brand-400: #5591d6;
+  --color-brand-500: #2f72c0;
+  --color-brand-600: #1e5aa8;
+  --color-brand-700: #184a8c;
+  --color-brand-800: #163e72;
+  --color-brand-900: #14315a;
+
+  /* Accent (warm) — used sparingly for highlights/CTAs */
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+
+  /* Neutrals */
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-line: #e2e8f0;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8fafc;
+
+  --font-sans: ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessible focus ring for keyboard users */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-brand-700);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0 0 0.5rem 0;
+}
+.skip-link:focus {
+  left: 0;
 }

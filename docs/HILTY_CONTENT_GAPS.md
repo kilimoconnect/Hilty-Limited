@@ -58,6 +58,15 @@ without confirming the licence/source.** Need the real Plascon (and other stocke
 ## 6. Languages
 
 - Confirm English + Kiswahili are both required at launch. Who provides Kiswahili copy/translation?
+- **Kiswahili is now live on the homepage (first-pass translation in `web/src/i18n/dictionaries.ts`)
+  and needs review by a native speaker before launch.**
+
+## 6b. Brand assets (Portion 3)
+
+- **Official approved Hilty logo file** is needed — the header/footer currently use a placeholder
+  wordmark (`web/src/components/ui/Logo.tsx`).
+- **Exact brand hex colours** — the site uses a professional blue palette (deliberately distinct
+  from the Hilti construction brand) defined in `web/src/app/globals.css`; swap in the real values.
 
 ## 7. AI Paint Advisor
 

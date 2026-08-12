@@ -1,16 +1,35 @@
-import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
 import '../globals.css'
+import type { Metadata } from 'next'
+import { getLocale } from '../../i18n/locale'
+import { getDictionary } from '../../i18n/dictionaries'
+import { Header } from '../../components/Header'
+import { Footer } from '../../components/Footer'
+import { WhatsAppFab } from '../../components/WhatsAppFab'
 
 export const metadata: Metadata = {
-  title: 'Hilty Paint & Coatings Centre',
-  description: 'Genuine paint. Professional guidance. Reliable project delivery.',
+  title: {
+    default: 'Hilty Paint & Coatings Centre',
+    template: '%s — Hilty Paint & Coatings Centre',
+  },
+  description: 'Genuine paint. Professional guidance. Reliable project delivery. Shop Plascon paint and painting materials, calculate requirements and request a quotation from Hilty in Tanzania.',
 }
 
-export default function FrontendLayout({ children }: { children: ReactNode }) {
+export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale()
+  const dict = getDictionary(locale)
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang={locale} className="h-full antialiased">
+      <body className="flex min-h-full flex-col bg-surface">
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+        <Header dict={dict} locale={locale} />
+        <main id="main" className="flex-1">
+          {children}
+        </main>
+        <Footer dict={dict} />
+        <WhatsAppFab label={dict.nav.whatsapp} />
+      </body>
     </html>
   )
 }

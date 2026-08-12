@@ -130,4 +130,54 @@ Local commits only. Awaiting GitHub push method (PAT — `gh` not installed).
 - All new and local. Rollback = `git reset`/delete `web/`. Nothing on production or GitHub touched.
 - Local data resets by deleting `web/hilty.db` and re-running `npm run seed`.
 
-## Portion 3 — (not started; awaiting go-ahead)
+## Portion 3 — Global design system, navigation & homepage — ✅ COMPLETE (2026-08-13)
+
+**Goal:** Brand design system, global nav (header/footer), and the 11-section homepage wired to
+CMS data, with required content corrections. Responsive + accessible.
+
+### Delivered
+- **Design system**: brand tokens in `web/src/app/globals.css` (blue palette, deliberately
+  distinct from Hilti; amber accent; type scale; radius; focus ring; reduced-motion; skip link).
+  UI primitives: `Button`, `Container`, `Section`/`SectionHeading`, `Logo` (placeholder wordmark),
+  inline `icons`.
+- **Global navigation**: `Header` (sticky) with logo, all 9 nav items (Home, Products, Paint
+  Calculator, Painting Services, Projects, Painters & Contractors, Branches, About Hilty,
+  Request Quotation), **search**, **WhatsApp**, **call**, **language selector (EN/SW)**, and a
+  full **mobile menu**. `Footer` with company/shop/contact + non-manufacturer disclaimer.
+  Floating WhatsApp button.
+- **Bilingual (EN/SW)**: cookie-based locale (`web/src/i18n/`), full homepage/nav translations.
+  SW is a first pass — needs native review (see CONTENT_GAPS §6).
+- **Homepage** (`web/src/app/(frontend)/page.tsx`): all 11 sections — hero (exact approved copy),
+  trust (confirmed claims only), categories (from DB), how-Hilty-helps, featured products
+  (empty-state), services intro (from DB), contractor CTA, branch summary (from DB),
+  completed projects (real-only, empty-state), AI advisor intro (with guardrail note), final
+  WhatsApp/quotation CTA.
+- **Nav-target stub pages** (`/products`, `/paint-calculator`, … `/search`, `/ai-advisor`) render
+  a "coming soon" placeholder so navigation works without broken links (built in later portions).
+
+### Required corrections applied
+- ❌ Removed "Color Capsule of the Year 2025".
+- ❌ Removed conflicting colour-count claims ("2,000"/"2,200").
+- ❌ No "Hilty Paint Colors" wording; positioned as retailer of genuine Plascon paint.
+- ❌ No cart/checkout in the new app.
+- ❌ No unverified warranty/Platinum claims on the homepage.
+- ✅ Hilty-specific copy throughout; footer disclaimer clarifies Hilty is not a manufacturer.
+
+### Tests performed (exact results)
+- `lint` → **clean**. `build` → **success** (16 routes).
+- Runtime: `/` 200; homepage renders live branches (Bunju B, Mapinga) & services from DB.
+- i18n: `hilty_locale=sw` cookie renders Kiswahili homepage. ✓
+- Stub routes render ("coming soon"). ✓
+- Content audit (grep): **none** of Color Capsule / "2,200" / "Hilty Paint Colors" / Platinum present. ✓
+- Responsive (computed styles): **mobile 375** desktop-nav `none` + hamburger shown + hero 30px;
+  **tablet 768** desktop-nav `block` + hamburger `none`; **no horizontal overflow** at any width.
+  Mobile menu opens with search + 9 links + WhatsApp + Call + language selector. ✓
+
+### Not yet done / needs owner input
+- Official **logo** + exact **brand hex** (placeholders in use — CONTENT_GAPS §6b).
+- Kiswahili native review. Pixel screenshots not captured (browser pane not displayed here).
+
+### Rollback
+- All new/local. Rollback = `git reset`/checkout `web/src`. Nothing on production/GitHub touched.
+
+## Portion 4 — (not started; awaiting go-ahead)
