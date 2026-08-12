@@ -55,8 +55,30 @@ surface the blocking stack decision. **No application code written** by design.
 - **2026-08-12:** Delivery approach = **Option B — Fresh modern build** (approved migration).
   Proposed stack: Next.js + TypeScript + Tailwind + i18n (EN/SW), server-side AI. See REBUILD_PLAN §4.
 
-## Portion 1 — (not started)
-**Blocked on owner action** before it can begin:
-1. Install Node.js LTS on the dev machine (no Node/npm present).
-2. Confirm/adjust the proposed Next.js stack.
-3. Confirm GitHub push + provide auth (PAT — `gh` not installed).
+## Portion 1 — Audit & foundation prep — ✅ AUDIT DONE / build BLOCKED (2026-08-12)
+
+**Owner direction (2026-08-12):** "We are creating a fresh website — no need to view the old
+one." → Audit is complete and retained as a **migration reference only**; the old WordPress
+site will be **replaced, not continued**.
+
+### Done
+- Full **read-only public audit** of hilty.co.tz → `docs/HILTY_SITE_AUDIT.md`.
+  - Stack: WordPress + Enfold v7.1 (no child theme detected) + WooCommerce 9.7.3 +
+    CodeCanyon Paint Addon + WhatsApp Chat + Jetpack + Go SMTP + (likely) Yoast.
+  - Route/content inventory captured; 14 problems logged (P-01…P-14).
+  - Confirmed: branch = Mapinga (site) vs Goba (brief); "over 2,000" vs "2200+" colours;
+    Platinum/1-yr warranty; "Hilty Paints" manufacturing wording; Benjamin Moore colour data;
+    products priced "Sh 0"; missing privacy/warranty/returns pages.
+- Updated `HILTY_CONTENT_GAPS.md` with verified facts.
+- **No live-site changes made** (per Task 2 — public access only).
+
+### Blocked — cannot start fresh build until:
+1. **Node.js LTS installed** (still NOT present as of 2026-08-12). Hard prerequisite for the
+   Next.js scaffold, dependency install, dev server, lint/tests. **← current blocker.**
+2. Confirm/adjust proposed stack (Next.js + TS + Tailwind + i18n + server-side AI).
+3. GitHub push method (PAT — `gh` not installed).
+
+### Rollback
+- Nothing on production/GitHub touched. Rollback = discard local commits / delete folder.
+
+## Portion 2 — Fresh app foundation — (not started; awaiting Node + go-ahead)
