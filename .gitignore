@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment & secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# WordPress (if the child-theme/plugin route is chosen)
+wp-config.php
+uploads/
+*.sql
+*.sql.gz
+
+# Local backups of production content/data
+backups/
