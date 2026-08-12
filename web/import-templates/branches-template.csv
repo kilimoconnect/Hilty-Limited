@@ -1,0 +1,2 @@
+name,region,district,full_address,lat,lng,map_link,phone,whatsapp,email,hours_monday,hours_tuesday,hours_wednesday,hours_thursday,hours_friday,hours_saturday,hours_sunday,active,verification_status
+"Example Branch - Bunju","Dar es Salaam","Kinondoni","Bunju B, Dar es Salaam",-6.65,39.15,"","+255 757 327 708","+255 757 327 708","info@hilty.co.tz","08:30-18:00","08:30-18:00","08:30-18:00","08:30-18:00","08:30-18:00","08:30-17:30","closed",true,pending_review

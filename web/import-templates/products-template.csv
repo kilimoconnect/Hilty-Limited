@@ -1,0 +1,2 @@
+name,brand,category_key,use_types,finish,surface_compatibility,colour_availability,coverage_per_litre,recommended_coats,recommended_primer,recommended_topcoat,drying_touch_dry,drying_recoat,pack_sizes_litres,tds_url,featured,active,quotation_eligible,price,currency,price_verified,show_price_publicly,verification_status
+"Example Interior Emulsion","Plascon","interior_paint","interior","matt","Plaster;Gypsum;Concrete","Tintable to a wide range of shades",12,2,"Plascon Wall Primer","","1 hour","4 hours","1;4;20","",false,true,true,,TZS,false,false,unverified

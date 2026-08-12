@@ -86,4 +86,48 @@ site will be **replaced, not continued**.
   `C:\Program Files\nodejs\`. Node blocker is **cleared**.
 - Still outstanding: GitHub push method (PAT), stack confirmation, Goba-vs-Mapinga answer.
 
-## Portion 2 — Fresh app foundation — (not started; awaiting explicit go-ahead)
+## Portion 2 — Structured content & database foundation — ✅ COMPLETE (2026-08-13)
+
+**Goal:** Native content models + database + admin + RBAC for the fresh build. **No redesigned
+frontend** (only a placeholder page).
+
+### Stack chosen
+- **Next.js 16.3 + Payload CMS 3.88** (admin UI, RBAC, version-controlled TS schema) on **SQLite**
+  (local dev; Postgres-ready for production). App lives in `web/`.
+
+### Delivered
+- **16 collections** (11 required models + supporting): `products`, `product-categories`,
+  `branches`, `services`, `projects`, `painters`, `leads`, `quotation-requests`,
+  `site-visit-requests`, `complaints`, `ai-sessions`, `ai-lead-summaries` + `users`, `brands`,
+  `media` (public), `documents` (private BOQ/quotes). See `docs/HILTY_DATA_MODEL.md`.
+- **RBAC**: roles admin/manager/content_editor/sales/branch_staff/viewer, with collection- and
+  field-level access. Prices & stock are **field-level staff-only**; stock defaults to
+  "Contact branch for availability". Personal-data collections allow public create, staff read.
+- **Audit** (createdBy/updatedBy + timestamps), **verification** status, **consent** & **retention**
+  field groups applied where required.
+- **CSV import templates** for products & branches (`web/import-templates/`).
+- **Seed** (verified content only): admin user, 9 categories, Plascon brand, 3 branches
+  (flagged pending_review re: Goba/Mapinga), 5 services (warranty/wording flagged). No products
+  or projects seeded.
+- `.env.example` added; real `.env`, `*.db`, uploads all gitignored.
+
+### Tests performed (exact results)
+- `npm run generate:types` → types written OK.
+- `npm run seed` → admin + 9 categories + Plascon + 3 branches + 5 services created.
+- `npm run test:crud` → **ALL CHECKS PASSED** (16/16 collections: create/edit/deactivate/display/cleanup).
+- `npm run lint` → **clean** (0 errors).
+- `npm run build` → **success** (TypeScript passes; routes /, /admin, /api/* built).
+- Runtime smoke: `/` 200, `/admin` 200, `/api/branches` returns data (public read),
+  `/api/users` **403** (RBAC blocks anon).
+
+### Env vars introduced
+`PAYLOAD_SECRET`, `DATABASE_URI`, `PAYLOAD_ADMIN_EMAIL`, `PAYLOAD_ADMIN_PASSWORD` (seed only).
+
+### Not pushed to GitHub yet
+Local commits only. Awaiting GitHub push method (PAT — `gh` not installed).
+
+### Rollback
+- All new and local. Rollback = `git reset`/delete `web/`. Nothing on production or GitHub touched.
+- Local data resets by deleting `web/hilty.db` and re-running `npm run seed`.
+
+## Portion 3 — (not started; awaiting go-ahead)
