@@ -67,8 +67,10 @@ export const Products: CollectionConfig = {
           label: 'Technical',
           fields: [
             { name: 'surfaceCompatibility', type: 'array', fields: [{ name: 'surface', type: 'text' }] },
+            { name: 'surfacePreparation', type: 'richText', admin: { description: 'Surface-preparation guidance.' } },
             { name: 'applicationInstructions', type: 'richText' },
             { name: 'recommendedPrimer', type: 'text' },
+            { name: 'recommendedUndercoat', type: 'text' },
             { name: 'recommendedTopcoat', type: 'text' },
             { name: 'coveragePerLitre', type: 'number', admin: { description: 'Coverage in m² per litre.' } },
             { name: 'recommendedCoats', type: 'number' },
@@ -88,8 +90,17 @@ export const Products: CollectionConfig = {
                 { name: 'sku', type: 'text' },
               ],
             },
+            { name: 'safetyNotes', type: 'richText', admin: { description: 'Safety notes (handling, ventilation, storage).' } },
             { name: 'tdsFile', type: 'upload', relationTo: 'media', admin: { description: 'Technical data sheet (owned/authorised only).' } },
             { name: 'tdsUrl', type: 'text', admin: { description: 'Authorised link to the manufacturer TDS.' } },
+            {
+              name: 'technicalSource',
+              type: 'text',
+              admin: {
+                description:
+                  'Authorised source of the technical information above (e.g. manufacturer TDS name/URL). Shown on the product page for traceability.',
+              },
+            },
           ],
         },
         {
@@ -139,7 +150,8 @@ export const Products: CollectionConfig = {
       ],
     },
     // Sidebar
-    { name: 'featured', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
+    { name: 'featured', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar', description: 'Show in the Featured section (admin selection).' } },
+    { name: 'popular', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar', description: 'Show in the Popular section (admin selection — not based on activity).' } },
     { name: 'active', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
     {
       name: 'quotationEligible',

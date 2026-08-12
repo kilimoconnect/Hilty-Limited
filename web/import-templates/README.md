@@ -1,7 +1,15 @@
 # CSV import templates
 
-Templates for bulk-importing **verified** data into the Hilty admin. Import is performed by
+Templates for bulk-importing **verified** data into the Hilty catalogue. Import is performed by
 staff; nothing here is auto-published.
+
+## Running the product import
+```
+npm run import:products -- ./import-templates/sample-products.csv
+```
+- Upserts by product **name** (creates missing brands; category_key must already exist).
+- `sample-products.csv` contains clearly-labelled **SAMPLE (test) data** for local QA only —
+  do not use it in production. Replace with real, verified product data.
 
 ## Rules
 - **Do not invent data.** Only import real, verified products and branches.

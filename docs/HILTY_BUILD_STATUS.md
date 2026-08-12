@@ -180,4 +180,54 @@ CMS data, with required content corrections. Responsive + accessible.
 ### Rollback
 - All new/local. Rollback = `git reset`/checkout `web/src`. Nothing on production/GitHub touched.
 
-## Portion 4 — (not started; awaiting go-ahead)
+## Portion 4 — Product catalogue & product-detail experience — ✅ COMPLETE (2026-08-13)
+
+**Goal:** Catalogue (nav, search, filters, featured/popular, pagination, empty/loading states)
+and a product-detail page showing DB info only, with commercial rules honoured, CSV import, and SEO.
+
+### Schema additions to `products`
+`popular` (admin flag), `surfacePreparation`, `safetyNotes`, `recommendedUndercoat`,
+`technicalSource` (authorised-source traceability). Types regenerated.
+
+### Delivered
+- **Catalogue** `/products` (`app/(frontend)/products/page.tsx`): category nav; keyword search;
+  filters for **brand, interior/exterior use, surface, finish, pack size, category** (server-side
+  GET form — works without JS); **Featured** & **Popular** sections (admin flags, not fabricated
+  activity); server-side **pagination**; **empty** state + **loading.tsx** skeleton.
+- **Product detail** `/products/[slug]` (`.../[slug]/page.tsx`): DB-only info — brand/name,
+  authorised image, suitable surfaces, interior/exterior, finish, pack sizes, coverage (m²/L),
+  coats, drying time, surface prep, primer/undercoat/topcoat, TDS link, safety notes,
+  **branch-availability** (indicative — defaults to "Contact branch for availability"), and
+  **Add to quotation** (localStorage), **Ask AI about this product**, **Check availability on
+  WhatsApp** (pre-filled). "Sold by Hilty · Manufactured by {brand}"; **Information source** line.
+- **Commercial rules**: no checkout; no invented prices → **"Request current price"** when no
+  verified public price; availability never claimed as real-time; technical info traceable to an
+  authorised source; Hilty shown as seller, brand as manufacturer.
+- **CSV import**: `src/import-products.ts` + `npm run import:products -- <file>`; template updated;
+  `sample-products.csv` (clearly-labelled test data) added.
+- **SEO**: product `generateMetadata` (title/description/OG image, factual), category-aware
+  catalogue metadata, and **Product JSON-LD** (no price/availability claims).
+- **lib**: `lib/catalogue.ts` (query + filters + `publicPrice`), `lib/format.ts`; bilingual
+  `catalogue`/`product` strings added to `i18n/dictionaries.ts` (EN + SW).
+
+### Tests performed (exact results)
+- `lint` clean; `build` success (18 routes incl. `/products`, `/products/[slug]`).
+- `import:products` with sample CSV → created 3 products (1 featured, 1 popular).
+- Catalogue: featured + popular render; category filter (exterior→1), use filter (roof→1),
+  search (weathercoat→1), **empty state** ("No products match…") all verified.
+- Detail: HTTP 200; shows Sold-by/Manufactured-by, "Request current price", technical details,
+  surfaces, indicative branch availability; Ask-AI + WhatsApp (pre-filled) + Add-to-quote links OK.
+- SEO: `<title>` = product — brand — site; **Product JSON-LD** present.
+- Responsive (mobile 375): **no horizontal overflow**; product grid 1-col; filters collapsible.
+
+### Notes / owner input
+- Local DB now holds 3 **SAMPLE (test)** products for QA (gitignored; not seeded, not production).
+  Replace with real verified data via the CSV import.
+- Real product/technical data, authorised images/TDS, and any verified prices still needed
+  (CONTENT_GAPS §3).
+
+### Rollback
+- All new/local. Rollback = `git reset`/checkout `web/src`; remove sample products by deleting
+  `web/hilty.db` and re-running `npm run seed`.
+
+## Portion 5 — (not started; awaiting go-ahead)

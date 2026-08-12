@@ -488,6 +488,24 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Surface-preparation guidance.
+   */
+  surfacePreparation?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   applicationInstructions?: {
     root: {
       type: string;
@@ -504,6 +522,7 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   recommendedPrimer?: string | null;
+  recommendedUndercoat?: string | null;
   recommendedTopcoat?: string | null;
   /**
    * Coverage in m² per litre.
@@ -522,6 +541,24 @@ export interface Product {
       }[]
     | null;
   /**
+   * Safety notes (handling, ventilation, storage).
+   */
+  safetyNotes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
    * Technical data sheet (owned/authorised only).
    */
   tdsFile?: (number | null) | Media;
@@ -529,6 +566,10 @@ export interface Product {
    * Authorised link to the manufacturer TDS.
    */
   tdsUrl?: string | null;
+  /**
+   * Authorised source of the technical information above (e.g. manufacturer TDS name/URL). Shown on the product page for traceability.
+   */
+  technicalSource?: string | null;
   pricing?: {
     price?: number | null;
     currency?: string | null;
@@ -549,7 +590,14 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Show in the Featured section (admin selection).
+   */
   featured?: boolean | null;
+  /**
+   * Show in the Popular section (admin selection — not based on activity).
+   */
+  popular?: boolean | null;
   active?: boolean | null;
   /**
    * Can be included in quotation requests.
@@ -1332,8 +1380,10 @@ export interface ProductsSelect<T extends boolean = true> {
         surface?: T;
         id?: T;
       };
+  surfacePreparation?: T;
   applicationInstructions?: T;
   recommendedPrimer?: T;
+  recommendedUndercoat?: T;
   recommendedTopcoat?: T;
   coveragePerLitre?: T;
   recommendedCoats?: T;
@@ -1350,8 +1400,10 @@ export interface ProductsSelect<T extends boolean = true> {
         sku?: T;
         id?: T;
       };
+  safetyNotes?: T;
   tdsFile?: T;
   tdsUrl?: T;
+  technicalSource?: T;
   pricing?:
     | T
     | {
@@ -1369,6 +1421,7 @@ export interface ProductsSelect<T extends boolean = true> {
         id?: T;
       };
   featured?: T;
+  popular?: T;
   active?: T;
   quotationEligible?: T;
   verification?:
