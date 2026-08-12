@@ -51,5 +51,12 @@ surface the blocking stack decision. **No application code written** by design.
 
 ---
 
+## Decision log
+- **2026-08-12:** Delivery approach = **Option B — Fresh modern build** (approved migration).
+  Proposed stack: Next.js + TypeScript + Tailwind + i18n (EN/SW), server-side AI. See REBUILD_PLAN §4.
+
 ## Portion 1 — (not started)
-Awaiting approval of the stack decision.
+**Blocked on owner action** before it can begin:
+1. Install Node.js LTS on the dev machine (no Node/npm present).
+2. Confirm/adjust the proposed Next.js stack.
+3. Confirm GitHub push + provide auth (PAT — `gh` not installed).

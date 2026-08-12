@@ -29,18 +29,33 @@ painter/contractor registration).
 - Local dev machine has **git + python stub only** — no Node/npm, PHP, Composer, WP-CLI,
   Docker or `gh`. Toolchain must be installed once the stack is chosen.
 
-## 4. OPEN DECISION — delivery approach (BLOCKING)
+## 4. DECISION — delivery approach ✅ CHOSEN: **B. Fresh modern build** (2026-08-12)
 
-The single biggest decision, owner to confirm before build work begins:
+Owner approved **Option B**: a fresh modern build in this repo that will eventually
+replace the WordPress site. This is an approved **migration** per the rules.
 
-| Option | Description | Implications |
+Options considered:
+
+| Option | Description | Status |
 |---|---|---|
-| **A. Continue existing WordPress** | Improve the live WP site via a **child theme + a `hilty-custom` plugin**. Never touch core/vendor/plugin files. | Needs: repo/DB export, hosting + **staging** access, local WP (PHP/MySQL/WP-CLI) toolchain. Fastest reuse of current content. |
-| **B. Fresh modern build** | New app in this repo (e.g. Next.js + headless CMS) that eventually replaces the WP site. | Cleaner base for calculators, BOQ upload, AI advisor, bilingual, admin CMS. Needs Node toolchain + content migration + DNS cutover plan. Counts as a **migration** → requires explicit approval per the rules. |
-| **C. Hybrid** | Keep WP for existing content; add new interactive tools as a separate app/subdomain. | More moving parts; phased risk. |
+| A. Continue existing WordPress | Child theme + `hilty-custom` plugin on the live WP site. | Not chosen. |
+| **B. Fresh modern build** | New app (proposed: **Next.js + headless/DB-backed CMS**) that replaces WP after cutover. | **CHOSEN.** |
+| C. Hybrid | Keep WP; add new tools on a subdomain. | Not chosen. |
 
-**No option will be started until confirmed.** Rules require following the existing stack
-unless migration is "technically necessary and approved."
+### What Option B requires (owner action)
+1. **Install Node.js LTS** on the dev machine — currently missing, and nothing can be
+   scaffolded without it. (Also gives `npm`/`npx`.)
+2. **Content migration plan** from WP → new app (products, pages, media that are owned/authorised).
+3. **DNS cutover plan** for when the new site is ready — production stays live until then.
+4. **GitHub push** confirmation + auth (Personal Access Token, since `gh` is not installed).
+
+### Proposed technical stack (to confirm in Portion 1)
+- **Framework:** Next.js (App Router) + TypeScript — SSR/SEO, API routes for server-side AI.
+- **Styling:** Tailwind CSS, mobile-first.
+- **i18n:** next-intl or similar — EN + SW.
+- **Content/CMS:** DB-backed (e.g. Postgres + Prisma) with a Hilty admin UI, OR a headless CMS
+  (e.g. Payload/Sanity). To be decided in Portion 1.
+- **AI advisor:** server-side only (API routes); keys in env, never in the client bundle.
 
 ## 5. Provisional phased portions (order/scope subject to approval)
 
