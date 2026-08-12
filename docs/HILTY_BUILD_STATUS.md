@@ -81,4 +81,9 @@ site will be **replaced, not continued**.
 ### Rollback
 - Nothing on production/GitHub touched. Rollback = discard local commits / delete folder.
 
-## Portion 2 — Fresh app foundation — (not started; awaiting Node + go-ahead)
+### Update 2026-08-12 — toolchain ready
+- **Node.js v24.19.0 + npm 11.17.0 installed** (winget `OpenJS.NodeJS.LTS`, exit 0), at
+  `C:\Program Files\nodejs\`. Node blocker is **cleared**.
+- Still outstanding: GitHub push method (PAT), stack confirmation, Goba-vs-Mapinga answer.
+
+## Portion 2 — Fresh app foundation — (not started; awaiting explicit go-ahead)
