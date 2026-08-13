@@ -29,13 +29,98 @@ const SITE_BRANCHES = [
   { name: 'Kibaha Maili Moja', district: 'Kibaha', region: 'Pwani' },
 ]
 
-// Services AS LISTED ON THE LIVE SITE. Warranty/"Platinum plan" wording is UNVERIFIED.
-const SITE_SERVICES = [
-  { name: 'Paint sales & supply', summary: 'Selling of all types of paint colours and painting products.' },
-  { name: 'House painting (interior & exterior)', summary: 'Professional residential and commercial painting.' },
-  { name: 'Spray painting', summary: 'Spray application for a smooth, even finish.' },
-  { name: 'Mechanized sanding', summary: 'Machine surface preparation before painting.' },
-  { name: 'Colour consultancy', summary: 'Guidance on colour selection using visual tools.' },
+// Canonical painting-service pages. Factual, Hilty-specific, NO unverified guarantees/warranties.
+type SeedService = {
+  name: string
+  summary: string
+  heroIntro: string
+  sectors: ('residential' | 'commercial')[]
+  scope: string[]
+  process: { title: string; detail: string }[]
+  customerProvides: string[]
+  hiltyConfirms: string[]
+}
+
+const commonProcess = [
+  { title: 'Enquiry', detail: 'You share your project details and request a site visit.' },
+  { title: 'Site inspection', detail: 'Our team inspects the surfaces and measures the area.' },
+  { title: 'Recommendation & quotation', detail: 'We recommend the paint system and provide a written quotation.' },
+  { title: 'Preparation & painting', detail: 'Surfaces are prepared and painted by our team.' },
+  { title: 'Handover', detail: 'We review the finished work with you at handover.' },
+]
+const commonConfirms = [
+  'Surface condition and any repairs needed',
+  'Correct paint system, primer and number of coats',
+  'Approximate paint and material quantities (m² and litres)',
+  'Access, timeline and site requirements',
+]
+
+const SITE_SERVICES: SeedService[] = [
+  {
+    name: 'Residential painting',
+    summary: 'Interior and exterior painting for homes and apartments.',
+    heroIntro: 'Professional painting for houses and apartments, from single rooms to whole-home repaints.',
+    sectors: ['residential'],
+    scope: ['Interior and exterior walls', 'Ceilings, doors and trim', 'Minor surface repairs before painting'],
+    process: commonProcess,
+    customerProvides: ['Access to the property', 'Preferred colours or a request for colour guidance', 'Any known moisture or damp issues'],
+    hiltyConfirms: commonConfirms,
+  },
+  {
+    name: 'Commercial painting',
+    summary: 'Painting for offices, retail, hospitality and larger buildings.',
+    heroIntro: 'Reliable painting for commercial premises, planned around your operating hours.',
+    sectors: ['commercial'],
+    scope: ['Interior and exterior commercial surfaces', 'Common areas and facades', 'Scheduling around business operations'],
+    process: commonProcess,
+    customerProvides: ['Site access and working hours', 'Any facility / safety requirements', 'Scope and areas to be painted'],
+    hiltyConfirms: [...commonConfirms, 'Health-and-safety and access arrangements on site'],
+  },
+  {
+    name: 'Interior painting',
+    summary: 'Interior walls, ceilings and trim with a clean finish.',
+    heroIntro: 'Interior repaints with careful preparation and tidy, protected work areas.',
+    sectors: ['residential', 'commercial'],
+    scope: ['Interior walls and ceilings', 'Doors, frames and skirting', 'Protection of floors and furniture'],
+    process: commonProcess,
+    customerProvides: ['Access to the rooms', 'Preferred colours or finish', 'Furniture moved or ready to be protected'],
+    hiltyConfirms: commonConfirms,
+  },
+  {
+    name: 'Exterior painting',
+    summary: 'Exterior walls and facades prepared for local weather conditions.',
+    heroIntro: 'Exterior painting with the right preparation and coatings for Tanzanian weather.',
+    sectors: ['residential', 'commercial'],
+    scope: ['Exterior walls and facades', 'Cleaning and preparation of surfaces', 'Weather-appropriate coating systems'],
+    process: commonProcess,
+    customerProvides: ['Access around the building', 'Any known cracks or water damage', 'Preferred colours or a request for guidance'],
+    hiltyConfirms: [...commonConfirms, 'Weather considerations and suitable coating system'],
+  },
+  {
+    name: 'Surface preparation',
+    summary: 'Cleaning, sanding, filling and priming before painting.',
+    heroIntro: 'Proper surface preparation for a durable, even paint finish.',
+    sectors: ['residential', 'commercial'],
+    scope: ['Cleaning and sanding', 'Filling and making good', 'Priming and undercoating'],
+    process: commonProcess,
+    customerProvides: ['Access to the surfaces', 'Details of previous coatings if known', 'Any damp or structural concerns'],
+    hiltyConfirms: ['Extent of preparation and repairs required', 'Correct primer/undercoat for the surface', 'Readiness of the surface for topcoats'],
+  },
+  {
+    name: 'Site inspection & colour consultation',
+    summary: 'On-site inspection and guidance on colours and paint systems.',
+    heroIntro: 'A site visit to inspect surfaces, discuss colours and recommend the right paint system.',
+    sectors: ['residential', 'commercial'],
+    scope: ['On-site surface inspection', 'Colour and finish guidance', 'Written recommendation and quotation'],
+    process: [
+      { title: 'Book a visit', detail: 'Request a site visit at a time that suits you.' },
+      { title: 'Inspection', detail: 'We inspect surfaces and take measurements.' },
+      { title: 'Guidance', detail: 'We discuss colours and the recommended paint system.' },
+      { title: 'Quotation', detail: 'We provide a written recommendation and quotation.' },
+    ],
+    customerProvides: ['Access to the property', 'Any ideas, references or preferred colours'],
+    hiltyConfirms: [...commonConfirms, 'Indicative colour direction (final colour confirmed on samples)'],
+  },
 ]
 
 async function findFirst(payload: Awaited<ReturnType<typeof getPayload>>, collection: string, where: object) {
@@ -124,11 +209,17 @@ const run = async () => {
         data: {
           name: s.name,
           summary: s.summary,
+          heroIntro: s.heroIntro,
+          sectors: s.sectors,
+          scope: s.scope.map((item) => ({ item })),
+          process: s.process,
+          customerProvides: s.customerProvides.map((item) => ({ item })),
+          hiltyConfirms: s.hiltyConfirms.map((item) => ({ item })),
           displayOrder: i,
           active: true,
           verification: {
             status: 'pending_review',
-            notes: 'Migrated from existing site. Reword to avoid implying Hilty manufactures paint; confirm any warranty/"Platinum plan" and colour-count claims (site shows both "over 2,000" and "2,200+").',
+            notes: 'Draft service content — confirm scope/process wording. No warranty/guarantee is stated; keep it that way unless officially confirmed.',
           },
         },
       })

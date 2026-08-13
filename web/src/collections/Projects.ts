@@ -19,6 +19,7 @@ export const Projects: CollectionConfig = {
     slugField('title'),
     { name: 'description', type: 'richText' },
     { name: 'location', type: 'text' },
+    { name: 'projectType', type: 'text', admin: { description: 'e.g. Apartment repaint, Office exterior.' } },
     {
       name: 'sector',
       type: 'select',
@@ -27,8 +28,11 @@ export const Projects: CollectionConfig = {
         { label: 'Commercial', value: 'commercial' },
       ],
     },
+    { name: 'scope', type: 'textarea', admin: { description: 'Scope of work delivered.' } },
     { name: 'servicesUsed', type: 'relationship', relationTo: 'services', hasMany: true },
     { name: 'productsUsed', type: 'relationship', relationTo: 'products', hasMany: true },
+    { name: 'beforeImage', type: 'upload', relationTo: 'media', admin: { description: 'Before image (authorised).' } },
+    { name: 'afterImage', type: 'upload', relationTo: 'media', admin: { description: 'After image (authorised).' } },
     { name: 'images', type: 'array', fields: [{ name: 'image', type: 'upload', relationTo: 'media' }] },
     { name: 'completionDate', type: 'date' },
     {

@@ -80,6 +80,7 @@ export interface Config {
     leads: Lead;
     'quotation-requests': QuotationRequest;
     'site-visit-requests': SiteVisitRequest;
+    enquiries: Enquiry;
     complaints: Complaint;
     'ai-sessions': AiSession;
     'ai-lead-summaries': AiLeadSummary;
@@ -103,6 +104,7 @@ export interface Config {
     leads: LeadsSelect<false> | LeadsSelect<true>;
     'quotation-requests': QuotationRequestsSelect<false> | QuotationRequestsSelect<true>;
     'site-visit-requests': SiteVisitRequestsSelect<false> | SiteVisitRequestsSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     complaints: ComplaintsSelect<false> | ComplaintsSelect<true>;
     'ai-sessions': AiSessionsSelect<false> | AiSessionsSelect<true>;
     'ai-lead-summaries': AiLeadSummariesSelect<false> | AiLeadSummariesSelect<true>;
@@ -269,6 +271,35 @@ export interface Service {
   features?:
     | {
         feature?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Short intro shown at the top of the service page.
+   */
+  heroIntro?: string | null;
+  scope?:
+    | {
+        item?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  process?:
+    | {
+        title?: string | null;
+        detail?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  customerProvides?:
+    | {
+        item?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  hiltyConfirms?:
+    | {
+        item?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -653,9 +684,25 @@ export interface Project {
     [k: string]: unknown;
   } | null;
   location?: string | null;
+  /**
+   * e.g. Apartment repaint, Office exterior.
+   */
+  projectType?: string | null;
   sector?: ('residential' | 'commercial') | null;
+  /**
+   * Scope of work delivered.
+   */
+  scope?: string | null;
   servicesUsed?: (number | Service)[] | null;
   productsUsed?: (number | Product)[] | null;
+  /**
+   * Before image (authorised).
+   */
+  beforeImage?: (number | null) | Media;
+  /**
+   * After image (authorised).
+   */
+  afterImage?: (number | null) | Media;
   images?:
     | {
         image?: (number | null) | Media;
@@ -944,6 +991,77 @@ export interface SiteVisitRequest {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: number;
+  reference?: string | null;
+  type: 'contractor_account' | 'developer' | 'project_pricing' | 'bulk_supply' | 'general';
+  /**
+   * Contact person.
+   */
+  name: string;
+  company?: string | null;
+  role?: string | null;
+  phone: string;
+  email?: string | null;
+  /**
+   * Company registration / TIN (optional).
+   */
+  registrationNumber?: string | null;
+  projectDescription?: string | null;
+  /**
+   * Approximate area in m² (optional).
+   */
+  estimatedArea?: number | null;
+  productsInterested?: (number | Product)[] | null;
+  /**
+   * Products / quantities for bulk supply.
+   */
+  quantities?: string | null;
+  /**
+   * Uploaded BOQ / project documents (stored privately).
+   */
+  documents?:
+    | {
+        file?: (number | null) | Document;
+        id?: string | null;
+      }[]
+    | null;
+  preferredBranch?: (number | null) | Branch;
+  status?: ('new' | 'contacted' | 'qualified' | 'converted' | 'closed') | null;
+  assignedTo?: (number | null) | User;
+  /**
+   * Record of the consent under which this personal data was collected.
+   */
+  consent?: {
+    given?: boolean | null;
+    purpose?: ('service_request' | 'marketing' | 'registration' | 'support') | null;
+    channel?: ('website' | 'whatsapp' | 'ai_advisor' | 'in_person' | 'phone' | 'import') | null;
+    timestamp?: string | null;
+    notes?: string | null;
+  };
+  /**
+   * Data-retention controls. Records past their retain-until date should be reviewed for deletion.
+   */
+  retention?: {
+    retainUntil?: string | null;
+    legalBasis?: ('consent' | 'contract' | 'legitimate_interest' | 'legal_obligation') | null;
+    notes?: string | null;
+  };
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints".
  */
 export interface Complaint {
@@ -1173,6 +1291,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'site-visit-requests';
         value: number | SiteVisitRequest;
+      } | null)
+    | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
       } | null)
     | ({
         relationTo: 'complaints';
@@ -1498,6 +1620,32 @@ export interface ServicesSelect<T extends boolean = true> {
         feature?: T;
         id?: T;
       };
+  heroIntro?: T;
+  scope?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        title?: T;
+        detail?: T;
+        id?: T;
+      };
+  customerProvides?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  hiltyConfirms?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
   warranty?:
     | T
     | {
@@ -1529,9 +1677,13 @@ export interface ProjectsSelect<T extends boolean = true> {
   slug?: T;
   description?: T;
   location?: T;
+  projectType?: T;
   sector?: T;
+  scope?: T;
   servicesUsed?: T;
   productsUsed?: T;
+  beforeImage?: T;
+  afterImage?: T;
   images?:
     | T
     | {
@@ -1741,6 +1893,53 @@ export interface SiteVisitRequestsSelect<T extends boolean = true> {
   assignedTo?: T;
   status?: T;
   scheduledFor?: T;
+  consent?:
+    | T
+    | {
+        given?: T;
+        purpose?: T;
+        channel?: T;
+        timestamp?: T;
+        notes?: T;
+      };
+  retention?:
+    | T
+    | {
+        retainUntil?: T;
+        legalBasis?: T;
+        notes?: T;
+      };
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  reference?: T;
+  type?: T;
+  name?: T;
+  company?: T;
+  role?: T;
+  phone?: T;
+  email?: T;
+  registrationNumber?: T;
+  projectDescription?: T;
+  estimatedArea?: T;
+  productsInterested?: T;
+  quantities?: T;
+  documents?:
+    | T
+    | {
+        file?: T;
+        id?: T;
+      };
+  preferredBranch?: T;
+  status?: T;
+  assignedTo?: T;
   consent?:
     | T
     | {

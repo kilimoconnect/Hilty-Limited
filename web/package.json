@@ -12,6 +12,7 @@
     "generate:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
     "seed": "tsx src/seed.ts",
     "test:crud": "tsx src/test-crud.ts",
+    "test:submissions": "tsx src/test-submissions.ts",
     "import:products": "tsx src/import-products.ts"
   },
   "dependencies": {

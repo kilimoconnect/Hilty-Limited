@@ -68,6 +68,20 @@ without confirming the licence/source.** Need the real Plascon (and other stocke
 - **Exact brand hex colours** — the site uses a professional blue palette (deliberately distinct
   from the Hilti construction brand) defined in `web/src/app/globals.css`; swap in the real values.
 
+## 6c. Service & project content (Portion 5)
+
+- The 6 service pages (residential, commercial, interior, exterior, surface prep, site
+  inspection) are seeded with **draft, factual** scope/process content — **no guarantees or
+  warranties stated**. Owner to confirm/adjust wording. Add Kiswahili versions of the DB content.
+- **Projects gallery is empty by design** — add only **genuine** completed projects via the admin
+  (before/after images must be owned/authorised; testimonials only where authorised).
+
+## 6d. Uploads / security (Portion 5) — production TODO
+
+- BOQ/document uploads are validated by **type + size + executable-signature checks** and stored
+  **privately** (staff-only read). **A real malware/antivirus scan (e.g. ClamAV or a cloud
+  scanner) must be added in production** before files are treated as safe. Flagged in code.
+
 ## 7. AI Paint Advisor
 
 - Which provider (OpenAI / Gemini / other) and who holds the API account/billing.

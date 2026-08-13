@@ -97,6 +97,17 @@ email · branch (→branches) · product (→products) · batchNumber · purchas
 sessionId · channel (web/whatsapp) · locale (en/sw) · startedAt · endedAt · messages (array:
 role, content, timestamp) · linkedLead (→leads) · **consent** · **retention** · audit. _No seed._
 
+### 12. enquiries (professional customers) — added Portion 5
+reference (auto, ENQ) · type (contractor_account / developer / project_pricing / bulk_supply /
+general) · name · company · role · phone · email · registrationNumber (TIN) · projectDescription
+· estimatedArea (m²) · productsInterested (→products) · quantities · **documents** (array →
+documents, private BOQ uploads) · preferredBranch (→branches) · status · assignedTo (→users) ·
+**consent** · **retention** · audit. Public create; staff read. _No seed._
+
+> **services** extended (Portion 5) with `heroIntro`, `scope[]`, `process[]`, `customerProvides[]`,
+> `hiltyConfirms[]` — drives the 6 service pages (admin-editable). Seeded with 6 canonical services.
+> **projects** extended (Portion 5) with `projectType`, `scope`, `beforeImage`, `afterImage`.
+
 ### 11b. ai-lead-summaries
 session (→ai-sessions) · summary · detectedIntent · recommendedProducts (→products) ·
 recommendedSystem · customerContact (name/phone, consent) · confidence · reviewedBy (→users) ·

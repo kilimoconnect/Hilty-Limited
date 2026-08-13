@@ -20,6 +20,7 @@ import { Leads } from './collections/Leads'
 import { QuotationRequests } from './collections/QuotationRequests'
 import { SiteVisitRequests } from './collections/SiteVisitRequests'
 import { Complaints } from './collections/Complaints'
+import { Enquiries } from './collections/Enquiries'
 import { AiSessions } from './collections/AiSessions'
 import { AiLeadSummaries } from './collections/AiLeadSummaries'
 
@@ -50,6 +51,7 @@ export default buildConfig({
     Leads,
     QuotationRequests,
     SiteVisitRequests,
+    Enquiries,
     Complaints,
     // AI advisor
     AiSessions,

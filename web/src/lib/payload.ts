@@ -56,6 +56,30 @@ export async function getActiveBranches(limit = 6): Promise<Branch[]> {
   return res.docs
 }
 
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  const p = await getClient()
+  const res = await p.find({
+    collection: 'services',
+    where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] },
+    limit: 1,
+    depth: 1,
+    overrideAccess: true,
+  })
+  return res.docs[0] ?? null
+}
+
+export async function getBranchBySlug(slug: string): Promise<Branch | null> {
+  const p = await getClient()
+  const res = await p.find({
+    collection: 'branches',
+    where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] },
+    limit: 1,
+    depth: 1,
+    overrideAccess: true,
+  })
+  return res.docs[0] ?? null
+}
+
 /** Completed projects — only real, active, published ones (never fabricated). */
 export async function getCompletedProjects(limit = 3): Promise<Project[]> {
   const p = await getClient()

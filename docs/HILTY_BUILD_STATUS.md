@@ -230,4 +230,55 @@ and a product-detail page showing DB info only, with commercial rules honoured, 
 - All new/local. Rollback = `git reset`/checkout `web/src`; remove sample products by deleting
   `web/hilty.db` and re-running `npm run seed`.
 
-## Portion 5 — (not started; awaiting go-ahead)
+## Portion 5 — Services, branches, projects & professional journeys — ✅ COMPLETE (2026-08-13)
+
+**Goal:** Service pages, branch directory + detail, projects gallery, and professional-customer
+journeys (painter registration, contractor/developer applications, project-pricing & bulk-supply
+enquiries, BOQ upload) with secure uploads, real submissions and staff notification.
+
+### Schema
+- `services` extended: `heroIntro`, `scope[]`, `process[]`, `customerProvides[]`, `hiltyConfirms[]`.
+- `projects` extended: `projectType`, `scope`, `beforeImage`, `afterImage`.
+- **New `enquiries` collection** (contractor_account / developer / project_pricing / bulk_supply /
+  general) with private `documents` (BOQ) uploads, consent, retention, audit, status. Registered
+  in `payload.config.ts`; types regenerated.
+
+### Delivered
+- **Service pages**: `/painting-services` (directory) + `/painting-services/[slug]` (Scope,
+  Process, What you provide, What Hilty confirms at inspection, Request-site-visit form, and a
+  "spec/pricing confirmed after inspection" note — **no unverified guarantees/warranties**).
+  Seeded 6 canonical services: residential, commercial, interior, exterior, surface preparation,
+  site inspection & colour consultation.
+- **Branches**: `/branches` (directory) + `/branches/[slug]` (full address, click-to-call,
+  WhatsApp, map/directions link, operating-hours table, available services). Data is admin-editable;
+  the **Bunju/Mapinga/Goba discrepancy is NOT decided** — seeded as-is and flagged `pending_review`.
+- **Projects gallery**: `/projects` — genuine admin-entered projects only (before/after images,
+  location, type, products used, scope, completion date, testimonial only where consent given).
+  **Empty by design** (no fabricated projects); shows a clean empty state.
+- **Professional journeys**: `/painters-contractors` hub → `/register` (painter/contractor
+  registration → `painters`) and `/apply` (contractor account / developer / project-pricing /
+  bulk-supply enquiry with **BOQ upload** → `enquiries`). Standalone `/book-visit` (site-visit).
+- **Infrastructure**: `lib/notify.ts` (staff email via Payload transport — Go SMTP in prod,
+  console in dev), `lib/uploads.ts` (type+size+executable-signature checks; private storage;
+  prod-AV TODO noted), `lib/submissions.ts` (testable submit functions), `app/(frontend)/actions.ts`
+  (server actions parsing FormData incl. files), client forms in `components/forms/` with
+  `useActionState` + success/error + consent. Bilingual `forms`/`pages` strings (EN + SW).
+
+### Tests performed (exact results)
+- **`test:submissions` → 14/14 passed**: site-visit, painter, enquiry, enquiry+upload created;
+  **staff notified** on each; BOQ stored privately; upload security rejects `.exe`, MZ-disguised
+  `.pdf`, and oversize, accepts valid png; rejects missing consent / required fields.
+- **End-to-end (browser)**: submitted `/book-visit` form → created **VIS-20260813-6539** and
+  displayed success — confirms form → server action → CMS → notification wiring.
+- `lint` clean; `build` success (**22 routes**).
+- All new routes 200; service detail shows Scope/Process/Provides/Confirms + visit form; branch
+  detail shows hours/services/call/WhatsApp/directions; projects empty state renders.
+
+### Needs owner input (see CONTENT_GAPS §6c–6d)
+- Service copy confirmation + Kiswahili for DB content; genuine projects to populate the gallery;
+  **production malware scanning** for uploads; the branch discrepancy (still flagged, not decided).
+
+### Rollback
+- All new/local (DB is gitignored). Rollback = `git reset`/checkout `web/src`. Production untouched.
+
+## Portion 6 — (not started; awaiting go-ahead)

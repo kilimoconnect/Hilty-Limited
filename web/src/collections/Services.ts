@@ -30,6 +30,20 @@ export const Services: CollectionConfig = {
       ],
     },
     { name: 'features', type: 'array', fields: [{ name: 'feature', type: 'text' }] },
+    // Structured content for the service detail page (admin-editable).
+    { name: 'heroIntro', type: 'textarea', admin: { description: 'Short intro shown at the top of the service page.' } },
+    { name: 'scope', type: 'array', labels: { singular: 'Scope item', plural: 'Scope' }, fields: [{ name: 'item', type: 'text' }] },
+    {
+      name: 'process',
+      type: 'array',
+      labels: { singular: 'Process step', plural: 'Process' },
+      fields: [
+        { name: 'title', type: 'text' },
+        { name: 'detail', type: 'text' },
+      ],
+    },
+    { name: 'customerProvides', type: 'array', labels: { singular: 'Item', plural: 'What the customer provides' }, fields: [{ name: 'item', type: 'text' }] },
+    { name: 'hiltyConfirms', type: 'array', labels: { singular: 'Item', plural: 'What Hilty confirms at inspection' }, fields: [{ name: 'item', type: 'text' }] },
     {
       name: 'warranty',
       type: 'group',
