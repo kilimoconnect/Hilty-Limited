@@ -281,4 +281,47 @@ enquiries, BOQ upload) with secure uploads, real submissions and staff notificat
 ### Rollback
 - All new/local (DB is gitignored). Rollback = `git reset`/checkout `web/src`. Production untouched.
 
-## Portion 6 — (not started; awaiting go-ahead)
+## Portion 6 — Deterministic paint calculator & quotation workflow — ✅ COMPLETE (2026-08-13)
+
+**Goal:** A deterministic (code, not AI) paint calculator and a quotation workflow that saves the
+calculation with a lead, notifies customer + staff, and produces a printable summary + WhatsApp handoff.
+
+### Deterministic core (`lib/calc.ts`) — pure, no AI, no I/O
+- Formulas exactly as specified: wall = 2(l+w)h − openings; ceiling = l×w;
+  litres = (area × coats ÷ coverage) × wasteFactor.
+- Multi-room; primer & topcoat (and "other") calculated **separately**; coverage read from
+  **verified** product records only — **missing verified coverage → litres `null`, never invented**.
+- `recommendPacks` (DP) recommends packs with **least excess then fewest packs** — volume only,
+  never price. Configurable waste allowance; validation for unrealistic measurements.
+
+### Delivered
+- **Calculator** `/paint-calculator`: interactive multi-room UI (client) with **live estimate**,
+  product selection (verified vs "coverage TBC"), coats, waste, branch, budget; area + per-component
+  litres + suggested packs; "Estimate — requires site verification" badge + note; validation issues shown.
+- **Quotation workflow** (`lib/quotation.ts`, server action `quotationAction`): re-computes
+  **authoritatively server-side**, generates a unique **reference (QUO-…)**, saves the **complete
+  calculation JSON** on the quotation-request AND creates a **linked lead** (source=quotation),
+  sends **customer confirmation** + **staff notification**, supports **BOQ/image/document upload**
+  (secure), **printable summary** (print button) and **WhatsApp handoff with the reference**.
+- **Validation/spam/consent**: field validation, **honeypot** spam field, required consent + retention.
+- Schema: `quotation-requests` gained `interiorExterior`, `budget`, `calculation` (json). Types regenerated.
+
+### Tests performed (exact results)
+- **`test:calc` → 21/21**: formulas; normal (46.41 m² → 12.76 L); multi-room; **missing coverage →
+  null (not invented)**; **unrealistic** (height 50, negative length, fractional doors) flagged;
+  pack minimisation (5 L → 4+1; >max → null).
+- **`test:quotation` → 9/9**: normal creates request + saves calculation + linked lead + staff
+  notified; missing-coverage saved as estimate with litres null; unrealistic rejected; missing
+  consent rejected; honeypot spam rejected.
+- **Browser E2E**: `/paint-calculator` live estimate 46.41 m² / 12.76 L / packs 4×4 L; submitted →
+  **QUO-20260813-9978**, success panel with reference + printable summary + WhatsApp handoff.
+- `lint` clean; `build` success (**23 routes**).
+
+### Needs owner input
+- **Verified Plascon coverage + pack sizes** so the calculator shows litres for real products
+  (see CONTENT_GAPS §6e); otherwise it honestly shows area + "coverage to be confirmed".
+
+### Rollback
+- All new/local (DB gitignored). Rollback = `git reset`/checkout `web/src`. Production untouched.
+
+## Portion 7 — (not started; awaiting go-ahead)

@@ -104,6 +104,10 @@ general) · name · company · role · phone · email · registrationNumber (TIN
 documents, private BOQ uploads) · preferredBranch (→branches) · status · assignedTo (→users) ·
 **consent** · **retention** · audit. Public create; staff read. _No seed._
 
+> **quotation-requests** extended (Portion 6) with `interiorExterior`, `budget`, and
+> `calculation` (json — the complete deterministic calculator result saved with the request).
+> A linked `leads` record (source=quotation) is created on submission.
+
 > **services** extended (Portion 5) with `heroIntro`, `scope[]`, `process[]`, `customerProvides[]`,
 > `hiltyConfirms[]` — drives the 6 service pages (admin-editable). Seeded with 6 canonical services.
 > **projects** extended (Portion 5) with `projectType`, `scope`, `beforeImage`, `afterImage`.

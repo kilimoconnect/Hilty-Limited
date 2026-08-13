@@ -35,7 +35,14 @@ export const QuotationRequests: CollectionConfig = {
       ],
     },
     { name: 'description', type: 'textarea' },
+    { name: 'interiorExterior', type: 'select', options: [{ label: 'Interior', value: 'interior' }, { label: 'Exterior', value: 'exterior' }] },
     { name: 'area', type: 'number', admin: { description: 'Approximate area in square metres (m²).' } },
+    { name: 'budget', type: 'text', admin: { description: 'Optional budget range provided by the customer.' } },
+    {
+      name: 'calculation',
+      type: 'json',
+      admin: { description: 'Complete deterministic paint-calculator result saved with this request (estimate — requires site verification).' },
+    },
     { name: 'surfaces', type: 'array', fields: [{ name: 'surface', type: 'text' }] },
     {
       name: 'boqFiles',

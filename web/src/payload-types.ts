@@ -883,10 +883,27 @@ export interface QuotationRequest {
   projectType?: string | null;
   sector?: ('residential' | 'commercial') | null;
   description?: string | null;
+  interiorExterior?: ('interior' | 'exterior') | null;
   /**
    * Approximate area in square metres (m²).
    */
   area?: number | null;
+  /**
+   * Optional budget range provided by the customer.
+   */
+  budget?: string | null;
+  /**
+   * Complete deterministic paint-calculator result saved with this request (estimate — requires site verification).
+   */
+  calculation?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   surfaces?:
     | {
         surface?: string | null;
@@ -1829,7 +1846,10 @@ export interface QuotationRequestsSelect<T extends boolean = true> {
   projectType?: T;
   sector?: T;
   description?: T;
+  interiorExterior?: T;
   area?: T;
+  budget?: T;
+  calculation?: T;
   surfaces?:
     | T
     | {

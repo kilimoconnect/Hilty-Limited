@@ -13,6 +13,8 @@
     "seed": "tsx src/seed.ts",
     "test:crud": "tsx src/test-crud.ts",
     "test:submissions": "tsx src/test-submissions.ts",
+    "test:calc": "tsx src/test-calc.ts",
+    "test:quotation": "tsx src/test-quotation.ts",
     "import:products": "tsx src/import-products.ts"
   },
   "dependencies": {

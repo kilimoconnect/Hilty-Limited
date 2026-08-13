@@ -1,8 +1,10 @@
 'use server'
 
 import { submitEnquiry, submitPainter, submitSiteVisit } from '../../lib/submissions'
+import { submitQuotation } from '../../lib/quotation'
 import { MAX_FILES } from '../../lib/uploads'
 import type { UploadInput } from '../../lib/uploads'
+import type { RoomInput } from '../../lib/calc'
 
 export type FormState = { ok?: boolean; error?: string; reference?: string }
 
@@ -63,6 +65,48 @@ export async function painterAction(_prev: FormState, fd: FormData): Promise<For
       yearsExperience: years ? Number(years) : undefined,
       consent: checked(fd, 'consent'),
     })
+    return res.ok ? { ok: true, reference: res.reference } : { error: res.error }
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Something went wrong.' }
+  }
+}
+
+export async function quotationAction(_prev: FormState, fd: FormData): Promise<FormState> {
+  try {
+    const files = await filesFrom(fd, 'documents')
+    if (files.length > MAX_FILES) return { error: `Please attach at most ${MAX_FILES} files.` }
+    let rooms: RoomInput[] = []
+    try {
+      rooms = JSON.parse(fd.get('rooms')?.toString() || '[]')
+    } catch {
+      return { error: 'Invalid room data.' }
+    }
+    const num = (k: string) => {
+      const v = str(fd, k)
+      return v ? Number(v) : undefined
+    }
+    const res = await submitQuotation(
+      {
+        customerName: str(fd, 'customerName') ?? '',
+        phone: str(fd, 'phone') ?? '',
+        email: str(fd, 'email'),
+        location: str(fd, 'location'),
+        projectType: str(fd, 'projectType'),
+        interiorExterior: (str(fd, 'interiorExterior') as 'interior' | 'exterior' | undefined) ?? undefined,
+        budget: str(fd, 'budget'),
+        branchId: num('branchId'),
+        rooms,
+        topcoatProductId: num('topcoatProductId'),
+        topcoatCoats: num('topcoatCoats'),
+        includePrimer: checked(fd, 'includePrimer'),
+        primerProductId: num('primerProductId'),
+        primerCoats: num('primerCoats'),
+        wastePct: num('wastePct'),
+        consent: checked(fd, 'consent'),
+        honeypot: str(fd, 'company_website'),
+      },
+      files,
+    )
     return res.ok ? { ok: true, reference: res.reference } : { error: res.error }
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Something went wrong.' }

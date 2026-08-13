@@ -82,6 +82,14 @@ without confirming the licence/source.** Need the real Plascon (and other stocke
   **privately** (staff-only read). **A real malware/antivirus scan (e.g. ClamAV or a cloud
   scanner) must be added in production** before files are treated as safe. Flagged in code.
 
+## 6e. Paint calculator (Portion 6) — verified coverage required
+
+- The calculator only produces a litre estimate when a product has **verified coverage**
+  (`verification.status = verified` + `coveragePerLitre`). Until the owner supplies **verified
+  Plascon coverage figures + pack sizes**, the calculator shows the area and "coverage not yet
+  verified — we will confirm the quantity" instead of inventing litres. Provide verified coverage
+  data for the products customers will calculate with.
+
 ## 7. AI Paint Advisor
 
 - Which provider (OpenAI / Gemini / other) and who holds the API account/billing.
