@@ -18,6 +18,7 @@
     "test:ai": "tsx src/test-ai.ts",
     "test:design": "tsx src/test-design.ts",
     "test:studio": "tsx src/test-studio.ts",
+    "test:8c": "tsx src/test-8c.ts",
     "import:products": "tsx src/import-products.ts"
   },
   "dependencies": {

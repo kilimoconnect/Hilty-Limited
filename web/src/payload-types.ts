@@ -88,6 +88,7 @@ export interface Config {
     'design-palettes': DesignPalette;
     'design-variants': DesignVariant;
     'design-product-plan': DesignProductPlan;
+    'design-events': DesignEvent;
     complaints: Complaint;
     'ai-sessions': AiSession;
     'ai-lead-summaries': AiLeadSummary;
@@ -119,6 +120,7 @@ export interface Config {
     'design-palettes': DesignPalettesSelect<false> | DesignPalettesSelect<true>;
     'design-variants': DesignVariantsSelect<false> | DesignVariantsSelect<true>;
     'design-product-plan': DesignProductPlanSelect<false> | DesignProductPlanSelect<true>;
+    'design-events': DesignEventsSelect<false> | DesignEventsSelect<true>;
     complaints: ComplaintsSelect<false> | ComplaintsSelect<true>;
     'ai-sessions': AiSessionsSelect<false> | AiSessionsSelect<true>;
     'ai-lead-summaries': AiLeadSummariesSelect<false> | AiLeadSummariesSelect<true>;
@@ -849,7 +851,9 @@ export interface Lead {
   name: string;
   phone?: string | null;
   email?: string | null;
-  source?: ('website_form' | 'whatsapp' | 'ai_advisor' | 'site_visit' | 'quotation' | 'import' | 'other') | null;
+  source?:
+    | ('website_form' | 'whatsapp' | 'ai_advisor' | 'site_visit' | 'quotation' | 'design_studio' | 'import' | 'other')
+    | null;
   interest?: string | null;
   message?: string | null;
   status?: ('new' | 'contacted' | 'qualified' | 'converted' | 'lost') | null;
@@ -1450,6 +1454,50 @@ export interface DesignProductPlan {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-events".
+ */
+export interface DesignEvent {
+  id: number;
+  type:
+    | 'studio_visit'
+    | 'project_started'
+    | 'image_uploaded'
+    | 'palette_created'
+    | 'visual_generated'
+    | 'favourite_saved'
+    | 'calculation_completed'
+    | 'quotation_requested'
+    | 'site_visit_requested'
+    | 'whatsapp_handoff'
+    | 'lead_won'
+    | 'lead_lost'
+    | 'revenue_recorded'
+    | 'followup_scheduled';
+  project?: (number | null) | DesignProject;
+  branch?: (number | null) | Branch;
+  leadRef?: string | null;
+  /**
+   * Attributable revenue where later recorded.
+   */
+  value?: number | null;
+  currency?: string | null;
+  /**
+   * Non-PII metadata only (counts / flags). Never images or chat.
+   */
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints".
  */
 export interface Complaint {
@@ -1711,6 +1759,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'design-product-plan';
         value: number | DesignProductPlan;
+      } | null)
+    | ({
+        relationTo: 'design-events';
+        value: number | DesignEvent;
       } | null)
     | ({
         relationTo: 'complaints';
@@ -2576,6 +2628,21 @@ export interface DesignProductPlanSelect<T extends boolean = true> {
   quotationReference?: T;
   createdBy?: T;
   updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-events_select".
+ */
+export interface DesignEventsSelect<T extends boolean = true> {
+  type?: T;
+  project?: T;
+  branch?: T;
+  leadRef?: T;
+  value?: T;
+  currency?: T;
+  meta?: T;
   updatedAt?: T;
   createdAt?: T;
 }

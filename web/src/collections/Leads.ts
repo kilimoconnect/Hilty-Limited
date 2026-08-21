@@ -26,6 +26,7 @@ export const Leads: CollectionConfig = {
         { label: 'AI advisor', value: 'ai_advisor' },
         { label: 'Site visit', value: 'site_visit' },
         { label: 'Quotation', value: 'quotation' },
+        { label: 'AI Design Studio', value: 'design_studio' },
         { label: 'Import', value: 'import' },
         { label: 'Other', value: 'other' },
       ],

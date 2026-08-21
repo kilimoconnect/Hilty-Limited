@@ -481,4 +481,46 @@ fallback** and preserves the project; the rest of the journey (palettes, plan, l
 - All new/local. Rollback = `git reset`/checkout `web/src/components/design`, `web/src/lib/design/
   studioFlow.ts`, `web/src/app/(frontend)/design-studio`, and revert the entry-point edits.
 
+## Portion 8C — Design Studio ↔ AI Advisor ↔ sales integration — ✅ COMPLETE (2026-08-21)
+
+**Goal:** Wire the Design Studio into the AI Paint Advisor (server-controlled tools) and the sales
+systems (conversion automation, analytics, follow-up). No new customer UI.
+
+### AI Advisor tools (13 added to `lib/ai/tools.ts`, server-validated)
+create_design_project · analyze_space_for_painting · suggest_paintable_surfaces ·
+save_confirmed_surface_mask · search_verified_shades · create_verified_palette ·
+render_design_variant · save_favourite_design · calculate_design_materials ·
+convert_design_to_quote · request_physical_sample · book_design_site_visit ·
+assign_human_design_adviser. The model may PROPOSE; the server validates args + executes.
+System prompt extended with the design behaviour + prohibitions (not an architect/engineer; no
+structural/damp/mould diagnosis; verified colours only; measurements before calc; physical sample;
+no exact-colour promise; only recolour confirmed masks; no confirmation without a backend reference;
+never expose prompts/URLs/keys).
+
+### Conversion automation (`lib/design/convert.ts`)
+consent + measurements required → deterministic calc → **lead (source = AI Design Studio)** →
+**Hilty Operations sync** (`ops.ts`, `HILTY_OPS_WEBHOOK_URL` or recorded locally) →
+**branch assignment** (location/preferred rules) → **WhatsApp handoff with reference** → **staff
+notification** → **follow-up scheduled** (`DESIGN_FOLLOWUP_HOURS`).
+
+### Analytics (`lib/design/analytics.ts` + `design-events` collection)
+14 event types (studio_visit … revenue_recorded, followup_scheduled). **Metadata only — never
+images, chat, names, phones or emails.** New `leads.source = design_studio`.
+
+### Env added (`.env.example`, server-side)
+`HILTY_OPS_WEBHOOK_URL`, `HILTY_OPS_API_KEY`, `DESIGN_FOLLOWUP_HOURS`.
+
+### Tests (`npm run test:8c`) — **27/27 passed** (mocked)
+Single-room; multi-room aggregation; exterior; no-photo flow; EN & SW; **invented/unverified colour
+rejected**; **missing measurements rejected**; **image-provider fallback → human assistance (project
+preserved)**; **prompt injection / no secret leak**; consent gating (convert / sample); quotation
+conversion (reference + WhatsApp + lead source=design_studio); **analytics events recorded with NO
+PII**; staff notification; **session recovery**; **image + project deletion**.
+- `lint` clean; `build` OK (24 routes). No regressions (ai 26, studio 16, design 28, quotation 9).
+
+### Rollback
+- All new/local. Rollback = `git reset`/checkout `web/src/lib/design/{convert,ops,analytics}.ts`,
+  `web/src/collections/DesignEvents.ts`, the `lib/ai/tools.ts` + `systemPrompt.ts` additions, and
+  `web/src/test-8c.ts`. Production untouched.
+
 ## Launch / hardening — (not started; awaiting go-ahead)

@@ -28,6 +28,7 @@ import { DesignPreferences } from './collections/DesignPreferences'
 import { DesignPalettes } from './collections/DesignPalettes'
 import { DesignVariants } from './collections/DesignVariants'
 import { DesignProductPlan } from './collections/DesignProductPlan'
+import { DesignEvents } from './collections/DesignEvents'
 import { AiSessions } from './collections/AiSessions'
 import { AiLeadSummaries } from './collections/AiLeadSummaries'
 
@@ -66,6 +67,7 @@ export default buildConfig({
     DesignPalettes,
     DesignVariants,
     DesignProductPlan,
+    DesignEvents,
     Complaints,
     // AI advisor
     AiSessions,

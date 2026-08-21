@@ -116,8 +116,10 @@ Open decisions before the Design Studio is built (spec: [HILTY_DESIGN_STUDIO.md]
   Hilty sample-room images before it can be used.
 - **Verified colour palette → product mapping:** needs the verified Plascon colour + product data
   (ties into §1b/§1c) so schemes map to real products, not Benjamin Moore placeholders.
-- **Hilty Operations application integration:** the internal ops app's interface, endpoints, auth and
-  data contract for pushing design leads/quotations/projects — **details TBC**.
+- **Hilty Operations application integration:** Portion 8C built the sync hook. Provide the ops app's
+  **webhook URL + API key** (`HILTY_OPS_WEBHOOK_URL` / `HILTY_OPS_API_KEY`) and confirm the JSON
+  contract; until set, converted leads are recorded locally (delivered=false). Confirm the
+  **follow-up interval** (`DESIGN_FOLLOWUP_HOURS`, default 24) and who actions follow-ups.
 - **Cost / abuse controls:** budget caps and rate limits for image generation.
 
 ## 9. Access & accounts (not content, but blocking)
