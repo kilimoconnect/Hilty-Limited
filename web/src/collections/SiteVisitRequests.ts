@@ -47,6 +47,29 @@ export const SiteVisitRequests: CollectionConfig = {
       ],
     },
     { name: 'scheduledFor', type: 'date', admin: { position: 'sidebar' } },
+    // On-site capture (Operations Lite)
+    {
+      name: 'measurements',
+      type: 'array',
+      admin: { description: 'Recorded on site (metres). Feeds the deterministic calculator.' },
+      fields: [
+        { name: 'roomOrArea', type: 'text' },
+        { name: 'length', type: 'number' },
+        { name: 'width', type: 'number' },
+        { name: 'height', type: 'number' },
+        { name: 'notes', type: 'text' },
+      ],
+    },
+    { name: 'siteImages', type: 'array', admin: { description: 'Site photos (private).' }, fields: [{ name: 'image', type: 'upload', relationTo: 'documents' }] },
+    {
+      name: 'followUpActions',
+      type: 'array',
+      fields: [
+        { name: 'action', type: 'text' },
+        { name: 'dueDate', type: 'date' },
+        { name: 'done', type: 'checkbox', defaultValue: false },
+      ],
+    },
     consentField,
     retentionField,
     ...auditFields,

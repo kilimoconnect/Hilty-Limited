@@ -523,4 +523,38 @@ PII**; staff notification; **session recovery**; **image + project deletion**.
   `web/src/collections/DesignEvents.ts`, the `lib/ai/tools.ts` + `systemPrompt.ts` additions, and
   `web/src/test-8c.ts`. Production untouched.
 
-## Launch / hardening — (not started; awaiting go-ahead)
+## Portion 9 — Hilty Operations Lite (internal PWA) — ✅ COMPLETE (2026-08-21)
+
+**Goal:** A secure internal ops app on the **same website database** (Payload admin), not a
+separate system.
+
+### Delivered
+- **6 roles** aligned to the brief (Administrator, Managing director, Sales officer, Branch manager,
+  Project officer, Read-only) with legacy aliases; RBAC via `access/roles.ts` groups.
+- **Dashboard** `/ops` (staff-auth via `payload.auth`, `noindex`): New leads, Open quotations, Site
+  visits, AI-qualified projects, Overdue follow-ups, Painter apps, Open complaints, Active
+  reservations; **Lead source** + **Branch performance** breakdowns; link into full `/admin`.
+- **Lead pipeline** statuses: New → Contacted → Site visit booked → Quotation prepared →
+  Negotiation → Won → Lost (+ `followUpAt`, `lostReason`).
+- **Quotation management**: `lineItems`, `discountPct`, `taxRatePct`, `approvalStatus` (manager-only),
+  `approvedBy`, **version history** (`versions: true`); prices internal + only when verified.
+- **Site visits**: `measurements`, `siteImages` (private), `followUpActions`.
+- **Catalogue / Branch / Painter / Complaints / AI summaries** = existing collections in `/admin`.
+- **Manual branch stock** (`branch-stock`) + **reservations** (`reservations`) — never invented figures.
+- **CSV export** via `@payloadcms/plugin-import-export` (export on sales/ops collections; import disabled).
+- **PWA**: `manifest.webmanifest`, icons (192/512), service worker (`sw.js`, never caches /api or
+  /admin), `PwaRegister` — installable on staff phones.
+- **Audit/history**: `createdBy`/`updatedBy`/timestamps on collections + quotation versions.
+- **Integration points** documented: `docs/HILTY_INTEGRATIONS.md` (inventory, accounting/POS —
+  **not replaced** — ops app, payments, notifications, analytics).
+
+### Tests
+- `lint` clean; `build` OK (20 routes incl. `/ops`, `/admin`). Regression: quotation 9/9, 8C 27/27.
+- Access is enforced by Payload (`isStaff`/role groups); `/ops` redirects to `/admin/login` when
+  unauthenticated (verified by route guard).
+
+### Rollback
+- All new/local. Rollback = revert `access/roles.ts`, the collection edits, `payload.config.ts`
+  plugin, `app/(frontend)/ops`, PWA files. Production untouched.
+
+## Portion 10 — Launch QA — (partially prepared; see launch-readiness report)

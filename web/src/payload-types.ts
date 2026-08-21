@@ -89,10 +89,15 @@ export interface Config {
     'design-variants': DesignVariant;
     'design-product-plan': DesignProductPlan;
     'design-events': DesignEvent;
+    'branch-stock': BranchStock;
+    reservations: Reservation;
     complaints: Complaint;
     'ai-sessions': AiSession;
     'ai-lead-summaries': AiLeadSummary;
+    exports: Export;
+    imports: Import;
     'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -121,10 +126,15 @@ export interface Config {
     'design-variants': DesignVariantsSelect<false> | DesignVariantsSelect<true>;
     'design-product-plan': DesignProductPlanSelect<false> | DesignProductPlanSelect<true>;
     'design-events': DesignEventsSelect<false> | DesignEventsSelect<true>;
+    'branch-stock': BranchStockSelect<false> | BranchStockSelect<true>;
+    reservations: ReservationsSelect<false> | ReservationsSelect<true>;
     complaints: ComplaintsSelect<false> | ComplaintsSelect<true>;
     'ai-sessions': AiSessionsSelect<false> | AiSessionsSelect<true>;
     'ai-lead-summaries': AiLeadSummariesSelect<false> | AiLeadSummariesSelect<true>;
+    exports: ExportsSelect<false> | ExportsSelect<true>;
+    imports: ImportsSelect<false> | ImportsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -141,7 +151,14 @@ export interface Config {
   };
   user: User;
   jobs: {
-    tasks: unknown;
+    tasks: {
+      createCollectionExport: TaskCreateCollectionExport;
+      createCollectionImport: TaskCreateCollectionImport;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -170,7 +187,7 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name: string;
-  roles: ('admin' | 'manager' | 'content_editor' | 'sales' | 'branch_staff' | 'viewer')[];
+  roles: ('admin' | 'managing_director' | 'sales_officer' | 'branch_manager' | 'project_officer' | 'viewer')[];
   /**
    * For branch staff: the outlet this user is responsible for.
    */
@@ -856,7 +873,15 @@ export interface Lead {
     | null;
   interest?: string | null;
   message?: string | null;
-  status?: ('new' | 'contacted' | 'qualified' | 'converted' | 'lost') | null;
+  /**
+   * Lead pipeline stage.
+   */
+  status?: ('new' | 'contacted' | 'site_visit_booked' | 'quotation_prepared' | 'negotiation' | 'won' | 'lost') | null;
+  /**
+   * Next follow-up date (overdue if in the past and not won/lost).
+   */
+  followUpAt?: string | null;
+  lostReason?: string | null;
   assignedTo?: (number | null) | User;
   branch?: (number | null) | Branch;
   /**
@@ -940,7 +965,36 @@ export interface QuotationRequest {
   productsInterested?: (number | Product)[] | null;
   preferredBranch?: (number | null) | Branch;
   status?: ('received' | 'in_review' | 'quoted' | 'accepted' | 'declined' | 'expired') | null;
+  /**
+   * Products & quantities. Unit price only if verified — never invent figures.
+   */
+  lineItems?:
+    | {
+        product?: (number | null) | Product;
+        description?: string | null;
+        quantity?: number | null;
+        unit?: string | null;
+        /**
+         * Leave blank unless a verified price exists.
+         */
+        unitPrice?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Discount %. Requires approval per policy.
+   */
+  discountPct?: number | null;
+  /**
+   * Tax rate % (configure per current law; not invented).
+   */
+  taxRatePct?: number | null;
+  /**
+   * Only when built from verified prices.
+   */
   quotedAmount?: number | null;
+  approvalStatus?: ('draft' | 'pending_approval' | 'approved' | 'rejected') | null;
+  approvedBy?: (number | null) | User;
   quoteFile?: (number | null) | Document;
   assignedTo?: (number | null) | User;
   /**
@@ -995,6 +1049,36 @@ export interface SiteVisitRequest {
   assignedTo?: (number | null) | User;
   status?: ('requested' | 'scheduled' | 'completed' | 'cancelled') | null;
   scheduledFor?: string | null;
+  /**
+   * Recorded on site (metres). Feeds the deterministic calculator.
+   */
+  measurements?:
+    | {
+        roomOrArea?: string | null;
+        length?: number | null;
+        width?: number | null;
+        height?: number | null;
+        notes?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Site photos (private).
+   */
+  siteImages?:
+    | {
+        image?: (number | null) | Document;
+        id?: string | null;
+      }[]
+    | null;
+  followUpActions?:
+    | {
+        action?: string | null;
+        dueDate?: string | null;
+        done?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Record of the consent under which this personal data was collected.
    */
@@ -1498,6 +1582,54 @@ export interface DesignEvent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "branch-stock".
+ */
+export interface BranchStock {
+  id: number;
+  branch: number | Branch;
+  product: number | Product;
+  status?: ('in_stock' | 'low' | 'out_of_stock' | 'contact_branch') | null;
+  note?: string | null;
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservations".
+ */
+export interface Reservation {
+  id: number;
+  reference?: string | null;
+  branch: number | Branch;
+  product: number | Product;
+  quantity?: number | null;
+  unit?: string | null;
+  customerName?: string | null;
+  phone?: string | null;
+  leadRef?: string | null;
+  status?: ('requested' | 'confirmed' | 'collected' | 'cancelled' | 'expired') | null;
+  expiresAt?: string | null;
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints".
  */
 export interface Complaint {
@@ -1654,6 +1786,80 @@ export interface AiLeadSummary {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exports".
+ */
+export interface Export {
+  id: number;
+  name?: string | null;
+  format: 'csv' | 'json';
+  limit?: number | null;
+  page?: number | null;
+  sort?: string | null;
+  sortOrder?: ('asc' | 'desc') | null;
+  drafts?: ('yes' | 'no') | null;
+  selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
+  fields?: string[] | null;
+  collectionSlug: string;
+  where?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imports".
+ */
+export interface Import {
+  id: number;
+  collectionSlug: string;
+  importMode?: ('create' | 'update' | 'upsert') | null;
+  matchField?: string | null;
+  status?: ('pending' | 'completed' | 'partial' | 'failed') | null;
+  summary?: {
+    imported?: number | null;
+    updated?: number | null;
+    total?: number | null;
+    issues?: number | null;
+    issueDetails?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1668,6 +1874,98 @@ export interface PayloadKv {
     | number
     | boolean
     | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: number;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'createCollectionExport' | 'createCollectionImport';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'createCollectionExport' | 'createCollectionImport') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1763,6 +2061,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'design-events';
         value: number | DesignEvent;
+      } | null)
+    | ({
+        relationTo: 'branch-stock';
+        value: number | BranchStock;
+      } | null)
+    | ({
+        relationTo: 'reservations';
+        value: number | Reservation;
       } | null)
     | ({
         relationTo: 'complaints';
@@ -2262,6 +2568,8 @@ export interface LeadsSelect<T extends boolean = true> {
   interest?: T;
   message?: T;
   status?: T;
+  followUpAt?: T;
+  lostReason?: T;
   assignedTo?: T;
   branch?: T;
   consent?:
@@ -2316,7 +2624,21 @@ export interface QuotationRequestsSelect<T extends boolean = true> {
   productsInterested?: T;
   preferredBranch?: T;
   status?: T;
+  lineItems?:
+    | T
+    | {
+        product?: T;
+        description?: T;
+        quantity?: T;
+        unit?: T;
+        unitPrice?: T;
+        id?: T;
+      };
+  discountPct?: T;
+  taxRatePct?: T;
   quotedAmount?: T;
+  approvalStatus?: T;
+  approvedBy?: T;
   quoteFile?: T;
   assignedTo?: T;
   consent?:
@@ -2364,6 +2686,30 @@ export interface SiteVisitRequestsSelect<T extends boolean = true> {
   assignedTo?: T;
   status?: T;
   scheduledFor?: T;
+  measurements?:
+    | T
+    | {
+        roomOrArea?: T;
+        length?: T;
+        width?: T;
+        height?: T;
+        notes?: T;
+        id?: T;
+      };
+  siteImages?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  followUpActions?:
+    | T
+    | {
+        action?: T;
+        dueDate?: T;
+        done?: T;
+        id?: T;
+      };
   consent?:
     | T
     | {
@@ -2648,6 +2994,40 @@ export interface DesignEventsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "branch-stock_select".
+ */
+export interface BranchStockSelect<T extends boolean = true> {
+  branch?: T;
+  product?: T;
+  status?: T;
+  note?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reservations_select".
+ */
+export interface ReservationsSelect<T extends boolean = true> {
+  reference?: T;
+  branch?: T;
+  product?: T;
+  quantity?: T;
+  unit?: T;
+  customerName?: T;
+  phone?: T;
+  leadRef?: T;
+  status?: T;
+  expiresAt?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints_select".
  */
 export interface ComplaintsSelect<T extends boolean = true> {
@@ -2760,11 +3140,100 @@ export interface AiLeadSummariesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exports_select".
+ */
+export interface ExportsSelect<T extends boolean = true> {
+  name?: T;
+  format?: T;
+  limit?: T;
+  page?: T;
+  sort?: T;
+  sortOrder?: T;
+  drafts?: T;
+  selectionToUse?: T;
+  fields?: T;
+  collectionSlug?: T;
+  where?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imports_select".
+ */
+export interface ImportsSelect<T extends boolean = true> {
+  collectionSlug?: T;
+  importMode?: T;
+  matchField?: T;
+  status?: T;
+  summary?:
+    | T
+    | {
+        imported?: T;
+        updated?: T;
+        total?: T;
+        issues?: T;
+        issueDetails?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2807,6 +3276,85 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCreateCollectionExport".
+ */
+export interface TaskCreateCollectionExport {
+  input: {
+    id: string;
+    name: string;
+    batchSize?: number | null;
+    collectionSlug:
+      | 'users'
+      | 'media'
+      | 'documents'
+      | 'brands'
+      | 'product-categories'
+      | 'products'
+      | 'branches'
+      | 'services'
+      | 'projects'
+      | 'painters'
+      | 'leads'
+      | 'quotation-requests'
+      | 'site-visit-requests'
+      | 'enquiries'
+      | 'design-projects'
+      | 'design-spaces'
+      | 'design-surfaces'
+      | 'design-preferences'
+      | 'design-palettes'
+      | 'design-variants'
+      | 'design-product-plan'
+      | 'design-events'
+      | 'branch-stock'
+      | 'reservations'
+      | 'complaints'
+      | 'ai-sessions'
+      | 'ai-lead-summaries'
+      | 'exports'
+      | 'imports';
+    drafts?: ('yes' | 'no') | null;
+    exportCollection: string;
+    fields?: string[] | null;
+    format: 'csv' | 'json';
+    limit?: number | null;
+    locale?: string | null;
+    maxLimit?: number | null;
+    page?: number | null;
+    sort?: string | null;
+    userCollection?: string | null;
+    userID?: string | null;
+    where?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskCreateCollectionImport".
+ */
+export interface TaskCreateCollectionImport {
+  input: {
+    importId: string;
+    importCollection: string;
+    userID?: string | null;
+    userCollection?: string | null;
+    batchSize?: number | null;
+    debug?: boolean | null;
+    defaultVersionStatus?: ('draft' | 'published') | null;
+    maxLimit?: number | null;
+  };
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -2,6 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { buildConfig } from 'payload'
+import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp'
@@ -29,6 +30,8 @@ import { DesignPalettes } from './collections/DesignPalettes'
 import { DesignVariants } from './collections/DesignVariants'
 import { DesignProductPlan } from './collections/DesignProductPlan'
 import { DesignEvents } from './collections/DesignEvents'
+import { BranchStock } from './collections/BranchStock'
+import { Reservations } from './collections/Reservations'
 import { AiSessions } from './collections/AiSessions'
 import { AiLeadSummaries } from './collections/AiLeadSummaries'
 
@@ -68,6 +71,8 @@ export default buildConfig({
     DesignVariants,
     DesignProductPlan,
     DesignEvents,
+    BranchStock,
+    Reservations,
     Complaints,
     // AI advisor
     AiSessions,
@@ -83,5 +88,21 @@ export default buildConfig({
       url: process.env.DATABASE_URI || 'file:./hilty.db',
     },
   }),
+  plugins: [
+    // CSV/JSON export for staff (Operations Lite). Import disabled to avoid unsafe bulk writes.
+    importExportPlugin({
+      collections: [
+        { slug: 'leads', import: false },
+        { slug: 'quotation-requests', import: false },
+        { slug: 'site-visit-requests', import: false },
+        { slug: 'enquiries', import: false },
+        { slug: 'painters', import: false },
+        { slug: 'complaints', import: false },
+        { slug: 'reservations', import: false },
+        { slug: 'branch-stock', import: false },
+        { slug: 'design-events', import: false },
+      ],
+    }),
+  ],
   sharp,
 })

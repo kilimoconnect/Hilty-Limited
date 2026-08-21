@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import {
   canHandleLeads,
+  fieldAdminOrManager,
   fieldStaffOnlyRead,
   isAdminOrManager,
   isStaff,
@@ -12,7 +13,8 @@ import { generateReference, referenceField } from '../fields/reference'
 export const QuotationRequests: CollectionConfig = {
   slug: 'quotation-requests',
   labels: { singular: 'Quotation request', plural: 'Quotation requests' },
-  admin: { useAsTitle: 'reference', group: 'Sales pipeline', defaultColumns: ['reference', 'customerName', 'status', 'assignedTo'] },
+  admin: { useAsTitle: 'reference', group: 'Sales pipeline', defaultColumns: ['reference', 'customerName', 'status', 'approvalStatus', 'assignedTo'] },
+  versions: true, // version history
   access: {
     read: isStaff,
     create: publicCreate,
@@ -66,7 +68,36 @@ export const QuotationRequests: CollectionConfig = {
         { label: 'Expired', value: 'expired' },
       ],
     },
-    { name: 'quotedAmount', type: 'number', access: { read: fieldStaffOnlyRead }, admin: { position: 'sidebar' } },
+    // Quotation build-out (internal / Operations Lite). Prices are only real when verified.
+    {
+      name: 'lineItems',
+      type: 'array',
+      admin: { description: 'Products & quantities. Unit price only if verified — never invent figures.' },
+      fields: [
+        { name: 'product', type: 'relationship', relationTo: 'products' },
+        { name: 'description', type: 'text' },
+        { name: 'quantity', type: 'number' },
+        { name: 'unit', type: 'text', admin: { placeholder: 'e.g. L, pcs' } },
+        { name: 'unitPrice', type: 'number', access: { read: fieldStaffOnlyRead }, admin: { description: 'Leave blank unless a verified price exists.' } },
+      ],
+    },
+    { name: 'discountPct', type: 'number', access: { read: fieldStaffOnlyRead }, admin: { position: 'sidebar', description: 'Discount %. Requires approval per policy.' } },
+    { name: 'taxRatePct', type: 'number', access: { read: fieldStaffOnlyRead }, admin: { position: 'sidebar', description: 'Tax rate % (configure per current law; not invented).' } },
+    { name: 'quotedAmount', type: 'number', access: { read: fieldStaffOnlyRead }, admin: { position: 'sidebar', description: 'Only when built from verified prices.' } },
+    {
+      name: 'approvalStatus',
+      type: 'select',
+      defaultValue: 'draft',
+      access: { update: fieldAdminOrManager },
+      admin: { position: 'sidebar' },
+      options: [
+        { label: 'Draft', value: 'draft' },
+        { label: 'Pending approval', value: 'pending_approval' },
+        { label: 'Approved', value: 'approved' },
+        { label: 'Rejected', value: 'rejected' },
+      ],
+    },
+    { name: 'approvedBy', type: 'relationship', relationTo: 'users', access: { update: fieldAdminOrManager }, admin: { position: 'sidebar' } },
     { name: 'quoteFile', type: 'upload', relationTo: 'documents' },
     { name: 'assignedTo', type: 'relationship', relationTo: 'users', admin: { position: 'sidebar' } },
     consentField,

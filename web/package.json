@@ -25,6 +25,7 @@
     "@google/genai": "^2.18.0",
     "@payloadcms/db-sqlite": "^3.88.0",
     "@payloadcms/next": "^3.88.0",
+    "@payloadcms/plugin-import-export": "^3.88.0",
     "@payloadcms/richtext-lexical": "^3.88.0",
     "csv-parse": "^7.0.2",
     "graphql": "^16.14.2",

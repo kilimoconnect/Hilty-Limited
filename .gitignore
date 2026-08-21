@@ -35,3 +35,12 @@ uploads/
 
 # Local backups of production content/data
 backups/
+
+# App runtime data — NEVER commit (customer uploads, DB, generated files)
+*.db
+*.db-*
+private-uploads/
+media-uploads/
+next-env.d.ts
+.turbo/
+*.tsbuildinfo
