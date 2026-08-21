@@ -8,7 +8,9 @@ Incrementally improve Hilty Limited's web presence so it becomes a serious multi
 **paint-solutions** platform — not just an online brochure — supporting the ten primary
 customer journeys (browse products → paint system → quantity calculator → quotation →
 BOQ upload → site visit → nearest outlet → AI Paint Advisor → WhatsApp human help →
-painter/contractor registration).
+painter/contractor registration), plus the **AI Design Studio** journey (visualise a project →
+verified colour & paint plan → deterministic quantities → quotation/site visit/handoff) — see §5b
+and [HILTY_DESIGN_STUDIO.md](HILTY_DESIGN_STUDIO.md).
 
 ## 2. Positioning
 
@@ -78,6 +80,22 @@ Options considered:
 - **Portion 8 — Hardening & launch**: performance, SEO, accessibility, staging→production
   cutover with rollback.
 
+## 5b. Major feature — Hilty AI Design Studio (PLANNED, not implemented)
+
+_Added as an architecture/database amendment 2026-08-13. Full spec:
+[HILTY_DESIGN_STUDIO.md](HILTY_DESIGN_STUDIO.md)._
+
+A **paint-led visual design & conversion tool** (NOT a general-purpose architecture app). Customers
+upload a photo (or pick a sample space), confirm auto-detected paintable surfaces, choose
+preferences, get colour schemes + **indicative** visual variants, map colours to **verified**
+products, enter measurements, run the **deterministic** calculator, save the project and convert to a
+quotation / site-visit / branch or WhatsApp handoff (and later purchase — subject to the no-online-
+payment rule). It **integrates with** the AI Paint Advisor, catalogue, paint calculator, quotation
+system, branches and the **Hilty Operations application**.
+
+Delivered as its own track of future portions **DS-1 … DS-8** (see the spec §8). This amendment
+updates documentation only; **no Design Studio code is written yet**.
+
 ## 6. Guardrails carried through every portion
 
 - Mobile-first; EN + Kiswahili; units m² and litres.
@@ -85,6 +103,10 @@ Options considered:
 - No online payment until real prices, stock and fulfilment are confirmed.
 - No AI keys in frontend; no secrets in repo; server-side AI only.
 - Preserve production until replacements are tested; backup before any deletion.
+- **Visual/AI design output is indicative only** — never promise exact colour appearance from a
+  screen or generated image; recommend physical Plascon samples; no structural/defect diagnosis from
+  photos; all quantities via the deterministic calculator; uploaded photos are consented, retained
+  and privately stored customer data.
 
 ## 7. Immediate blocking questions
 

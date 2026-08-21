@@ -26,6 +26,9 @@ This project is in **discovery / setup**. The technical stack and delivery appro
 | [docs/HILTY_BUILD_STATUS.md](docs/HILTY_BUILD_STATUS.md) | Living log of what has been built, updated every portion |
 | [docs/HILTY_CONTENT_GAPS.md](docs/HILTY_CONTENT_GAPS.md) | Information the owner must confirm before it goes live |
 | [docs/HILTY_TESTING_CHECKLIST.md](docs/HILTY_TESTING_CHECKLIST.md) | Tests to run before any release |
+| [docs/HILTY_DATA_MODEL.md](docs/HILTY_DATA_MODEL.md) | Content models / database schema |
+| [docs/HILTY_SITE_AUDIT.md](docs/HILTY_SITE_AUDIT.md) | Read-only audit of the old WordPress site (migration reference) |
+| [docs/HILTY_DESIGN_STUDIO.md](docs/HILTY_DESIGN_STUDIO.md) | **PLANNED** — Hilty AI Design Studio architecture & data model (not yet built) |
 
 ## Ground rules (summary)
 

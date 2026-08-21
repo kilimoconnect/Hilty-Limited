@@ -368,4 +368,21 @@ server-controlled tools, strict structured output, failover, security, and mocke
 ### Rollback
 - All new/local. Rollback = `git reset`/checkout `web/src/lib/ai` + `web/src/test-ai.ts`. Production untouched.
 
+## Amendment — Hilty AI Design Studio added to plan (docs only) — 2026-08-13
+
+**Documentation-only** amendment (no code). Added the **Hilty AI Design Studio** — a paint-led
+visual design & conversion tool — to the architecture, database and planning docs:
+- New spec **`docs/HILTY_DESIGN_STUDIO.md`** (objective, journey, project types, provider-independent
+  image architecture, proposed collections, integrations, guardrails, DS-1…DS-8 roadmap).
+- `HILTY_REBUILD_PLAN.md` §1, §5b, §6 updated (feature, journey, guardrails).
+- `HILTY_DATA_MODEL.md` — proposed design-projects / design-surfaces / colour-schemes /
+  design-variants / sample-spaces / design-preferences collections (planned).
+- `HILTY_CONTENT_GAPS.md` §8 — open decisions (image providers/billing, disclaimers, sample-space
+  asset rights, verified palette mapping, **Hilty Operations integration contract**, cost controls).
+- `HILTY_TESTING_CHECKLIST.md` — Design Studio test items.
+- `README.md` — index updated.
+
+**Not implemented.** Build only after approval, portion by portion (DS-1…DS-8). Integrates with the
+AI Paint Advisor, catalogue, calculator, quotation system, branches and the Hilty Operations app.
+
 ## Portion 8 — (not started; awaiting go-ahead)

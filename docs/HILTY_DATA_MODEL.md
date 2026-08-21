@@ -117,6 +117,32 @@ session (→ai-sessions) · summary · detectedIntent · recommendedProducts (�
 recommendedSystem · customerContact (name/phone, consent) · confidence · reviewedBy (→users) ·
 status · **retention** · audit. _No seed._
 
+## PLANNED — Hilty AI Design Studio collections (NOT yet implemented)
+
+_Amendment 2026-08-13. Full spec: [HILTY_DESIGN_STUDIO.md](HILTY_DESIGN_STUDIO.md). These are
+proposed schemas only — no Payload configs exist yet. They follow the same conventions
+(audit, consent, retention, verification, RBAC, private uploads)._
+
+- **design-projects** — reference (DSN-…) · type (living_room … commercial_building) · status
+  (draft→converted) · customer (personal data) · sessionId · locale · sourceImages (private) OR
+  sampleSpace (→sample-spaces) · surfaces (embedded/→design-surfaces) · preferences · schemeOptions
+  (→colour-schemes) · selectedScheme · variants (→design-variants) · selectedVariant · measurements
+  · **calculation (json, deterministic estimate)** · recommendedProducts (→products) · linkedQuotation
+  (→quotation-requests) · linkedSiteVisit (→site-visit-requests) · linkedLead (→leads) · preferredBranch
+  (→branches) · **consent** · **retention** · **verification** · audit.
+- **design-surfaces** — project (→design-projects) · surfaceType (wall/ceiling/roof/wood/metal/
+  boundary_wall/gate/facade/trim) · mask · estimatedAreaM2 · assignedColour · assignedProduct
+  (→products) · userConfirmed.
+- **colour-schemes** — name · palette (label, **approx** hex, mappedProduct →products, finish) ·
+  mood/style tags · source (curated|generated) · active. **Approximate colour only.**
+- **design-variants** — project (→design-projects) · scheme (→colour-schemes) · image (→media,
+  **watermarked "indicative visualisation"**) · notes · generatedBy (provider/model, no secrets) · audit.
+- **sample-spaces** — name · type · image (→media, **owned/authorised only**) · active.
+- **design-preferences** (optional taxonomy) — editable style/mood tags for scheme generation.
+
+Reuses existing collections: **products** (verified mapping), **quotation-requests**,
+**site-visit-requests**, **leads**, **branches**, **documents/media** (private uploads).
+
 ## CSV import templates
 - `web/import-templates/products-template.csv`
 - `web/import-templates/branches-template.csv`

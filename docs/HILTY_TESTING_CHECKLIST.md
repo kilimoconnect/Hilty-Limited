@@ -50,6 +50,19 @@ Record exact results in the end-of-portion report._
 - [ ] Images optimised; only owned/authorised assets used.
 - [ ] Meta titles/descriptions per page; sitemap; correct canonical.
 
+## AI Design Studio (PLANNED — test when built; spec HILTY_DESIGN_STUDIO.md)
+- [ ] Surface detection returns editable masks; **user can confirm/correct** before visualisation.
+- [ ] Safe fallback when detection/visualisation providers fail (manual masks / flat swatches).
+- [ ] Variants are clearly labelled **indicative** and **watermarked**; no exact-colour promise.
+- [ ] Colours map only to **verified** catalogue products; price/stock rules honoured.
+- [ ] Quantities come from the **deterministic calculator**, labelled estimates.
+- [ ] Save/resume a project across every step.
+- [ ] Convert to quotation / site-visit / branch / WhatsApp with the design reference.
+- [ ] Uploaded photos: consent captured, private storage, retention + deletion on request.
+- [ ] No structural/damp/hazard diagnosis from photos; recommends professional inspection.
+- [ ] Server-side keys only; PII-free logs; rate/upload limits; malware scan on uploads.
+- [ ] Hilty Operations integration pushes leads/quotations/projects correctly.
+
 ## Release safety
 - [ ] Tested on staging first.
 - [ ] Production backup taken (DB + files) before cutover.

@@ -101,7 +101,21 @@ without confirming the licence/source.** Need the real Plascon (and other stocke
 - The in-memory **rate limiter is per-instance**; for multi-instance/serverless production, back
   it with a shared store (Redis/Upstash) — flagged in `web/src/lib/ai/ratelimit.ts`.
 
-## 8. Access & accounts (not content, but blocking)
+## 8. Hilty AI Design Studio (PLANNED — spec added 2026-08-13)
+
+Open decisions before the Design Studio is built (spec: [HILTY_DESIGN_STUDIO.md](HILTY_DESIGN_STUDIO.md)):
+- **Image providers & billing:** which surface-segmentation and image-visualisation providers
+  (primary + backup), and who holds the API accounts. Keys must be **server-side only**.
+- **Colour-accuracy disclaimer wording** (EN + SW): every variant is an *indicative visualisation*;
+  confirm with physical Plascon samples. Owner to approve exact wording.
+- **Sample-space assets:** provide **owned/authorised** demo photos (no scraped/copyrighted imagery).
+- **Verified colour palette → product mapping:** needs the verified Plascon colour + product data
+  (ties into §1b/§1c) so schemes map to real products, not Benjamin Moore placeholders.
+- **Hilty Operations application integration:** the internal ops app's interface, endpoints, auth and
+  data contract for pushing design leads/quotations/projects — **details TBC**.
+- **Cost / abuse controls:** budget caps and rate limits for image generation.
+
+## 9. Access & accounts (not content, but blocking)
 
 - Hosting/staging credentials, DB export, existing repo (if any).
 - GitHub access to `kilimoconnect/Hilty-Limited` for pushing.
