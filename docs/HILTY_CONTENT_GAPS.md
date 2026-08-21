@@ -94,6 +94,12 @@ without confirming the licence/source.** Need the real Plascon (and other stocke
 
 - Which provider (OpenAI / Gemini / other) and who holds the API account/billing.
 - Confirm guardrails: no exact-colour promises, no serious wall-defect diagnosis.
+- **Portion 7 built the backend** (OpenAI primary + Gemini backup). To go live it needs
+  **`OPENAI_API_KEY` / `GEMINI_API_KEY`** (+ optional model overrides) set as **server-side**
+  env vars — never `NEXT_PUBLIC_`. Without keys the service returns the safe deterministic
+  response (calculator / quotation / WhatsApp). See `.env.example`.
+- The in-memory **rate limiter is per-instance**; for multi-instance/serverless production, back
+  it with a shared store (Redis/Upstash) — flagged in `web/src/lib/ai/ratelimit.ts`.
 
 ## 8. Access & accounts (not content, but blocking)
 

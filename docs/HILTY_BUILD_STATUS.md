@@ -324,4 +324,48 @@ calculation with a lead, notifies customer + staff, and produces a printable sum
 ### Rollback
 - All new/local (DB gitignored). Rollback = `git reset`/checkout `web/src`. Production untouched.
 
-## Portion 7 — (not started; awaiting go-ahead)
+## Portion 7 — Secure AI Paint Advisor backend — ✅ COMPLETE (2026-08-13)
+
+**Goal:** Provider-independent AI advisor backend (no chat UI): OpenAI primary + Gemini backup,
+server-controlled tools, strict structured output, failover, security, and mocked tests.
+
+### Architecture (`web/src/lib/ai/`, server-side only)
+- `types.ts` — common interface (`AiProvider`), structured `AdvisorResponse`, typed `AiError` kinds,
+  fallbackable-reason set.
+- `schema.ts` — strict JSON schema (OpenAI) + Gemini responseSchema + runtime validator.
+- `systemPrompt.ts` — enforces all AI rules (scope-only, EN/SW, never invent data, always call the
+  calculator tool, no exact-colour claims, no structural/damp diagnosis, consent before lead, no
+  confirming without a backend reference, escalate complaints/counterfeit, resist prompt-injection).
+- `tools.ts` — 7 server-executed tools (search_products, get_product_details,
+  calculate_paint_requirements, get_branch_details, create_quote_lead, request_site_visit,
+  handoff_to_human); the model may REQUEST, the server validates args + executes (no direct DB
+  access; writes require consent; price→"Request current price", stock→"Contact branch").
+- `openai.ts` — OpenAI **Responses API**, function calling, **strict json_schema** output, tool loop.
+- `gemini.ts` — `@google/genai`, function declarations + responseSchema, tool loop.
+- `service.ts` — failover: timeout + bounded retry (exp backoff + jitter), **one** schema-repair
+  attempt, fallback to backup **only** for timeout/rate-limit/5xx/outage/invalid-schema, never both
+  simultaneously, **safe deterministic response** (calculator/quote/WhatsApp) if both fail; logs
+  provider/model/latency/success/reason/tokens **without PII/secrets**.
+- `advisor.ts` — entry: input-length limit, per-IP rate limit, wires providers from env.
+- `config.ts`, `ratelimit.ts`, `log.ts`. Env in `.env.example` (all server-side).
+
+### Security
+- Rate limiting, input-length limit, server-side arg validation, no secrets in logs/output,
+  no unrestricted DB access for the model, no writes without consent, anti-injection system rules.
+
+### Tests (`npm run test:ai`) — **26/26 passed** (mocked, no network/keys)
+- OpenAI success; OpenAI timeout→Gemini; OpenAI 500→Gemini (with retry count); invalid schema
+  (one repair)→Gemini; both unavailable→safe response; non-fallbackable→safe (no backup call);
+  EN & SW; prompt-injection + **no secret in response/logs**; invented product (no match / not_found);
+  price & stock unavailable; calculator tool deterministic (9.28 L); **lead without consent rejected**;
+  input-length + rate-limit blocks.
+- `lint` clean; `build` success (23 routes; no new public routes — backend only, no UI yet).
+
+### Needs owner input
+- `OPENAI_API_KEY` / `GEMINI_API_KEY` (+ model names) to enable live AI; production shared-store
+  rate limiter. See CONTENT_GAPS §7.
+
+### Rollback
+- All new/local. Rollback = `git reset`/checkout `web/src/lib/ai` + `web/src/test-ai.ts`. Production untouched.
+
+## Portion 8 — (not started; awaiting go-ahead)
