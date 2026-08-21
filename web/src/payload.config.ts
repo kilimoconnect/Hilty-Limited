@@ -21,6 +21,13 @@ import { QuotationRequests } from './collections/QuotationRequests'
 import { SiteVisitRequests } from './collections/SiteVisitRequests'
 import { Complaints } from './collections/Complaints'
 import { Enquiries } from './collections/Enquiries'
+import { DesignProjects } from './collections/DesignProjects'
+import { DesignSpaces } from './collections/DesignSpaces'
+import { DesignSurfaces } from './collections/DesignSurfaces'
+import { DesignPreferences } from './collections/DesignPreferences'
+import { DesignPalettes } from './collections/DesignPalettes'
+import { DesignVariants } from './collections/DesignVariants'
+import { DesignProductPlan } from './collections/DesignProductPlan'
 import { AiSessions } from './collections/AiSessions'
 import { AiLeadSummaries } from './collections/AiLeadSummaries'
 
@@ -52,6 +59,13 @@ export default buildConfig({
     QuotationRequests,
     SiteVisitRequests,
     Enquiries,
+    DesignProjects,
+    DesignSpaces,
+    DesignSurfaces,
+    DesignPreferences,
+    DesignPalettes,
+    DesignVariants,
+    DesignProductPlan,
     Complaints,
     // AI advisor
     AiSessions,

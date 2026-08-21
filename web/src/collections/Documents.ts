@@ -35,6 +35,7 @@ export const Documents: CollectionConfig = {
       options: [
         { label: 'BOQ / project document', value: 'boq' },
         { label: 'Quotation PDF', value: 'quote' },
+        { label: 'Design Studio image', value: 'design' },
         { label: 'Other', value: 'other' },
       ],
     },

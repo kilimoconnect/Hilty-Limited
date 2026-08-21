@@ -16,6 +16,7 @@
     "test:calc": "tsx src/test-calc.ts",
     "test:quotation": "tsx src/test-quotation.ts",
     "test:ai": "tsx src/test-ai.ts",
+    "test:design": "tsx src/test-design.ts",
     "import:products": "tsx src/import-products.ts"
   },
   "dependencies": {

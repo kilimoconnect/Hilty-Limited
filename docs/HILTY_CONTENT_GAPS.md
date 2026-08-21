@@ -104,8 +104,11 @@ without confirming the licence/source.** Need the real Plascon (and other stocke
 ## 8. Hilty AI Design Studio (PLANNED — spec added 2026-08-13)
 
 Open decisions before the Design Studio is built (spec: [HILTY_DESIGN_STUDIO.md](HILTY_DESIGN_STUDIO.md)):
-- **Image providers & billing:** which surface-segmentation and image-visualisation providers
-  (primary + backup), and who holds the API accounts. Keys must be **server-side only**.
+- **Image providers & billing:** Portion 8A built the image service (OpenAI primary + Gemini backup).
+  Confirm the **image model names** (`OPENAI_IMAGE_MODEL` / `GEMINI_IMAGE_MODEL`), who holds the API
+  accounts/billing, and (optional) an **object-storage bucket** (`DESIGN_STORAGE_BUCKET`, e.g. S3) to
+  enable short-lived signed URLs. Keys must be **server-side only**. Production also needs shared-store
+  quotas and malware scanning of uploaded images.
 - **Colour-accuracy disclaimer wording** (EN + SW): every variant is an *indicative visualisation*;
   confirm with physical Plascon samples. Owner to approve exact wording.
 - **Sample-space assets:** provide **owned/authorised** demo photos (no scraped/copyrighted imagery).

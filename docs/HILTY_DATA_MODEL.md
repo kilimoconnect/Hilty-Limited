@@ -117,11 +117,13 @@ session (→ai-sessions) · summary · detectedIntent · recommendedProducts (�
 recommendedSystem · customerContact (name/phone, consent) · confidence · reviewedBy (→users) ·
 status · **retention** · audit. _No seed._
 
-## PLANNED — Hilty AI Design Studio collections (NOT yet implemented)
+## Hilty AI Design Studio collections — ✅ IMPLEMENTED (Portion 8A, 2026-08-13)
 
-_Amendment 2026-08-13. Full spec: [HILTY_DESIGN_STUDIO.md](HILTY_DESIGN_STUDIO.md). These are
-proposed schemas only — no Payload configs exist yet. They follow the same conventions
-(audit, consent, retention, verification, RBAC, private uploads)._
+_The 7 Design Studio collections below are now built (Payload configs in `web/src/collections/`):
+**design-projects, design-spaces, design-surfaces, design-preferences, design-palettes,
+design-variants, design-product-plan** — matching the Portion 8A field list. `documents.kind`
+gained a `design` option for private Design Studio images. The customer UI is NOT built yet.
+The proposed shapes below remain the reference for fields._
 
 - **design-projects** — reference (DSN-…) · type (living_room … commercial_building) · status
   (draft→converted) · customer (personal data) · sessionId · locale · sourceImages (private) OR

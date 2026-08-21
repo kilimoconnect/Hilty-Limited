@@ -385,4 +385,57 @@ visual design & conversion tool — to the architecture, database and planning d
 **Not implemented.** Build only after approval, portion by portion (DS-1…DS-8). Integrates with the
 AI Paint Advisor, catalogue, calculator, quotation system, branches and the Hilty Operations app.
 
-## Portion 8 — (not started; awaiting go-ahead)
+## Portion 8A — Design Studio backend, data foundation & secure image service — ✅ COMPLETE (2026-08-13)
+
+**Goal:** Design Studio backend + data models + provider-independent secure image service.
+**No customer UI** (per instructions).
+
+### Data models (7 new Payload collections — `web/src/collections/`)
+design-projects · design-spaces · design-surfaces · design-preferences · design-palettes ·
+design-variants · design-product-plan (all with audit/consent/retention/verification/RBAC as
+applicable; registered in `payload.config.ts`; types regenerated). `documents.kind` gained `design`.
+
+### Image service (`web/src/lib/design/`, server-side only)
+- **Provider-independent**: OpenAI primary + Gemini backup, **models configurable via
+  `OPENAI_IMAGE_MODEL` / `GEMINI_IMAGE_MODEL`** (never hard-coded), current official SDKs.
+- **Failover** (`image/service.ts`): timeout + bounded retry for transient only; fall back to
+  Gemini for timeout/rate-limit/outage/5xx/**invalid image output**; never both at once; **if both
+  fail → preserve project + offer human assistance**; logs provider/model/latency/usage/reason.
+- **Upload security** (`uploads.ts`): accept only JPEG/PNG/WebP; validate **magic-byte MIME +
+  extension + declared MIME + size + dimensions**; **re-encode with sharp** (bakes EXIF orientation,
+  **strips EXIF/GPS**); store **privately** in `documents` (staff-only read; no public directory).
+- **Masking** (`masking.ts`): deterministic initial surface suggestion (not AI-only), versioned
+  masks, **no render until user-confirmed**.
+- **Editing rules** (`prompt.ts`): edit only confirmed masks; preserve geometry/openings/furniture/
+  fixtures/perspective; no add/remove unless concept mode; never hide defects; never exact colour.
+- **Watermark** (`watermark.ts`): composites an "AI visualisation" indicator; original retained.
+- **Quotas** (`quota.ts`): per-session + per-IP-per-day image limits.
+- **Lifecycle** (`lifecycle.ts`): `deleteProject` cascade (spaces/surfaces/variants/palettes/
+  preferences/plans + private images) for the customer's delete right; `purgeExpiredDesignData` for
+  automatic retention/deletion.
+- **Orchestration** (`variant.ts`): gates disclaimer + confirmed masks + quota BEFORE any provider
+  call; watermarks + stores privately; records the variant.
+
+### Env (server-side only, in `.env.example`)
+`OPENAI_IMAGE_MODEL`, `GEMINI_IMAGE_MODEL`, `IMAGE_PRIMARY_PROVIDER`, `IMAGE_GENERATION_TIMEOUT_MS`,
+`IMAGE_MAX_UPLOAD_MB`, `IMAGE_MAX_GENERATIONS_PER_SESSION`, `IMAGE_DAILY_LIMIT_PER_IP`,
+`DESIGN_IMAGE_RETENTION_DAYS`, `DESIGN_STORAGE_BUCKET`. Keys never exposed to the browser.
+
+### Tests (`npm run test:design`) — **28/28 passed** (mocked, no network/keys)
+Uploads (accept JPEG/PNG/WebP, **EXIF stripped**, reject non-image/extension-mismatch/declared-MIME-
+mismatch/oversize); masking (suggestions, confirm-gating, versioning); OpenAI success; OpenAI
+timeout→Gemini; 5xx→Gemini; both-fail→human assistance; **permissions** (design-projects not publicly
+readable); disclaimer + confirmation gating; variant stored + watermarked; **session quota**; both-fail
+preserves project; **image + project deletion cascade**.
+- `lint` clean; `build` success (23 routes; no new public routes — backend only). No regressions in
+  test:calc/quotation/ai.
+
+### Needs owner input (CONTENT_GAPS §8)
+- Confirm image **model names** + provider billing; optional **object-storage bucket** (S3) for
+  signed URLs; production shared-store quotas + malware scanning.
+
+### Rollback
+- All new/local (DB gitignored). Rollback = `git reset`/checkout `web/src/lib/design`,
+  `web/src/collections/Design*`, `web/src/test-design.ts`. Production untouched.
+
+## Portion 8B / launch — (not started; awaiting go-ahead)

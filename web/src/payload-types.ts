@@ -81,6 +81,13 @@ export interface Config {
     'quotation-requests': QuotationRequest;
     'site-visit-requests': SiteVisitRequest;
     enquiries: Enquiry;
+    'design-projects': DesignProject;
+    'design-spaces': DesignSpace;
+    'design-surfaces': DesignSurface;
+    'design-preferences': DesignPreference;
+    'design-palettes': DesignPalette;
+    'design-variants': DesignVariant;
+    'design-product-plan': DesignProductPlan;
     complaints: Complaint;
     'ai-sessions': AiSession;
     'ai-lead-summaries': AiLeadSummary;
@@ -105,6 +112,13 @@ export interface Config {
     'quotation-requests': QuotationRequestsSelect<false> | QuotationRequestsSelect<true>;
     'site-visit-requests': SiteVisitRequestsSelect<false> | SiteVisitRequestsSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
+    'design-projects': DesignProjectsSelect<false> | DesignProjectsSelect<true>;
+    'design-spaces': DesignSpacesSelect<false> | DesignSpacesSelect<true>;
+    'design-surfaces': DesignSurfacesSelect<false> | DesignSurfacesSelect<true>;
+    'design-preferences': DesignPreferencesSelect<false> | DesignPreferencesSelect<true>;
+    'design-palettes': DesignPalettesSelect<false> | DesignPalettesSelect<true>;
+    'design-variants': DesignVariantsSelect<false> | DesignVariantsSelect<true>;
+    'design-product-plan': DesignProductPlanSelect<false> | DesignProductPlanSelect<true>;
     complaints: ComplaintsSelect<false> | ComplaintsSelect<true>;
     'ai-sessions': AiSessionsSelect<false> | AiSessionsSelect<true>;
     'ai-lead-summaries': AiLeadSummariesSelect<false> | AiLeadSummariesSelect<true>;
@@ -397,7 +411,7 @@ export interface Media {
 export interface Document {
   id: number;
   label?: string | null;
-  kind?: ('boq' | 'quote' | 'other') | null;
+  kind?: ('boq' | 'quote' | 'design' | 'other') | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1079,6 +1093,363 @@ export interface Enquiry {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-projects".
+ */
+export interface DesignProject {
+  id: number;
+  reference?: string | null;
+  /**
+   * Customer/user identifier where applicable (session or account id).
+   */
+  customerRef?: string | null;
+  /**
+   * Project name.
+   */
+  name: string;
+  sector?: ('residential' | 'commercial') | null;
+  location?: string | null;
+  branch?: (number | null) | Branch;
+  status?:
+    | (
+        | 'draft'
+        | 'surfaces_confirmed'
+        | 'palette_selected'
+        | 'visualised'
+        | 'mapped'
+        | 'measured'
+        | 'saved'
+        | 'converted'
+        | 'archived'
+      )
+    | null;
+  language?: ('en' | 'sw') | null;
+  quotationStatus?: ('none' | 'requested' | 'quoted' | 'accepted' | 'declined') | null;
+  linkedQuotation?: (number | null) | QuotationRequest;
+  linkedSiteVisit?: (number | null) | SiteVisitRequest;
+  /**
+   * Record of the consent under which this personal data was collected.
+   */
+  consent?: {
+    given?: boolean | null;
+    purpose?: ('service_request' | 'marketing' | 'registration' | 'support') | null;
+    channel?: ('website' | 'whatsapp' | 'ai_advisor' | 'in_person' | 'phone' | 'import') | null;
+    timestamp?: string | null;
+    notes?: string | null;
+  };
+  /**
+   * Data-retention controls. Records past their retain-until date should be reviewed for deletion.
+   */
+  retention?: {
+    retainUntil?: string | null;
+    legalBasis?: ('consent' | 'contract' | 'legitimate_interest' | 'legal_obligation') | null;
+    notes?: string | null;
+  };
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-spaces".
+ */
+export interface DesignSpace {
+  id: number;
+  project: number | DesignProject;
+  name: string;
+  /**
+   * Room / surface type, e.g. living_room, exterior_facade, roof.
+   */
+  surfaceType?: string | null;
+  interiorExterior?: ('interior' | 'exterior') | null;
+  /**
+   * Original upload — stored PRIVATELY (retained for comparison).
+   */
+  originalImage?: (number | null) | Document;
+  /**
+   * Safely re-encoded image (EXIF/location stripped).
+   */
+  processedImage?: (number | null) | Document;
+  imageWidth?: number | null;
+  imageHeight?: number | null;
+  /**
+   * Optional actual measurements (metres).
+   */
+  measurements?: {
+    length?: number | null;
+    width?: number | null;
+    height?: number | null;
+  };
+  surfaceCondition?: ('good' | 'fair' | 'poor') | null;
+  /**
+   * Lighting description (e.g. bright daylight, warm indoor).
+   */
+  lighting?: string | null;
+  /**
+   * Customer confirmed they own / may use this image.
+   */
+  ownershipConfirmed?: boolean | null;
+  privacyStatus?: ('private' | 'deleted') | null;
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-surfaces".
+ */
+export interface DesignSurface {
+  id: number;
+  space: number | DesignSpace;
+  type: 'wall' | 'ceiling' | 'roof' | 'gate' | 'wood' | 'metal' | 'other';
+  /**
+   * Editable mask data (polygons / RLE). Versioned.
+   */
+  mask?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Optional raster mask (private).
+   */
+  maskImage?: (number | null) | Document;
+  maskVersion?: number | null;
+  /**
+   * No rendering until the user confirms the intended surface.
+   */
+  confirmedByUser?: boolean | null;
+  /**
+   * Surface area where manually supplied (m²).
+   */
+  areaM2?: number | null;
+  conditionNotes?: string | null;
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-preferences".
+ */
+export interface DesignPreference {
+  id: number;
+  project: number | DesignProject;
+  /**
+   * e.g. modern, classic, minimal.
+   */
+  preferredStyle?: string | null;
+  mood?: string | null;
+  temperature?: ('warm' | 'cool' | 'neutral') | null;
+  desiredColours?:
+    | {
+        colour?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  avoidColours?:
+    | {
+        colour?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  furnitureColours?:
+    | {
+        colour?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. matt, satin, silk, gloss.
+   */
+  preferredFinish?: string | null;
+  /**
+   * Durability / cleanability requirement.
+   */
+  durability?: string | null;
+  budgetRange?: string | null;
+  /**
+   * High-traffic / lifestyle factors.
+   */
+  factors?: {
+    children?: boolean | null;
+    pets?: boolean | null;
+    highTraffic?: boolean | null;
+  };
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-palettes".
+ */
+export interface DesignPalette {
+  id: number;
+  project?: (number | null) | DesignProject;
+  name: string;
+  /**
+   * e.g. main wall, accent, trim, ceiling.
+   */
+  roles?:
+    | {
+        role?: string | null;
+        /**
+         * Shade label (approximate on screen).
+         */
+        shadeName?: string | null;
+        /**
+         * Approximate hex — NOT an exact colour promise.
+         */
+        hexApprox?: string | null;
+        /**
+         * Verified product this shade maps to.
+         */
+        product?: (number | null) | Product;
+        finish?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Model confidence 0–1 (informational).
+   */
+  confidence?: number | null;
+  status?: ('proposed' | 'selected' | 'rejected') | null;
+  /**
+   * Why this palette was suggested (customer-facing rationale).
+   */
+  aiExplanation?: string | null;
+  /**
+   * Verification of the information in this record. Unverified content must not be presented to customers as fact.
+   */
+  verification: {
+    status: 'unverified' | 'pending_review' | 'verified';
+    verifiedBy?: (number | null) | User;
+    verifiedAt?: string | null;
+    /**
+     * Source / discrepancy notes.
+     */
+    notes?: string | null;
+  };
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-variants".
+ */
+export interface DesignVariant {
+  id: number;
+  space: number | DesignSpace;
+  palette?: (number | null) | DesignPalette;
+  /**
+   * Generated image (watermarked "AI visualisation"; stored privately).
+   */
+  image?: (number | null) | Document;
+  provider?: ('openai' | 'gemini') | null;
+  /**
+   * Configured image model used (not hard-coded).
+   */
+  model?: string | null;
+  status?: ('pending' | 'generating' | 'succeeded' | 'failed') | null;
+  promptVersion?: string | null;
+  selection?: ('none' | 'selected' | 'rejected') | null;
+  /**
+   * Customer accepted the "indicative visualisation" disclaimer.
+   */
+  disclaimerAccepted?: boolean | null;
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-product-plan".
+ */
+export interface DesignProductPlan {
+  id: number;
+  project: number | DesignProject;
+  surface?: (number | null) | DesignSurface;
+  /**
+   * Selected shade (approximate on screen).
+   */
+  shade?: string | null;
+  product?: (number | null) | Product;
+  primer?: (number | null) | Product;
+  topcoat?: (number | null) | Product;
+  finish?: string | null;
+  /**
+   * Verified coverage (m²/L) copied from the product at plan time.
+   */
+  verifiedCoverage?: number | null;
+  coats?: number | null;
+  /**
+   * Reference of the deterministic calculation used.
+   */
+  calculatorReference?: string | null;
+  /**
+   * Quotation reference once converted.
+   */
+  quotationReference?: string | null;
+  /**
+   * Set automatically to the staff member who created this record.
+   */
+  createdBy?: (number | null) | User;
+  /**
+   * Set automatically to the staff member who last updated this record.
+   */
+  updatedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints".
  */
 export interface Complaint {
@@ -1312,6 +1683,34 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enquiries';
         value: number | Enquiry;
+      } | null)
+    | ({
+        relationTo: 'design-projects';
+        value: number | DesignProject;
+      } | null)
+    | ({
+        relationTo: 'design-spaces';
+        value: number | DesignSpace;
+      } | null)
+    | ({
+        relationTo: 'design-surfaces';
+        value: number | DesignSurface;
+      } | null)
+    | ({
+        relationTo: 'design-preferences';
+        value: number | DesignPreference;
+      } | null)
+    | ({
+        relationTo: 'design-palettes';
+        value: number | DesignPalette;
+      } | null)
+    | ({
+        relationTo: 'design-variants';
+        value: number | DesignVariant;
+      } | null)
+    | ({
+        relationTo: 'design-product-plan';
+        value: number | DesignProductPlan;
       } | null)
     | ({
         relationTo: 'complaints';
@@ -1976,6 +2375,205 @@ export interface EnquiriesSelect<T extends boolean = true> {
         legalBasis?: T;
         notes?: T;
       };
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-projects_select".
+ */
+export interface DesignProjectsSelect<T extends boolean = true> {
+  reference?: T;
+  customerRef?: T;
+  name?: T;
+  sector?: T;
+  location?: T;
+  branch?: T;
+  status?: T;
+  language?: T;
+  quotationStatus?: T;
+  linkedQuotation?: T;
+  linkedSiteVisit?: T;
+  consent?:
+    | T
+    | {
+        given?: T;
+        purpose?: T;
+        channel?: T;
+        timestamp?: T;
+        notes?: T;
+      };
+  retention?:
+    | T
+    | {
+        retainUntil?: T;
+        legalBasis?: T;
+        notes?: T;
+      };
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-spaces_select".
+ */
+export interface DesignSpacesSelect<T extends boolean = true> {
+  project?: T;
+  name?: T;
+  surfaceType?: T;
+  interiorExterior?: T;
+  originalImage?: T;
+  processedImage?: T;
+  imageWidth?: T;
+  imageHeight?: T;
+  measurements?:
+    | T
+    | {
+        length?: T;
+        width?: T;
+        height?: T;
+      };
+  surfaceCondition?: T;
+  lighting?: T;
+  ownershipConfirmed?: T;
+  privacyStatus?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-surfaces_select".
+ */
+export interface DesignSurfacesSelect<T extends boolean = true> {
+  space?: T;
+  type?: T;
+  mask?: T;
+  maskImage?: T;
+  maskVersion?: T;
+  confirmedByUser?: T;
+  areaM2?: T;
+  conditionNotes?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-preferences_select".
+ */
+export interface DesignPreferencesSelect<T extends boolean = true> {
+  project?: T;
+  preferredStyle?: T;
+  mood?: T;
+  temperature?: T;
+  desiredColours?:
+    | T
+    | {
+        colour?: T;
+        id?: T;
+      };
+  avoidColours?:
+    | T
+    | {
+        colour?: T;
+        id?: T;
+      };
+  furnitureColours?:
+    | T
+    | {
+        colour?: T;
+        id?: T;
+      };
+  preferredFinish?: T;
+  durability?: T;
+  budgetRange?: T;
+  factors?:
+    | T
+    | {
+        children?: T;
+        pets?: T;
+        highTraffic?: T;
+      };
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-palettes_select".
+ */
+export interface DesignPalettesSelect<T extends boolean = true> {
+  project?: T;
+  name?: T;
+  roles?:
+    | T
+    | {
+        role?: T;
+        shadeName?: T;
+        hexApprox?: T;
+        product?: T;
+        finish?: T;
+        id?: T;
+      };
+  confidence?: T;
+  status?: T;
+  aiExplanation?: T;
+  verification?:
+    | T
+    | {
+        status?: T;
+        verifiedBy?: T;
+        verifiedAt?: T;
+        notes?: T;
+      };
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-variants_select".
+ */
+export interface DesignVariantsSelect<T extends boolean = true> {
+  space?: T;
+  palette?: T;
+  image?: T;
+  provider?: T;
+  model?: T;
+  status?: T;
+  promptVersion?: T;
+  selection?: T;
+  disclaimerAccepted?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "design-product-plan_select".
+ */
+export interface DesignProductPlanSelect<T extends boolean = true> {
+  project?: T;
+  surface?: T;
+  shade?: T;
+  product?: T;
+  primer?: T;
+  topcoat?: T;
+  finish?: T;
+  verifiedCoverage?: T;
+  coats?: T;
+  calculatorReference?: T;
+  quotationReference?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
