@@ -4,8 +4,19 @@ import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp'
+
+/**
+ * DB adapter: Postgres in production (Vercel/serverless) when a Postgres URL is provided,
+ * SQLite for local development otherwise. Set DATABASE_URI (or POSTGRES_URL) to a
+ * postgres:// connection string on the host. `push` auto-syncs schema outside production.
+ */
+const postgresUrl = process.env.DATABASE_URI?.startsWith('postgres') ? process.env.DATABASE_URI : process.env.POSTGRES_URL
+const dbAdapter = postgresUrl
+  ? postgresAdapter({ pool: { connectionString: postgresUrl }, push: process.env.NODE_ENV !== 'production' })
+  : sqliteAdapter({ client: { url: process.env.DATABASE_URI || 'file:./hilty.db' } })
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -83,11 +94,7 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || 'file:./hilty.db',
-    },
-  }),
+  db: dbAdapter,
   plugins: [
     // CSV/JSON export for staff (Operations Lite). Import disabled to avoid unsafe bulk writes.
     importExportPlugin({
