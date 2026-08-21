@@ -438,4 +438,47 @@ preserves project; **image + project deletion cascade**.
 - All new/local (DB gitignored). Rollback = `git reset`/checkout `web/src/lib/design`,
   `web/src/collections/Design*`, `web/src/test-design.ts`. Production untouched.
 
-## Portion 8B / launch — (not started; awaiting go-ahead)
+## Portion 8B — Customer-facing AI Design Studio — ✅ COMPLETE (2026-08-21)
+
+**Goal:** The customer journey UI on top of the 8A backend. Bilingual, mobile-first, accessible.
+
+### Delivered
+- **Entry points** ("Design My Space"): global nav (`site.ts` + `nav.studio`), homepage hero,
+  AI Advisor page, product-detail page, paint-calculator result, painting-services page
+  (reusable `components/design/DesignCta.tsx`).
+- **5 design modes**: Recolour / Help me choose a style / Design my whole home / Exterior / Start
+  without a photo (samples gated — no unlicensed imagery shipped).
+- **9-step wizard** (`components/design/DesignStudio.tsx`): project type → upload (privacy +
+  ownership + AI-visualisation notices) → **surface masking** (`MaskEditor.tsx`: brush/erase/undo/
+  redo/reset/zoom, touch, **no render until confirmed**) → design interview → **3 deterministic
+  palettes** (safe/balanced/bold; main/accent/ceiling-trim; suitable verified product + finish;
+  physical-sample recommendation; no invented shade codes) → visual preview (with **progress +
+  human-assistance fallback**, project preserved) → **comparison** (`CompareSlider.tsx` original vs
+  design) → **paint plan** (measurements → deterministic calculator; never litres from a photo) →
+  commercial conversion + **quote-ready lead** (consent-gated).
+- **Disclaimer** shown prominently on every step (never only in T&Cs).
+- **Auto-save + resume** via localStorage project id + `loadProjectAction`. **Delete my project &
+  images** action (customer right).
+- **Server actions** (`app/(frontend)/design-studio/actions.ts`) wrap `lib/design/studioFlow.ts`
+  (create/upload/surfaces/preferences/palettes/variant/convert/lead/load/delete); IP hashed for
+  quotas, never stored raw.
+- Bilingual EN/SW `studio` strings; mobile-first; accessible (labels, aria, keyboard, touch).
+
+### Tests (`npm run test:studio`) — **16/16 passed** (mocked image provider)
+Project create; upload ownership gating + processing + suggestions; surface save/confirm; prefs;
+**3 palettes with roles**; variant via mocked provider; **no-provider → human assistance (project
+preserved)**; convert→deterministic calc; **lead consent gating**; quote-ready lead persisted;
+resume state; **project + assets deletion**.
+- Browser smoke: `/design-studio` renders 5 modes + stepper + step 1; **no mobile horizontal
+  overflow**; disclaimer prominent; nav/hero entry points live.
+- `lint` clean; `build` success (24 routes). No regressions (calc/quotation/ai/design green).
+
+### Note on live image generation
+Without `OPENAI_API_KEY`/`GEMINI_API_KEY` the preview step correctly shows the **human-assistance
+fallback** and preserves the project; the rest of the journey (palettes, plan, lead) is fully live.
+
+### Rollback
+- All new/local. Rollback = `git reset`/checkout `web/src/components/design`, `web/src/lib/design/
+  studioFlow.ts`, `web/src/app/(frontend)/design-studio`, and revert the entry-point edits.
+
+## Launch / hardening — (not started; awaiting go-ahead)

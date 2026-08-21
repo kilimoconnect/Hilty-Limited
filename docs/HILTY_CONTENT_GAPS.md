@@ -112,6 +112,8 @@ Open decisions before the Design Studio is built (spec: [HILTY_DESIGN_STUDIO.md]
 - **Colour-accuracy disclaimer wording** (EN + SW): every variant is an *indicative visualisation*;
   confirm with physical Plascon samples. Owner to approve exact wording.
 - **Sample-space assets:** provide **owned/authorised** demo photos (no scraped/copyrighted imagery).
+  The "Start without a photo" mode is built but **has no sample rooms yet** — it needs approved
+  Hilty sample-room images before it can be used.
 - **Verified colour palette → product mapping:** needs the verified Plascon colour + product data
   (ties into §1b/§1c) so schemes map to real products, not Benjamin Moore placeholders.
 - **Hilty Operations application integration:** the internal ops app's interface, endpoints, auth and

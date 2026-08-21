@@ -17,6 +17,7 @@ export const SITE = {
 
 export type NavKey =
   | 'home'
+  | 'studio'
   | 'products'
   | 'calculator'
   | 'services'
@@ -28,6 +29,7 @@ export type NavKey =
 
 export const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: 'home', href: '/' },
+  { key: 'studio', href: '/design-studio' },
   { key: 'products', href: '/products' },
   { key: 'calculator', href: '/paint-calculator' },
   { key: 'services', href: '/painting-services' },

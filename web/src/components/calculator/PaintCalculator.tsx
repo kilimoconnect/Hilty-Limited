@@ -74,6 +74,9 @@ export function PaintCalculator({ t, products, branches, whatsapp }: { t: Dictio
           <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white hover:brightness-95">
             {c.whatsapp}
           </a>
+          <Button href="/design-studio" variant="outline">
+            🎨 {t.studio.cta}
+          </Button>
           <Button href="/paint-calculator" variant="ghost">
             {c.newCalc}
           </Button>

@@ -6,6 +6,7 @@ import { getActiveServices } from '../../../lib/payload'
 import { Container } from '../../../components/ui/Container'
 import { Section, SectionHeading } from '../../../components/ui/Section'
 import { ArrowRight } from '../../../components/ui/icons'
+import { DesignCta } from '../../../components/design/DesignCta'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = getDictionary(await getLocale())
@@ -41,6 +42,9 @@ export default async function ServicesPage() {
           <p className="text-muted">{t.pages.services.subtitle}</p>
         </Container>
       )}
+      <div className="mt-10">
+        <DesignCta dict={t} variant="banner" />
+      </div>
     </Section>
   )
 }

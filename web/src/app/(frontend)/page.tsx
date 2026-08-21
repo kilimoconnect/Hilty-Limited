@@ -52,6 +52,9 @@ export default async function HomePage() {
               <Button href="/ai-advisor" variant="outlineLight" size="lg">
                 {t.hero.advisor}
               </Button>
+              <Button href="/design-studio" variant="light" size="lg">
+                🎨 {t.studio.cta}
+              </Button>
             </div>
           </div>
         </Container>

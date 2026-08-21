@@ -11,6 +11,7 @@ import type { Product } from '../../../../payload-types'
 import { Container } from '../../../../components/ui/Container'
 import { Rich } from '../../../../components/RichText'
 import { AddToQuoteButton } from '../../../../components/catalogue/AddToQuoteButton'
+import { DesignCta } from '../../../../components/design/DesignCta'
 import { ArrowRight } from '../../../../components/ui/icons'
 
 function plainDescription(p: Product): string {
@@ -247,6 +248,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           )}
           <p className="mt-3 text-xs text-muted">{t.product.contactBranch}.</p>
         </section>
+        <div className="mt-10">
+          <DesignCta dict={t} variant="banner" />
+        </div>
       </Container>
     </>
   )
