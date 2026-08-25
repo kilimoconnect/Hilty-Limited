@@ -18,6 +18,7 @@ export type CalcProduct = {
 
 /** Quotation-eligible, active products. Coverage is exposed ONLY when verified. */
 export async function getCalculatorProducts(): Promise<CalcProduct[]> {
+  return safe(async () => {
   const p = await getClient()
   const res = await p.find({
     collection: 'products',
@@ -43,95 +44,79 @@ export async function getCalculatorProducts(): Promise<CalcProduct[]> {
       useTypes: (d.useTypes ?? []) as string[],
     }
   })
+  }, [])
 }
 
 export async function getClient() {
   return getPayload({ config })
 }
 
+/**
+ * Run a Payload read and degrade gracefully: if the database is unreachable/misconfigured
+ * (e.g. before a production DB is attached), return a safe fallback instead of throwing a 500.
+ */
+async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await fn()
+  } catch (e) {
+    console.error('[payload] read failed, using fallback:', e instanceof Error ? e.message : String(e))
+    return fallback
+  }
+}
+
 export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'products',
-    where: { and: [{ active: { equals: true } }, { featured: { equals: true } }] },
-    limit,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'products', where: { and: [{ active: { equals: true } }, { featured: { equals: true } }] }, limit, depth: 1, overrideAccess: true })
+    return res.docs
+  }, [])
 }
 
 export async function getCategories(limit = 12): Promise<ProductCategory[]> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'product-categories',
-    where: { active: { equals: true } },
-    sort: 'displayOrder',
-    limit,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'product-categories', where: { active: { equals: true } }, sort: 'displayOrder', limit, depth: 1, overrideAccess: true })
+    return res.docs
+  }, [])
 }
 
 export async function getActiveServices(limit = 6): Promise<Service[]> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'services',
-    where: { active: { equals: true } },
-    sort: 'displayOrder',
-    limit,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'services', where: { active: { equals: true } }, sort: 'displayOrder', limit, depth: 1, overrideAccess: true })
+    return res.docs
+  }, [])
 }
 
 export async function getActiveBranches(limit = 6): Promise<Branch[]> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'branches',
-    where: { active: { equals: true } },
-    limit,
-    depth: 0,
-    overrideAccess: true,
-  })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'branches', where: { active: { equals: true } }, limit, depth: 0, overrideAccess: true })
+    return res.docs
+  }, [])
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'services',
-    where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] },
-    limit: 1,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs[0] ?? null
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'services', where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] }, limit: 1, depth: 1, overrideAccess: true })
+    return res.docs[0] ?? null
+  }, null)
 }
 
 export async function getBranchBySlug(slug: string): Promise<Branch | null> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'branches',
-    where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] },
-    limit: 1,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs[0] ?? null
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'branches', where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] }, limit: 1, depth: 1, overrideAccess: true })
+    return res.docs[0] ?? null
+  }, null)
 }
 
 /** Completed projects — only real, active, published ones (never fabricated). */
 export async function getCompletedProjects(limit = 3): Promise<Project[]> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'projects',
-    where: { active: { equals: true } },
-    limit,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'projects', where: { active: { equals: true } }, limit, depth: 1, overrideAccess: true })
+    return res.docs
+  }, [])
 }
