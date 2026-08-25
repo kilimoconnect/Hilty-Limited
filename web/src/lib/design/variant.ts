@@ -29,7 +29,7 @@ export type VariantInput = {
 }
 
 export type VariantResult =
-  | { ok: true; variantId: number; provider: 'openai' | 'gemini'; fallbackReason?: string }
+  | { ok: true; variantId: number; provider: 'openai' | 'gemini'; fallbackReason?: string; imageDataUrl: string }
   | { ok: false; error: string; humanAssistance?: boolean }
 
 /**
@@ -75,5 +75,11 @@ export async function generateVariant(deps: VariantDeps, input: VariantInput): P
     } as never,
     overrideAccess: true,
   })
-  return { ok: true, variantId: (v as { id: number }).id, provider: fo.result.provider, fallbackReason: fo.fallbackReason }
+  return {
+    ok: true,
+    variantId: (v as { id: number }).id,
+    provider: fo.result.provider,
+    fallbackReason: fo.fallbackReason,
+    imageDataUrl: `data:image/png;base64,${watermarked.toString('base64')}`,
+  }
 }

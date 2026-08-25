@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 
 import { buildConfig } from 'payload'
 import { importExportPlugin } from '@payloadcms/plugin-import-export'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -96,6 +97,25 @@ export default buildConfig({
   },
   db: dbAdapter,
   plugins: [
+    // Persistent object storage (Supabase Storage / any S3) for media + private documents.
+    // Activates only when S3 env vars are set; local dev keeps using disk.
+    ...(process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID
+      ? [
+          s3Storage({
+            collections: { media: true, documents: true },
+            bucket: process.env.S3_BUCKET,
+            config: {
+              endpoint: process.env.S3_ENDPOINT,
+              region: process.env.S3_REGION || 'us-east-1',
+              forcePathStyle: true, // required for Supabase Storage
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID,
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+              },
+            },
+          }),
+        ]
+      : []),
     // CSV/JSON export for staff (Operations Lite). Import disabled to avoid unsafe bulk writes.
     importExportPlugin({
       collections: [

@@ -165,7 +165,7 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
     setVariant({ status: 'loading' })
     const confirmed = surfaces.filter((s) => s.confirmedByUser).map((s) => ({ type: s.type, confirmedByUser: true }))
     const res = await makeVariantAction({ spaceId, paletteId: selectedPalette, surfaces: confirmed, disclaimerAccepted: true, sessionId: sessionIdRef.current || 'anon' })
-    if (res.ok) setVariant({ status: 'done' })
+    if (res.ok) setVariant({ status: 'done', url: res.imageDataUrl })
     else setVariant({ status: 'fallback' })
   }
 
