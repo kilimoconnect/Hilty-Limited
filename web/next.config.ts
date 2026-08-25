@@ -6,3 +6,5 @@ const nextConfig: NextConfig = {
 }
 
 export default withPayload(nextConfig)
+
+// Deployment trigger: build from web/ root on Vercel (Root Directory = web).
