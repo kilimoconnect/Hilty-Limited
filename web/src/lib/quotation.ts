@@ -2,6 +2,7 @@ import { getClient } from './payload'
 import { notifyStaff } from './notify'
 import { storeDocuments, type UploadInput } from './uploads'
 import { calculate, type ComponentInput, type RoomInput } from './calc'
+import { trackSiteEvent } from './analytics'
 
 export type QuotationInput = {
   customerName: string
@@ -167,5 +168,7 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
     }
   }
 
+  await trackSiteEvent('quote_requested', { ref, payload })
+  if (boqFiles.length) await trackSiteEvent('boq_uploaded', { ref, payload })
   return { ok: true, reference: ref, notified }
 }

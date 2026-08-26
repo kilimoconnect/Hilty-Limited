@@ -3,6 +3,7 @@
 import { headers } from 'next/headers'
 import { createHash } from 'crypto'
 import { runAdvisor } from '../../../lib/ai/advisor'
+import { trackSiteEvent } from '../../../lib/analytics'
 import type { AdvisorLanguage, AdvisorResponse, ChatMessage } from '../../../lib/ai/types'
 
 async function clientId(): Promise<string> {
@@ -17,6 +18,8 @@ export async function advisorChatAction(input: {
   consent: boolean
   sessionId?: string
 }): Promise<AdvisorResponse> {
+  // Count the start of a conversation (metadata only — never the chat content).
+  if (input.messages.filter((m) => m.role === 'user').length === 1) await trackSiteEvent('ai_conversation_started')
   const outcome = await runAdvisor({
     messages: input.messages.slice(-12), // keep recent turns; input-length is also enforced server-side
     locale: input.locale,

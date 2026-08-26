@@ -44,6 +44,7 @@ import { DesignProductPlan } from './collections/DesignProductPlan'
 import { DesignEvents } from './collections/DesignEvents'
 import { BranchStock } from './collections/BranchStock'
 import { Reservations } from './collections/Reservations'
+import { AnalyticsEvents } from './collections/AnalyticsEvents'
 import { AiSessions } from './collections/AiSessions'
 import { AiLeadSummaries } from './collections/AiLeadSummaries'
 
@@ -85,6 +86,7 @@ export default buildConfig({
     DesignEvents,
     BranchStock,
     Reservations,
+    AnalyticsEvents,
     Complaints,
     // AI advisor
     AiSessions,

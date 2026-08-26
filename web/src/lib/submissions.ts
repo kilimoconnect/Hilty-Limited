@@ -1,6 +1,7 @@
 import { getClient } from './payload'
 import { notifyStaff } from './notify'
 import { storeDocuments, type UploadInput } from './uploads'
+import { trackSiteEvent } from './analytics'
 
 export type SubmitResult = { ok: boolean; reference?: string; error?: string; notified?: boolean }
 
@@ -56,6 +57,7 @@ export async function submitSiteVisit(input: SiteVisitInput): Promise<SubmitResu
     input.location ? `Location: ${input.location}` : '',
     notes,
   ].filter(Boolean))
+  await trackSiteEvent('site_visit_requested', { ref, payload })
   return { ok: true, reference: ref, notified }
 }
 
@@ -101,6 +103,7 @@ export async function submitPainter(input: PainterInput): Promise<SubmitResult> 
     `Phone: ${input.phone}`,
     input.region ? `Region: ${input.region}` : '',
   ].filter(Boolean))
+  await trackSiteEvent('painter_registration', { payload })
   return { ok: true, reference: String((doc as { id: number }).id), notified }
 }
 
@@ -162,5 +165,6 @@ export async function submitEnquiry(input: EnquiryInput, files: UploadInput[] = 
     `Phone: ${input.phone}`,
     documents.length ? `Documents: ${documents.length}` : '',
   ].filter(Boolean))
+  if (documents.length) await trackSiteEvent('boq_uploaded', { ref, payload })
   return { ok: true, reference: ref, notified }
 }

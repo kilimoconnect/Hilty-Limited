@@ -8,6 +8,7 @@ import { SITE } from '../../../../lib/site'
 import { relName } from '../../../../lib/format'
 import { Container } from '../../../../components/ui/Container'
 import { PhoneIcon, PinIcon, WhatsAppIcon } from '../../../../components/ui/icons'
+import { JsonLd } from '../../../../components/JsonLd'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -28,6 +29,20 @@ export default async function BranchDetail({ params }: { params: Promise<{ slug:
 
   return (
     <Container className="py-10">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Store',
+          name: `Hilty — ${b.name}`,
+          parentOrganization: { '@type': 'Organization', name: 'Hilty Paint & Coatings Centre' },
+          ...(b.phone ? { telephone: b.phone } : {}),
+          ...(b.fullAddress ? { address: { '@type': 'PostalAddress', streetAddress: b.fullAddress, addressCountry: 'TZ', ...(b.region ? { addressRegion: b.region } : {}) } } : {}),
+          ...(b.coordinates?.lat && b.coordinates?.lng ? { geo: { '@type': 'GeoCoordinates', latitude: b.coordinates.lat, longitude: b.coordinates.lng } } : {}),
+          ...(Array.isArray(b.operatingHours) && b.operatingHours.length
+            ? { openingHours: b.operatingHours.filter((h) => !h.closed && h.open && h.close).map((h) => `${(h.day || '').slice(0, 2)} ${h.open}-${h.close}`) }
+            : {}),
+        }}
+      />
       <Link href="/branches" className="text-sm text-muted hover:text-brand-700">
         ← {t.pages.branches.title}
       </Link>

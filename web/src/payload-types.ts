@@ -91,6 +91,7 @@ export interface Config {
     'design-events': DesignEvent;
     'branch-stock': BranchStock;
     reservations: Reservation;
+    'analytics-events': AnalyticsEvent;
     complaints: Complaint;
     'ai-sessions': AiSession;
     'ai-lead-summaries': AiLeadSummary;
@@ -128,6 +129,7 @@ export interface Config {
     'design-events': DesignEventsSelect<false> | DesignEventsSelect<true>;
     'branch-stock': BranchStockSelect<false> | BranchStockSelect<true>;
     reservations: ReservationsSelect<false> | ReservationsSelect<true>;
+    'analytics-events': AnalyticsEventsSelect<false> | AnalyticsEventsSelect<true>;
     complaints: ComplaintsSelect<false> | ComplaintsSelect<true>;
     'ai-sessions': AiSessionsSelect<false> | AiSessionsSelect<true>;
     'ai-lead-summaries': AiLeadSummariesSelect<false> | AiLeadSummariesSelect<true>;
@@ -1630,6 +1632,43 @@ export interface Reservation {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-events".
+ */
+export interface AnalyticsEvent {
+  id: number;
+  type:
+    | 'product_viewed'
+    | 'calculator_started'
+    | 'calculator_completed'
+    | 'quote_requested'
+    | 'site_visit_requested'
+    | 'boq_uploaded'
+    | 'whatsapp_clicked'
+    | 'branch_selected'
+    | 'ai_conversation_started'
+    | 'ai_converted_to_lead'
+    | 'painter_registration';
+  /**
+   * Non-PII reference (e.g. product slug, branch slug, quotation ref).
+   */
+  ref?: string | null;
+  /**
+   * Non-PII metadata only (counts/flags). Never chat, names, phones or images.
+   */
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints".
  */
 export interface Complaint {
@@ -2069,6 +2108,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'reservations';
         value: number | Reservation;
+      } | null)
+    | ({
+        relationTo: 'analytics-events';
+        value: number | AnalyticsEvent;
       } | null)
     | ({
         relationTo: 'complaints';
@@ -3028,6 +3071,17 @@ export interface ReservationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-events_select".
+ */
+export interface AnalyticsEventsSelect<T extends boolean = true> {
+  type?: T;
+  ref?: T;
+  meta?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "complaints_select".
  */
 export interface ComplaintsSelect<T extends boolean = true> {
@@ -3311,6 +3365,7 @@ export interface TaskCreateCollectionExport {
       | 'design-events'
       | 'branch-stock'
       | 'reservations'
+      | 'analytics-events'
       | 'complaints'
       | 'ai-sessions'
       | 'ai-lead-summaries'

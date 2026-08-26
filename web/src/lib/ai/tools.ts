@@ -3,6 +3,7 @@ import { relName } from '../format'
 import { calculate, type ComponentInput, type RoomInput } from '../calc'
 import { notifyStaff } from '../notify'
 import { SITE } from '../site'
+import { trackSiteEvent } from '../analytics'
 import { createDesignProject, saveSpaceSurfaces, convertToPlan } from '../design/studioFlow'
 import { convertDesignToQuote } from '../design/convert'
 import { proposeInitialSurfaces } from '../design/masking'
@@ -230,6 +231,7 @@ export function createToolExecutor(ctx: ToolExecutorContext = {}): ToolExecutor 
           overrideAccess: true,
         })
         await notifyStaff(payload, 'New AI-advisor lead', [`Name: ${name}`, `Phone: ${phone}`])
+        await trackSiteEvent('ai_converted_to_lead', { payload })
         return { ok: true, reference: `LEAD-${(lead as { id: number }).id}` }
       }
 

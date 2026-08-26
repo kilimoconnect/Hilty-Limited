@@ -12,6 +12,7 @@ import { Container } from '../../../../components/ui/Container'
 import { Rich } from '../../../../components/RichText'
 import { AddToQuoteButton } from '../../../../components/catalogue/AddToQuoteButton'
 import { DesignCta } from '../../../../components/design/DesignCta'
+import { TrackEvent } from '../../../../components/TrackEvent'
 import { ArrowRight } from '../../../../components/ui/icons'
 
 function plainDescription(p: Product): string {
@@ -251,6 +252,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="mt-10">
           <DesignCta dict={t} variant="banner" />
         </div>
+        <TrackEvent type="product_viewed" eventRef={p.slug ?? String(p.id)} />
       </Container>
     </>
   )

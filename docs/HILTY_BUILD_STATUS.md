@@ -557,4 +557,30 @@ separate system.
 - All new/local. Rollback = revert `access/roles.ts`, the collection edits, `payload.config.ts`
   plugin, `app/(frontend)/ops`, PWA files. Production untouched.
 
-## Portion 10 — Launch QA — (partially prepared; see launch-readiness report)
+## Portion 10 — Final QA & launch prep — ✅ COMPLETE (2026-08-25)
+
+**SEO:** dynamic `sitemap.xml` (static + products/branches/services) + `robots.txt` (disallow
+/admin,/ops,/api); canonical + Open Graph in the layout; **Organization JSON-LD** site-wide +
+**LocalBusiness (Store) JSON-LD** on branch pages; **Product JSON-LD** (Portion 4); old-WordPress-URL
+**301 redirects** (/services,/paints-colors,/contacts,/shop,/cart,/checkout,/my-account); GSC
+verification via `NEXT_PUBLIC_GSC_VERIFICATION`; no fabricated reviews; branch pages act as the local pages.
+
+**Performance/security (`next.config.ts`):** security headers (X-Content-Type-Options, Referrer-Policy,
+X-Frame-Options SAMEORIGIN, Permissions-Policy, **HSTS**), long-cache for `/icons/*`, `poweredByHeader`
+off; HTTPS enforced by Vercel; DB reads degrade gracefully; images lazy where non-critical; AI is
+server-side (not in the homepage bundle). Rate limits on AI + forms (honeypot/consent) already present.
+
+**Analytics:** `analytics-events` collection (**metadata only — no chat/PII/images**) + `lib/analytics.ts`;
+server events wired: quote_requested, boq_uploaded, site_visit_requested, painter_registration,
+ai_conversation_started, ai_converted_to_lead; client beacons: product_viewed, calculator_started.
+Schema pushed to Supabase.
+
+**Docs:** `HILTY_LAUNCH_CHECKLISTS.md` — deployment, owner content-confirmation, env-var, monitoring,
+rollback + final-QA status. Deployment infra in `HILTY_DEPLOYMENT.md`.
+
+**Tests:** full suite green (calc 21 / submissions 14 / quotation 9 / AI 26 / Design 28 / flow 16 /
+8C 27); lint clean; build OK (23 routes + sitemap/robots). Live smoke checks passed.
+
+### Remaining (owner)
+- Change seeded admin password; rotate Supabase anon key; add real products/coverage/prices; confirm
+  branch discrepancy; point hilty.co.tz domain + submit sitemap to GSC. See launch checklists.
