@@ -137,11 +137,33 @@ function buildImageProviders(): { primary: ImageProvider | null; backup: ImagePr
   return { primary: build(primaryName), backup: build(backupName) }
 }
 
+async function readFromS3(filename: string): Promise<Buffer | null> {
+  if (!process.env.S3_BUCKET || !process.env.S3_ACCESS_KEY_ID) return null
+  try {
+    const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3')
+    const client = new S3Client({
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION || 'us-east-1',
+      forcePathStyle: true,
+      credentials: { accessKeyId: process.env.S3_ACCESS_KEY_ID, secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '' },
+    })
+    const res = await client.send(new GetObjectCommand({ Bucket: process.env.S3_BUCKET, Key: filename }))
+    const body = res.Body as { transformToByteArray?: () => Promise<Uint8Array> } | undefined
+    if (!body?.transformToByteArray) return null
+    return Buffer.from(await body.transformToByteArray())
+  } catch {
+    return null
+  }
+}
+
 async function readDocumentBytes(payload: Awaited<ReturnType<typeof getClient>>, id?: number): Promise<Buffer | null> {
   if (!id) return null
   const doc = await payload.findByID({ collection: 'documents', id, overrideAccess: true }).catch(() => null)
   const filename = (doc as { filename?: string } | null)?.filename
   if (!filename) return null
+  // Object storage (Supabase/S3) in production; local disk in dev.
+  const fromS3 = await readFromS3(filename)
+  if (fromS3) return fromS3
   try {
     return await readFile(path.join(process.cwd(), 'private-uploads', filename))
   } catch {
