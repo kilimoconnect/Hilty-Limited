@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getDictionary } from '../../../../i18n/dictionaries'
 import { getLocale } from '../../../../i18n/locale'
 import { getServiceBySlug } from '../../../../lib/payload'
 import { Container } from '../../../../components/ui/Container'
-import { CheckIcon } from '../../../../components/ui/icons'
+import { PageHeader } from '../../../../components/ui/PageHeader'
+import { Panel } from '../../../../components/ui/Panel'
+import { CheckIcon, InfoIcon } from '../../../../components/ui/icons'
 import { SiteVisitForm } from '../../../../components/forms/SiteVisitForm'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -18,17 +19,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 function DetailList({ title, items }: { title: string; items: string[] }) {
   if (items.length === 0) return null
   return (
-    <div>
-      <h2 className="text-lg font-bold">{title}</h2>
-      <ul className="mt-3 space-y-2">
+    <section>
+      <h2 className="font-display text-h3 font-semibold">{title}</h2>
+      <ul className="mt-4 space-y-3">
         {items.map((it, i) => (
-          <li key={i} className="flex items-start gap-2 text-sm">
-            <CheckIcon width={18} height={18} className="mt-0.5 shrink-0 text-brand-600" />
+          <li key={i} className="flex items-start gap-3 text-[0.9375rem] leading-relaxed text-ink-soft">
+            <CheckIcon width={18} height={18} className="mt-1 shrink-0 text-accent-500" />
             <span>{it}</span>
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   )
 }
 
@@ -44,49 +45,60 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
   const process = (s.process ?? []).filter((p) => p.title || p.detail)
 
   return (
-    <Container className="py-10">
-      <Link href="/painting-services" className="text-sm text-muted hover:text-brand-700">
-        ← {t.pages.services.all}
-      </Link>
-      <h1 className="mt-4 text-3xl font-bold tracking-tight">{s.name}</h1>
-      {s.heroIntro && <p className="mt-2 max-w-2xl text-muted">{s.heroIntro}</p>}
+    <>
+      <PageHeader
+        eyebrow={t.home.servicesEyebrow}
+        title={s.name}
+        lead={s.heroIntro || s.summary || undefined}
+        breadcrumb={[
+          { label: t.nav.home, href: '/' },
+          { label: t.pages.services.all, href: '/painting-services' },
+        ]}
+      />
 
-      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-2">
-        <div className="space-y-8">
-          <DetailList title={t.pages.services.scope} items={scope} />
-          {process.length > 0 && (
-            <div>
-              <h2 className="text-lg font-bold">{t.pages.services.process}</h2>
-              <ol className="mt-3 space-y-3">
-                {process.map((p, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-bold text-white">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <p className="font-medium">{p.title}</p>
-                      {p.detail && <p className="text-sm text-muted">{p.detail}</p>}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-          <DetailList title={t.pages.services.provides} items={provides} />
-          <DetailList title={t.pages.services.confirms} items={confirms} />
-          <p className="rounded-lg bg-surface-2 p-4 text-sm text-muted">{t.pages.services.noGuarantee}</p>
-        </div>
+      <Container className="py-14 lg:py-20">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="space-y-12 lg:col-span-7">
+            <DetailList title={t.pages.services.scope} items={scope} />
 
-        {/* Request site visit */}
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <div className="rounded-2xl border border-line bg-surface p-6">
-            <h2 className="text-lg font-bold">{t.pages.services.requestVisit}</h2>
-            <div className="mt-4">
-              <SiteVisitForm t={t} serviceContext={s.name} />
-            </div>
+            {process.length > 0 && (
+              <section>
+                <h2 className="font-display text-h3 font-semibold">{t.pages.services.process}</h2>
+                <ol className="mt-5 space-y-0 divide-y divide-line border-y border-line">
+                  {process.map((p, i) => (
+                    <li key={i} className="flex gap-5 py-5">
+                      <span className="tabular font-display text-lg font-bold text-accent-500">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div>
+                        <p className="font-display font-semibold">{p.title}</p>
+                        {p.detail && <p className="mt-1 text-[0.9375rem] leading-relaxed text-muted">{p.detail}</p>}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            <DetailList title={t.pages.services.provides} items={provides} />
+            <DetailList title={t.pages.services.confirms} items={confirms} />
+
+            <p className="flex items-start gap-3 rounded-md bg-surface-2 px-5 py-4 text-[0.9375rem] leading-relaxed text-muted">
+              <InfoIcon width={18} height={18} className="mt-0.5 shrink-0 text-brand-500" />
+              {t.pages.services.noGuarantee}
+            </p>
+          </div>
+
+          <div className="lg:col-span-5">
+            <Panel className="p-6 sm:p-8 lg:sticky lg:top-32">
+              <h2 className="font-display text-h3 font-semibold">{t.pages.services.requestVisit}</h2>
+              <div className="mt-6">
+                <SiteVisitForm t={t} serviceContext={s.name} />
+              </div>
+            </Panel>
           </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   )
 }

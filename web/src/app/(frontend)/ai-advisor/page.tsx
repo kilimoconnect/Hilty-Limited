@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getDictionary } from '../../../i18n/dictionaries'
 import { getLocale } from '../../../i18n/locale'
 import { Container } from '../../../components/ui/Container'
+import { PageHeader } from '../../../components/ui/PageHeader'
 import { AiAdvisorChat } from '../../../components/ai/AiAdvisorChat'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,12 +14,19 @@ export default async function AiAdvisorPage() {
   const locale = await getLocale()
   const t = getDictionary(locale)
   return (
-    <Container className="py-10">
-      <h1 className="text-3xl font-bold tracking-tight">{t.advisor.title}</h1>
-      <p className="mt-2 max-w-2xl text-muted">{t.advisor.body}</p>
-      <div className="mt-8">
+    <>
+      <PageHeader
+        eyebrow={t.home.toolsEyebrow}
+        title={t.advisor.title}
+        lead={t.advisor.body}
+        breadcrumb={[
+          { label: t.nav.home, href: '/' },
+          { label: t.advisor.title, href: '/ai-advisor' },
+        ]}
+      />
+      <Container className="py-14 lg:py-20">
         <AiAdvisorChat dict={t} locale={locale} />
-      </div>
-    </Container>
+      </Container>
+    </>
   )
 }

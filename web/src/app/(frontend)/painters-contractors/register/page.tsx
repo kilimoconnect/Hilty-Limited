@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { getDictionary } from '../../../../i18n/dictionaries'
 import { getLocale } from '../../../../i18n/locale'
 import { Container } from '../../../../components/ui/Container'
+import { PageHeader } from '../../../../components/ui/PageHeader'
+import { Panel } from '../../../../components/ui/Panel'
 import { PainterForm } from '../../../../components/forms/PainterForm'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,12 +14,21 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RegisterPage() {
   const t = getDictionary(await getLocale())
   return (
-    <Container className="max-w-2xl py-10">
-      <h1 className="text-2xl font-bold tracking-tight">{t.pages.pro.registerTitle}</h1>
-      <p className="mt-2 text-muted">{t.pages.pro.registerBody}</p>
-      <div className="mt-8">
-        <PainterForm t={t} />
-      </div>
-    </Container>
+    <>
+      <PageHeader
+        eyebrow={t.home.contractorEyebrow}
+        title={t.pages.pro.registerTitle}
+        lead={t.pages.pro.registerBody}
+        breadcrumb={[
+          { label: t.nav.home, href: '/' },
+          { label: t.nav.painters, href: '/painters-contractors' },
+        ]}
+      />
+      <Container width="content" className="py-14 lg:py-20">
+        <Panel className="p-6 sm:p-9">
+          <PainterForm t={t} />
+        </Panel>
+      </Container>
+    </>
   )
 }

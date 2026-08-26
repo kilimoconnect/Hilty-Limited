@@ -41,8 +41,10 @@ export function AddToQuoteButton({ slug, name, label, addedLabel }: { slug: stri
       type="button"
       onClick={add}
       aria-pressed={added}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-        added ? 'bg-brand-50 text-brand-700' : 'bg-brand-600 text-white hover:bg-brand-700'
+      className={`inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 font-display text-[0.9375rem] font-semibold transition-[background-color,box-shadow,transform] duration-200 ${
+        added
+          ? 'bg-success-bg text-success ring-1 ring-inset ring-success/20'
+          : 'bg-accent-500 text-white shadow-soft hover:bg-accent-600 hover:shadow-lift active:translate-y-px'
       }`}
     >
       {added && <CheckIcon width={16} height={16} />}

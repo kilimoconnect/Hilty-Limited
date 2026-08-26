@@ -39,3 +39,28 @@ export const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: 'about', href: '/about' },
   { key: 'quotation', href: '/request-quotation' },
 ]
+
+/**
+ * Header information architecture. The main bar carries the six routes people
+ * shop and buy through; the corporate and trade routes sit in the utility bar,
+ * the mobile drawer and the footer, where that audience looks for them.
+ */
+export const PRIMARY_NAV: { key: NavKey; href: string }[] = [
+  { key: 'products', href: '/products' },
+  { key: 'calculator', href: '/paint-calculator' },
+  { key: 'services', href: '/painting-services' },
+  { key: 'studio', href: '/design-studio' },
+  { key: 'projects', href: '/projects' },
+  { key: 'branches', href: '/branches' },
+]
+
+export const UTILITY_NAV: { key: NavKey; href: string }[] = [
+  { key: 'painters', href: '/painters-contractors' },
+  { key: 'about', href: '/about' },
+]
+
+export const OPENING_HOURS = {
+  weekdays: 'Mon–Fri 08:30–18:00',
+  saturday: 'Sat 08:30–17:30',
+  sunday: 'Sun closed',
+} as const

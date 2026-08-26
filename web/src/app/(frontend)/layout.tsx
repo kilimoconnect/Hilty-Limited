@@ -1,3 +1,5 @@
+import '@fontsource-variable/schibsted-grotesk/wght.css'
+import '@fontsource-variable/source-sans-3/wght.css'
 import '../globals.css'
 import type { Metadata, Viewport } from 'next'
 import { getLocale } from '../../i18n/locale'
@@ -32,14 +34,14 @@ export const metadata: Metadata = {
   ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } } : {}),
 }
 
-export const viewport: Viewport = { themeColor: '#1e5aa8' }
+export const viewport: Viewport = { themeColor: '#071e30' }
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()
   const dict = getDictionary(locale)
   return (
     <html lang={locale} className="h-full antialiased">
-      <body className="flex min-h-full flex-col bg-surface">
+      <body className="flex min-h-full flex-col bg-surface font-sans">
         <a href="#main" className="skip-link">
           Skip to content
         </a>

@@ -3,8 +3,13 @@ import Link from 'next/link'
 import { getDictionary } from '../../../i18n/dictionaries'
 import { getLocale } from '../../../i18n/locale'
 import { getActiveBranches } from '../../../lib/payload'
-import { Section, SectionHeading } from '../../../components/ui/Section'
-import { PinIcon } from '../../../components/ui/icons'
+import { SITE } from '../../../lib/site'
+import { Button } from '../../../components/ui/Button'
+import { Container } from '../../../components/ui/Container'
+import { EmptyState } from '../../../components/ui/EmptyState'
+import { PageHeader } from '../../../components/ui/PageHeader'
+import { Panel } from '../../../components/ui/Panel'
+import { ArrowRight, PhoneIcon, PinIcon, WhatsAppIcon } from '../../../components/ui/icons'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = getDictionary(await getLocale())
@@ -16,31 +21,71 @@ export default async function BranchesPage() {
   const branches = await getActiveBranches(50)
 
   return (
-    <Section>
-      <SectionHeading title={t.pages.branches.title} subtitle={t.pages.branches.subtitle} />
-      {branches.length > 0 ? (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {branches.map((b) => (
-            <li key={b.id} className="flex h-full flex-col rounded-xl border border-line bg-surface p-5">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-                <PinIcon />
-              </span>
-              <h3 className="mt-3 font-semibold">{b.name}</h3>
-              {b.region && <p className="text-sm text-muted">{b.region}</p>}
-              {b.phone && (
-                <a href={`tel:${b.phone.replace(/\s/g, '')}`} className="mt-2 text-sm text-brand-700">
-                  {b.phone}
-                </a>
-              )}
-              <Link href={`/branches/${b.slug ?? ''}`} className="mt-4 text-sm font-medium text-brand-700 hover:underline">
-                {t.pages.branches.view} →
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-muted">{t.pages.branches.empty}</p>
-      )}
-    </Section>
+    <>
+      <PageHeader
+        eyebrow={t.home.branchesEyebrow}
+        title={t.pages.branches.title}
+        lead={t.pages.branches.subtitle}
+        breadcrumb={[
+          { label: t.nav.home, href: '/' },
+          { label: t.nav.branches, href: '/branches' },
+        ]}
+      />
+
+      <Container className="py-14 lg:py-20">
+        {branches.length > 0 ? (
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {branches.map((b) => (
+              <Panel as="li" key={b.id} className="flex h-full flex-col p-6">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-brand-50 text-brand-600">
+                  <PinIcon width={21} height={21} />
+                </span>
+                <h2 className="mt-5 font-display text-h3 font-semibold">{b.name}</h2>
+                {b.region && <p className="mt-1 text-[0.9375rem] text-muted">{b.region}</p>}
+
+                <div className="mt-5 flex flex-1 flex-col gap-2.5 text-[0.9375rem]">
+                  {b.phone && (
+                    <a
+                      href={`tel:${b.phone.replace(/\s/g, '')}`}
+                      className="tabular inline-flex items-center gap-2.5 font-semibold text-brand-600"
+                    >
+                      <PhoneIcon width={16} height={16} className="shrink-0 text-brand-400" />
+                      {b.phone}
+                    </a>
+                  )}
+                  <a
+                    href={SITE.whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 text-ink-soft hover:text-brand-700"
+                  >
+                    <WhatsAppIcon width={16} height={16} className="shrink-0 text-whatsapp" />
+                    {t.pages.branches.whatsapp}
+                  </a>
+                </div>
+
+                <Link
+                  href={`/branches/${b.slug ?? ''}`}
+                  className="group mt-6 inline-flex items-center gap-2 border-t border-line pt-5 font-display text-sm font-semibold text-ink"
+                >
+                  {t.pages.branches.view}
+                  <ArrowRight
+                    width={16}
+                    height={16}
+                    className="text-brand-400 transition-transform duration-200 group-hover:translate-x-1"
+                  />
+                </Link>
+              </Panel>
+            ))}
+          </ul>
+        ) : (
+          <EmptyState
+            icon={<PinIcon width={22} height={22} />}
+            title={t.pages.branches.empty}
+            action={<Button href="/request-quotation">{t.hero.quotation}</Button>}
+          />
+        )}
+      </Container>
+    </>
   )
 }

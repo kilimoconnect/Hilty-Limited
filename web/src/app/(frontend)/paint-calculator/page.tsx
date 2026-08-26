@@ -4,6 +4,7 @@ import { getLocale } from '../../../i18n/locale'
 import { getActiveBranches, getCalculatorProducts } from '../../../lib/payload'
 import { SITE } from '../../../lib/site'
 import { Container } from '../../../components/ui/Container'
+import { PageHeader } from '../../../components/ui/PageHeader'
 import { PaintCalculator } from '../../../components/calculator/PaintCalculator'
 import { TrackEvent } from '../../../components/TrackEvent'
 
@@ -17,18 +18,25 @@ export default async function CalculatorPage() {
   const [products, branches] = await Promise.all([getCalculatorProducts(), getActiveBranches(50)])
 
   return (
-    <Container className="py-10">
-      <h1 className="text-3xl font-bold tracking-tight">{t.calc.title}</h1>
-      <p className="mt-2 max-w-2xl text-muted">{t.calc.subtitle}</p>
+    <>
+      <PageHeader
+        eyebrow={t.home.toolsEyebrow}
+        title={t.calc.title}
+        lead={t.calc.subtitle}
+        breadcrumb={[
+          { label: t.nav.home, href: '/' },
+          { label: t.calc.title, href: '/paint-calculator' },
+        ]}
+      />
       <TrackEvent type="calculator_started" />
-      <div className="mt-8">
+      <Container className="py-14 lg:py-20">
         <PaintCalculator
           t={t}
           products={products}
           branches={branches.map((b) => ({ id: b.id, name: b.name }))}
           whatsapp={SITE.whatsapp}
         />
-      </div>
-    </Container>
+      </Container>
+    </>
   )
 }

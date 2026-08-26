@@ -5,7 +5,16 @@ import { useTransition } from 'react'
 import type { Locale } from '../i18n/dictionaries'
 import { LOCALE_COOKIE } from '../i18n/dictionaries'
 
-export function LanguageSelector({ locale, label }: { locale: Locale; label: string }) {
+export function LanguageSelector({
+  locale,
+  label,
+  tone = 'light',
+}: {
+  locale: Locale
+  label: string
+  /** 'light' = on a light ground; 'dark' = on the dark utility bar or footer. */
+  tone?: 'light' | 'dark'
+}) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
@@ -16,22 +25,37 @@ export function LanguageSelector({ locale, label }: { locale: Locale; label: str
     startTransition(() => router.refresh())
   }
 
+  const dark = tone === 'dark'
+
   return (
-    <div className="inline-flex items-center rounded-lg border border-line" role="group" aria-label={label}>
-      {(['en', 'sw'] as Locale[]).map((l) => (
-        <button
-          key={l}
-          type="button"
-          onClick={() => set(l)}
-          aria-pressed={locale === l}
-          disabled={pending}
-          className={`px-2.5 py-1.5 text-xs font-semibold uppercase transition-colors ${
-            locale === l ? 'bg-brand-600 text-white' : 'text-muted hover:bg-brand-50'
-          } ${l === 'en' ? 'rounded-l-md' : 'rounded-r-md'}`}
-        >
-          {l}
-        </button>
-      ))}
+    <div
+      className={`inline-flex items-center rounded-sm p-0.5 ${dark ? 'bg-white/10' : 'bg-surface-2 ring-1 ring-inset ring-line'}`}
+      role="group"
+      aria-label={label}
+    >
+      {(['en', 'sw'] as Locale[]).map((l) => {
+        const active = locale === l
+        return (
+          <button
+            key={l}
+            type="button"
+            onClick={() => set(l)}
+            aria-pressed={active}
+            disabled={pending}
+            className={`rounded-[0.1875rem] px-2 py-1 font-display text-[0.6875rem] font-bold uppercase tracking-[0.1em] transition-colors ${
+              active
+                ? dark
+                  ? 'bg-white text-brand-900'
+                  : 'bg-brand-600 text-white'
+                : dark
+                  ? 'text-brand-200 hover:text-white'
+                  : 'text-muted hover:text-ink'
+            }`}
+          >
+            {l}
+          </button>
+        )
+      })}
     </div>
   )
 }

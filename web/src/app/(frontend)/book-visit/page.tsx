@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { getDictionary } from '../../../i18n/dictionaries'
 import { getLocale } from '../../../i18n/locale'
 import { Container } from '../../../components/ui/Container'
+import { PageHeader } from '../../../components/ui/PageHeader'
+import { Panel } from '../../../components/ui/Panel'
 import { SiteVisitForm } from '../../../components/forms/SiteVisitForm'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -14,12 +16,21 @@ export default async function BookVisitPage({ searchParams }: { searchParams: Pr
   const sp = await searchParams
   const service = Array.isArray(sp.service) ? sp.service[0] : sp.service
   return (
-    <Container className="max-w-2xl py-10">
-      <h1 className="text-2xl font-bold tracking-tight">{t.pages.services.requestVisit}</h1>
-      <p className="mt-2 text-muted">{t.pages.services.noGuarantee}</p>
-      <div className="mt-8">
-        <SiteVisitForm t={t} serviceContext={service} />
-      </div>
-    </Container>
+    <>
+      <PageHeader
+        eyebrow={t.home.servicesEyebrow}
+        title={t.pages.services.requestVisit}
+        lead={t.pages.services.noGuarantee}
+        breadcrumb={[
+          { label: t.nav.home, href: '/' },
+          { label: t.nav.services, href: '/painting-services' },
+        ]}
+      />
+      <Container width="content" className="py-14 lg:py-20">
+        <Panel className="p-6 sm:p-9">
+          <SiteVisitForm t={t} serviceContext={service} />
+        </Panel>
+      </Container>
+    </>
   )
 }

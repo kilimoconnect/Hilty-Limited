@@ -1,26 +1,31 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-type Variant = 'primary' | 'accent' | 'outline' | 'ghost' | 'whatsapp' | 'light' | 'outlineLight'
+type Variant = 'primary' | 'accent' | 'secondary' | 'outline' | 'ghost' | 'whatsapp' | 'light' | 'outlineLight'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60'
+  'group inline-flex items-center justify-center gap-2 rounded-md font-display font-semibold tracking-[-0.005em] transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] disabled:cursor-not-allowed disabled:opacity-55'
 
+/**
+ * Clay carries every primary action across the site; blue and neutral carry the
+ * rest. One bold colour, used in one role, is what keeps the palette premium.
+ */
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700',
-  accent: 'bg-accent-500 text-ink hover:bg-accent-600',
-  outline: 'border border-brand-600 text-brand-700 hover:bg-brand-50',
+  primary: 'bg-accent-500 text-white shadow-soft hover:bg-accent-600 hover:shadow-lift active:translate-y-px',
+  accent: 'bg-accent-500 text-white shadow-soft hover:bg-accent-600 hover:shadow-lift active:translate-y-px',
+  secondary: 'bg-brand-600 text-white hover:bg-brand-700 active:translate-y-px',
+  outline: 'border border-line-strong bg-surface text-ink hover:border-brand-600 hover:text-brand-700',
   ghost: 'text-brand-700 hover:bg-brand-50',
-  whatsapp: 'bg-[#25D366] text-white hover:brightness-95',
-  light: 'bg-white text-brand-700 hover:bg-brand-50',
-  outlineLight: 'border border-white/70 text-white hover:bg-white/10',
+  whatsapp: 'bg-whatsapp text-white hover:bg-whatsapp-dark',
+  light: 'bg-white text-brand-700 hover:bg-brand-50 active:translate-y-px',
+  outlineLight: 'border border-white/30 text-white hover:border-white/60 hover:bg-white/10',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'text-sm px-3 py-2',
-  md: 'text-sm px-4 py-2.5',
-  lg: 'text-base px-5 py-3',
+  sm: 'h-9 px-3.5 text-sm',
+  md: 'h-11 px-5 text-[0.9375rem]',
+  lg: 'h-[3.25rem] px-7 text-base',
 }
 
 type Props = {

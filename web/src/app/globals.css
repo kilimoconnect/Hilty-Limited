@@ -1,62 +1,272 @@
 @import 'tailwindcss';
 
 /*
-  Hilty Paint & Coatings Centre — design tokens.
-  Professional, dependable, modern, practical. Blue primary keeps a clear
-  distance from the Hilti (red/black) construction brand. Replace values here
-  once the official approved brand hex + logo are supplied.
+  ────────────────────────────────────────────────────────────────────────────
+  Hilty Paint & Coatings Centre — design system
+  ────────────────────────────────────────────────────────────────────────────
+  Direction: clean & premium. Calm editorial layout, deep Prussian blue as the
+  brand anchor, a single warm clay accent carrying every primary action, and a
+  blue-biased neutral ramp so nothing reads as default grey.
+
+  Blue is retained deliberately: it keeps a clear distance from the Hilti
+  (red/black) construction brand. Replace values here once the official
+  approved brand hex + logo are supplied — every component reads these tokens.
 */
 @theme {
-  /* Brand blue */
-  --color-brand-50: #eef5fc;
-  --color-brand-100: #d9e8f8;
-  --color-brand-200: #b3d1f1;
-  --color-brand-300: #85b3e6;
-  --color-brand-400: #5591d6;
-  --color-brand-500: #2f72c0;
-  --color-brand-600: #1e5aa8;
-  --color-brand-700: #184a8c;
-  --color-brand-800: #163e72;
-  --color-brand-900: #14315a;
+  /* ── Brand: Prussian blue ─────────────────────────────────────────────── */
+  --color-brand-50: #f1f6fa;
+  --color-brand-100: #dfeaf3;
+  --color-brand-200: #bfd5e6;
+  --color-brand-300: #92b5d0;
+  --color-brand-400: #5b8caf;
+  --color-brand-500: #2c6690;
+  --color-brand-600: #134a70;
+  --color-brand-700: #0e3a59;
+  --color-brand-800: #0b2c44;
+  --color-brand-900: #071e30;
 
-  /* Accent (warm) — used sparingly for highlights/CTAs */
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
+  /* ── Accent: clay. Carries primary actions and active state, nothing else ─ */
+  --color-accent-50: #fcf2ec;
+  --color-accent-100: #f7e0d2;
+  --color-accent-200: #eebf9f;
+  --color-accent-300: #e09667;
+  --color-accent-400: #ce7038;
+  --color-accent-500: #a94d25;
+  --color-accent-600: #8e3e1d;
+  --color-accent-700: #703016;
 
-  /* Neutrals */
-  --color-ink: #0f172a;
-  --color-muted: #475569;
-  --color-line: #e2e8f0;
+  /* ── Neutrals, biased toward the brand hue ────────────────────────────── */
+  --color-ink: #0a1a28;
+  --color-ink-soft: #2c3e4e;
+  --color-muted: #5b6e7e;
+  --color-line: #dce4ea;
+  --color-line-strong: #c3d0da;
   --color-surface: #ffffff;
-  --color-surface-2: #f8fafc;
+  --color-surface-2: #f4f7f9;
+  --color-surface-3: #eaf0f4;
 
-  --font-sans: ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* WhatsApp green, darkened from the brand value so white label text clears AA. */
+  --color-whatsapp: #17853f;
+  --color-whatsapp-dark: #116631;
 
+  /* ── Semantic ─────────────────────────────────────────────────────────── */
+  --color-success: #16704b;
+  --color-success-bg: #e8f5ef;
+  --color-warning: #8a5b12;
+  --color-warning-bg: #fbf1e0;
+  --color-danger: #a32222;
+  --color-danger-bg: #fbebeb;
+
+  /* ── Type ─────────────────────────────────────────────────────────────── */
+  --font-sans: 'Source Sans 3 Variable', ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Schibsted Grotesk Variable', 'Source Sans 3 Variable', ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.14em;
+
+  --text-display: clamp(2.5rem, 5.6vw, 4rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-h1: clamp(2rem, 4.2vw, 3rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.025em;
+
+  --text-h2: clamp(1.625rem, 3vw, 2.25rem);
+  --text-h2--line-height: 1.14;
+  --text-h2--letter-spacing: -0.02em;
+
+  --text-h3: 1.1875rem;
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+
+  /* ── Form ─────────────────────────────────────────────────────────────── */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  --shadow-soft: 0 1px 2px rgba(10, 26, 40, 0.04), 0 1px 3px rgba(10, 26, 40, 0.06);
+  --shadow-lift: 0 4px 12px rgba(10, 26, 40, 0.06), 0 12px 32px rgba(10, 26, 40, 0.08);
+  --shadow-panel: 0 24px 64px rgba(7, 30, 48, 0.16);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --container-content: 78rem;
 }
 
-:root {
-  color-scheme: light;
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-wrap: balance;
+    color: var(--color-ink);
+  }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: var(--color-brand-600);
+    width: 1rem;
+    height: 1rem;
+  }
+
+  ::selection {
+    background: var(--color-accent-100);
+    color: var(--color-accent-700);
+  }
+
+  /* Accessible focus ring for keyboard users */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+@layer components {
+  /* ── Small reusable pieces ────────────────────────────────────────────────── */
 
-body {
-  background: var(--color-surface);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-}
+  /* Section label. Uppercase, tracked, always paired with a heading. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-display);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-accent-500);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.55;
+  }
+  .eyebrow-light {
+    color: var(--color-accent-200);
+  }
 
-/* Accessible focus ring for keyboard users */
-:where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-brand-600);
-  outline-offset: 2px;
-  border-radius: 4px;
+  /* Figures that line up in columns: coverage, litres, prices, phone numbers. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* Paint chip — the site's structural device. A solid field of colour with the
+     quiet inner edge a real colour card has. */
+  .chip {
+    position: relative;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px rgba(10, 26, 40, 0.08), inset 0 -1.5rem 2rem -1.5rem rgba(10, 26, 40, 0.18);
+  }
+
+  /* Link that reveals its underline on hover rather than wearing one always. */
+  .link-quiet {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.25s var(--ease-out-soft);
+  }
+  .link-quiet:hover {
+    background-size: 100% 1px;
+  }
+
+  /* Hero entrance. Used once, on load, nowhere else. */
+  @keyframes hilty-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .rise {
+    animation: hilty-rise 0.7s var(--ease-out-soft) both;
+  }
+  .rise-1 {
+    animation-delay: 0.05s;
+  }
+  .rise-2 {
+    animation-delay: 0.14s;
+  }
+  .rise-3 {
+    animation-delay: 0.23s;
+  }
+  .rise-4 {
+    animation-delay: 0.32s;
+  }
+
+  /* Long-form copy coming out of the CMS. */
+  .prose-hilty {
+    color: var(--color-ink-soft);
+    max-width: 68ch;
+  }
+  .prose-hilty > * + * {
+    margin-top: 1.1em;
+  }
+  .prose-hilty h2 {
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    margin-top: 2em;
+  }
+  .prose-hilty h3 {
+    font-size: 1.1875rem;
+    margin-top: 1.75em;
+  }
+  .prose-hilty ul,
+  .prose-hilty ol {
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+  .prose-hilty ol {
+    list-style: decimal;
+  }
+  .prose-hilty li + li {
+    margin-top: 0.4em;
+  }
+  .prose-hilty a {
+    color: var(--color-brand-600);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-hilty strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
 }
 
 /* Respect reduced-motion preferences */
@@ -68,6 +278,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0.001ms !important;
   }
 }

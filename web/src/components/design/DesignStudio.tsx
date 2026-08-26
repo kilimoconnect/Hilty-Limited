@@ -206,25 +206,41 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
   }
 
   const canRender = surfaces.some((s) => s.confirmedByUser)
-  const field = 'w-full rounded-lg border border-line px-3 py-2 text-sm'
+  const field =
+    'w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-[0.9375rem] outline-none transition-colors focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10'
 
   return (
     <div>
       {/* Disclaimer — always visible, never hidden in T&Cs */}
-      <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">{t.disclaimer}</div>
+      <p className="mb-8 rounded-md border border-warning/20 bg-warning-bg px-4 py-3.5 text-[0.8125rem] leading-relaxed text-warning">
+        {t.disclaimer}
+      </p>
 
       {/* Stepper */}
       {mode && (
-        <ol className="mb-6 flex flex-wrap gap-2 text-xs">
+        <ol className="mb-10 flex flex-wrap items-center gap-2">
           {steps.map((s, i) => (
-            <li key={s} className={`rounded-full px-2.5 py-1 ${i === idx ? 'bg-brand-600 text-white' : i < idx ? 'bg-brand-100 text-brand-800' : 'bg-surface-2 text-muted'}`}>
+            <li
+              key={s}
+              aria-current={i === idx ? 'step' : undefined}
+              className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-display text-[0.75rem] font-semibold uppercase tracking-[0.06em] ${
+                i === idx
+                  ? 'bg-brand-700 text-white'
+                  : i < idx
+                    ? 'bg-brand-50 text-brand-700'
+                    : 'bg-surface-2 text-muted'
+              }`}
+            >
+              <span className="tabular opacity-70">{String(i + 1).padStart(2, '0')}</span>
               {(t.steps as Record<string, string>)[s] ?? s}
             </li>
           ))}
         </ol>
       )}
 
-      {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-800">{error}</p>}
+      {error && (
+        <p className="mb-6 rounded-md border border-danger/20 bg-danger-bg px-4 py-3.5 text-[0.9375rem] text-danger">{error}</p>
+      )}
 
       {/* Mode selection */}
       {!mode && (
@@ -239,10 +255,10 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
                 if (m === 'exterior') setInteriorExterior('exterior')
                 go('type')
               }}
-              className="rounded-2xl border border-line bg-surface p-5 text-left hover:border-brand-300"
+              className="group rounded-lg border border-line bg-surface p-7 text-left transition-[border-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-lift"
             >
-              <h3 className="font-semibold">{t.modes[m].title}</h3>
-              <p className="mt-1 text-sm text-muted">{t.modes[m].body}</p>
+              <h3 className="font-display text-h3 font-semibold">{t.modes[m].title}</h3>
+              <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{t.modes[m].body}</p>
             </button>
           ))}
         </div>
@@ -251,46 +267,46 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: project type */}
       {mode && step === 'type' && (
         <div className="max-w-lg space-y-4">
-          <label className="block text-sm font-medium">{t.q.space}
+          <label className="block font-display text-[0.8125rem] font-semibold text-ink-soft">{t.q.space}
             <select value={space} onChange={(e) => setSpace(e.target.value)} className={`mt-1 ${field}`}>
               {['living_room', 'bedroom', 'kitchen', 'bathroom', 'office', 'shop', 'restaurant', 'school_institutional', 'exterior_facade', 'roof', 'boundary_wall', 'gate_metal', 'wood_surface', 'multi_room_home', 'commercial_building'].map((v) => (
                 <option key={v} value={v}>{v.replace(/_/g, ' ')}</option>
               ))}
             </select>
           </label>
-          <fieldset><legend className="text-sm font-medium">{t.q.sector}</legend>
-            <div className="mt-1 flex gap-4 text-sm">
+          <fieldset><legend className="font-display text-[0.8125rem] font-semibold text-ink-soft">{t.q.sector}</legend>
+            <div className="mt-2.5 flex flex-wrap gap-5">
               {(['residential', 'commercial'] as const).map((v) => (
-                <label key={v} className="flex items-center gap-1"><input type="radio" name="sector" checked={sector === v} onChange={() => setSector(v)} />{t.q[v]}</label>
+                <label key={v} className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="radio" name="sector" checked={sector === v} onChange={() => setSector(v)} />{t.q[v]}</label>
               ))}
             </div>
           </fieldset>
-          <fieldset><legend className="text-sm font-medium">{t.q.hasPhoto}</legend>
-            <div className="mt-1 flex gap-4 text-sm">
-              <label className="flex items-center gap-1"><input type="radio" name="hasphoto" checked={hasPhoto} onChange={() => setHasPhoto(true)} />{t.q.yes}</label>
-              <label className="flex items-center gap-1"><input type="radio" name="hasphoto" checked={!hasPhoto} onChange={() => setHasPhoto(false)} />{t.q.no}</label>
+          <fieldset><legend className="font-display text-[0.8125rem] font-semibold text-ink-soft">{t.q.hasPhoto}</legend>
+            <div className="mt-2.5 flex flex-wrap gap-5">
+              <label className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="radio" name="hasphoto" checked={hasPhoto} onChange={() => setHasPhoto(true)} />{t.q.yes}</label>
+              <label className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="radio" name="hasphoto" checked={!hasPhoto} onChange={() => setHasPhoto(false)} />{t.q.no}</label>
             </div>
           </fieldset>
-          <button type="button" onClick={nextStep} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">{t.common.next}</button>
+          <button type="button" onClick={nextStep} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600">{t.common.next}</button>
         </div>
       )}
 
       {/* STEP: upload */}
       {mode && step === 'upload' && (
         <div className="max-w-xl space-y-4">
-          <div className="space-y-2 rounded-xl bg-surface-2 p-4 text-sm text-muted">
+          <div className="space-y-2 rounded-md bg-surface-2 p-5 text-[0.9375rem] leading-relaxed text-muted">
             <p>🔒 {t.notices.privacy}</p>
             <p>🖼️ {t.notices.aiVisual}</p>
           </div>
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => e.target.files?.[0] && onPickFile(e.target.files[0])} className={field} />
           {imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="preview" className="max-h-64 rounded-lg border border-line" />
+            <img src={imageUrl} alt="preview" className="max-h-64 rounded-lg border border-line shadow-soft" />
           )}
-          <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={ownership} onChange={(e) => setOwnership(e.target.checked)} className="mt-0.5" />{t.notices.ownership}</label>
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={doUpload} disabled={busy || !imageFile || !ownership} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? t.upload.analysing : t.common.next}</button>
+          <label className="flex cursor-pointer items-start gap-2.5 text-[0.9375rem] leading-relaxed"><input type="checkbox" checked={ownership} onChange={(e) => setOwnership(e.target.checked)} className="mt-0.5" />{t.notices.ownership}</label>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={doUpload} disabled={busy || !imageFile || !ownership} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-55">{busy ? t.upload.analysing : t.common.next}</button>
           </div>
         </div>
       )}
@@ -298,7 +314,7 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: surfaces */}
       {mode && step === 'surfaces' && imageUrl && (
         <div className="space-y-4">
-          <h2 className="text-lg font-bold">{t.surfaces.title}</h2>
+          <h2 className="font-display text-h2">{t.surfaces.title}</h2>
           <div className="flex flex-wrap gap-2">
             {surfaces.map((s, i) => (
               <button key={i} type="button" onClick={() => confirmSurface(i)} className={`rounded-full px-3 py-1.5 text-sm ${s.confirmedByUser ? 'bg-brand-600 text-white' : 'border border-line hover:bg-brand-50'}`}>
@@ -307,9 +323,9 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
             ))}
           </div>
           <MaskEditor imageUrl={imageUrl} width={imgDims.w} height={imgDims.h} dict={dict} onChange={(strokes) => setSurfaces((prev) => prev.map((s, j) => (j === 0 ? { ...s, strokes } : s)))} />
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={nextStep} disabled={!canRender} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{t.common.next}</button>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={nextStep} disabled={!canRender} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-55">{t.common.next}</button>
           </div>
         </div>
       )}
@@ -317,28 +333,28 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: interview */}
       {mode && step === 'interview' && (
         <div className="max-w-lg space-y-4">
-          <h2 className="text-lg font-bold">{t.interview.title}</h2>
-          <label className="block text-sm font-medium">{t.interview.feeling}
+          <h2 className="font-display text-h2">{t.interview.title}</h2>
+          <label className="block font-display text-[0.8125rem] font-semibold text-ink-soft">{t.interview.feeling}
             <select value={prefs.feeling} onChange={(e) => setPrefs((p) => ({ ...p, feeling: e.target.value }))} className={`mt-1 ${field}`}>
               <option value="">—</option>
               {t.interview.styles.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </label>
-          <label className="block text-sm font-medium">{t.interview.temperature}
+          <label className="block font-display text-[0.8125rem] font-semibold text-ink-soft">{t.interview.temperature}
             <select value={prefs.temperature} onChange={(e) => setPrefs((p) => ({ ...p, temperature: e.target.value }))} className={`mt-1 ${field}`}>
               <option value="warm">Warm</option><option value="cool">Cool</option><option value="neutral">Neutral</option>
             </select>
           </label>
-          <label className="block text-sm font-medium">{t.interview.budget}<input value={prefs.budget} onChange={(e) => setPrefs((p) => ({ ...p, budget: e.target.value }))} className={`mt-1 ${field}`} /></label>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <label className="flex items-center gap-1"><input type="checkbox" checked={prefs.highTraffic} onChange={(e) => setPrefs((p) => ({ ...p, highTraffic: e.target.checked }))} />{t.interview.highTraffic}</label>
-            <label className="flex items-center gap-1"><input type="checkbox" checked={prefs.washability} onChange={(e) => setPrefs((p) => ({ ...p, washability: e.target.checked }))} />{t.interview.washability}</label>
-            <label className="flex items-center gap-1"><input type="checkbox" checked={prefs.weather} onChange={(e) => setPrefs((p) => ({ ...p, weather: e.target.checked }))} />{t.interview.weather}</label>
-            <label className="flex items-center gap-1"><input type="checkbox" checked={prefs.moisture} onChange={(e) => setPrefs((p) => ({ ...p, moisture: e.target.checked }))} />{t.interview.moisture}</label>
+          <label className="block font-display text-[0.8125rem] font-semibold text-ink-soft">{t.interview.budget}<input value={prefs.budget} onChange={(e) => setPrefs((p) => ({ ...p, budget: e.target.value }))} className={`mt-1 ${field}`} /></label>
+          <div className="flex flex-wrap gap-5">
+            <label className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="checkbox" checked={prefs.highTraffic} onChange={(e) => setPrefs((p) => ({ ...p, highTraffic: e.target.checked }))} />{t.interview.highTraffic}</label>
+            <label className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="checkbox" checked={prefs.washability} onChange={(e) => setPrefs((p) => ({ ...p, washability: e.target.checked }))} />{t.interview.washability}</label>
+            <label className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="checkbox" checked={prefs.weather} onChange={(e) => setPrefs((p) => ({ ...p, weather: e.target.checked }))} />{t.interview.weather}</label>
+            <label className="flex cursor-pointer items-center gap-2 text-[0.9375rem]"><input type="checkbox" checked={prefs.moisture} onChange={(e) => setPrefs((p) => ({ ...p, moisture: e.target.checked }))} />{t.interview.moisture}</label>
           </div>
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={toPalettes} disabled={busy} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{busy ? t.common.saving : t.common.next}</button>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={toPalettes} disabled={busy} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-55">{busy ? t.common.saving : t.common.next}</button>
           </div>
         </div>
       )}
@@ -346,28 +362,61 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: palettes */}
       {mode && step === 'palettes' && (
         <div className="space-y-4">
-          <h2 className="text-lg font-bold">{t.palettes.title}</h2>
+          <h2 className="font-display text-h2">{t.palettes.title}</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {palettes.map((p) => (
-              <div key={p.id} className={`rounded-2xl border p-4 ${selectedPalette === p.id ? 'border-brand-600 ring-1 ring-brand-600' : 'border-line'}`}>
-                <h3 className="font-semibold">{p.title}</h3>
-                <div className="mt-2 flex gap-2">
-                  {p.roles.map((r) => <span key={r.role} className="h-8 w-8 rounded-full border border-line" style={{ backgroundColor: r.hex }} title={`${r.role}: ${r.name}`} />)}
-                </div>
-                <ul className="mt-3 space-y-1 text-sm">
+              <div
+                key={p.id}
+                className={`flex flex-col overflow-hidden rounded-lg border bg-surface transition-[border-color,box-shadow] duration-200 ${
+                  selectedPalette === p.id ? 'border-brand-600 shadow-lift ring-1 ring-brand-600' : 'border-line'
+                }`}
+              >
+                {/* The palette itself, shown as a band of colour before any words. */}
+                <div className="flex h-24" aria-hidden>
                   {p.roles.map((r) => (
-                    <li key={r.role}><span className="text-muted">{(t.palettes as Record<string, string>)[r.role === 'ceiling_trim' ? 'trim' : r.role] ?? r.role}:</span> {r.name}{r.productName ? ` · ${t.palettes.suitable}: ${r.productName}` : ''}</li>
+                    <span key={r.role} className="flex-1" style={{ backgroundColor: r.hex }} title={`${r.role}: ${r.name}`} />
                   ))}
-                </ul>
-                <p className="mt-2 text-xs text-muted">{p.explanation}</p>
-                <p className="mt-1 text-xs text-amber-700">{t.palettes.sample}</p>
-                <button type="button" onClick={() => setSelectedPalette(p.id)} className={`mt-3 rounded-lg px-4 py-2 text-sm font-semibold ${selectedPalette === p.id ? 'bg-brand-600 text-white' : 'border border-brand-600 text-brand-700'}`}>{selectedPalette === p.id ? t.palettes.chosen : t.palettes.choose}</button>
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="font-display text-h3 font-semibold">{p.title}</h3>
+                  <ul className="mt-4 space-y-2 text-[0.875rem]">
+                    {p.roles.map((r) => (
+                      <li key={r.role} className="flex items-start gap-2.5">
+                        <span
+                          aria-hidden
+                          className="mt-1 h-3 w-3 shrink-0 rounded-sm ring-1 ring-inset ring-black/10"
+                          style={{ backgroundColor: r.hex }}
+                        />
+                        <span>
+                          <span className="text-muted">
+                            {(t.palettes as Record<string, string>)[r.role === 'ceiling_trim' ? 'trim' : r.role] ?? r.role}:
+                          </span>{' '}
+                          {r.name}
+                          {r.productName ? ` · ${t.palettes.suitable}: ${r.productName}` : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 flex-1 text-[0.8125rem] leading-relaxed text-muted">{p.explanation}</p>
+                  <p className="mt-3 text-[0.8125rem] text-warning">{t.palettes.sample}</p>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPalette(p.id)}
+                    className={`mt-5 inline-flex h-10 items-center justify-center rounded-md px-4 font-display text-sm font-semibold transition-colors ${
+                      selectedPalette === p.id
+                        ? 'bg-brand-700 text-white'
+                        : 'border border-line-strong hover:border-brand-600 hover:text-brand-700'
+                    }`}
+                  >
+                    {selectedPalette === p.id ? t.palettes.chosen : t.palettes.choose}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={nextStep} disabled={!selectedPalette} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{t.common.next}</button>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={nextStep} disabled={!selectedPalette} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-55">{t.common.next}</button>
           </div>
         </div>
       )}
@@ -375,17 +424,19 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: visual */}
       {mode && step === 'visual' && (
         <div className="max-w-xl space-y-4">
-          <h2 className="text-lg font-bold">{t.visual.generate}</h2>
-          {variant.status === 'idle' && <button type="button" onClick={generatePreview} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white">{t.visual.generate}</button>}
-          {variant.status === 'loading' && <p className="text-sm text-muted">{t.visual.generating}</p>}
-          {variant.status === 'fallback' && <p className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900">{t.visual.fallback}</p>}
+          <h2 className="font-display text-h2">{t.visual.generate}</h2>
+          {variant.status === 'idle' && <button type="button" onClick={generatePreview} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600">{t.visual.generate}</button>}
+          {variant.status === 'loading' && <p className="text-[0.9375rem] text-muted">{t.visual.generating}</p>}
+          {variant.status === 'fallback' && (
+            <p className="rounded-md border border-warning/20 bg-warning-bg px-4 py-3.5 text-[0.9375rem] text-warning">{t.visual.fallback}</p>
+          )}
           {variant.status === 'done' && variant.url && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={variant.url} alt="preview" className="rounded-lg border border-line" />
+            <img src={variant.url} alt="preview" className="rounded-lg border border-line shadow-soft" />
           )}
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={nextStep} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white">{t.common.next}</button>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={nextStep} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600">{t.common.next}</button>
           </div>
         </div>
       )}
@@ -393,11 +444,11 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: compare */}
       {mode && step === 'compare' && imageUrl && (
         <div className="max-w-xl space-y-4">
-          <h2 className="text-lg font-bold">{t.compare.title}</h2>
+          <h2 className="font-display text-h2">{t.compare.title}</h2>
           <CompareSlider originalUrl={imageUrl} designUrl={variant.url ?? imageUrl} originalLabel={t.compare.original} designLabel={t.compare.design} />
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={nextStep} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white">{t.common.next}</button>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={nextStep} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600">{t.common.next}</button>
           </div>
         </div>
       )}
@@ -405,20 +456,25 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: plan */}
       {mode && step === 'plan' && (
         <div className="max-w-lg space-y-4">
-          <h2 className="text-lg font-bold">{t.plan.title}</h2>
-          <p className="text-sm text-muted">{t.plan.measurements} ({t.plan.note})</p>
+          <h2 className="font-display text-h2">{t.plan.title}</h2>
+          <p className="text-[0.9375rem] text-muted">{t.plan.measurements} ({t.plan.note})</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {(['length', 'width', 'height', 'doors', 'windows'] as const).map((k) => (
-              <label key={k} className="text-sm">{k}
+              <label key={k} className="font-display text-[0.8125rem] font-semibold capitalize text-ink-soft">{k}
                 <input type="number" step="0.1" value={rooms[k]} onChange={(e) => setRooms((r) => ({ ...r, [k]: Number(e.target.value) }))} className={`mt-1 ${field}`} />
               </label>
             ))}
           </div>
-          <button type="button" onClick={runCalc} disabled={busy} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{t.plan.calculate}</button>
-          {calc && <p className="rounded-lg bg-surface-2 p-3 text-sm">{t.plan.litres}: <strong>{calc.litres == null ? '—' : `${calc.litres} L`}</strong> <span className="text-muted">({t.plan.note})</span></p>}
-          <div className="flex gap-2">
-            <button type="button" onClick={prevStep} className="rounded-lg border border-line px-4 py-2 text-sm">{t.common.back}</button>
-            <button type="button" onClick={nextStep} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white">{t.common.next}</button>
+          <button type="button" onClick={runCalc} disabled={busy} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-55">{t.plan.calculate}</button>
+          {calc && (
+            <p className="tabular rounded-md bg-surface-2 px-4 py-3.5 text-[0.9375rem]">
+              {t.plan.litres}: <strong className="font-display font-bold">{calc.litres == null ? '—' : `${calc.litres} L`}</strong>{' '}
+              <span className="text-muted">({t.plan.note})</span>
+            </p>
+          )}
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button type="button" onClick={prevStep} className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700">{t.common.back}</button>
+            <button type="button" onClick={nextStep} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600">{t.common.next}</button>
           </div>
         </div>
       )}
@@ -426,14 +482,14 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       {/* STEP: convert + lead */}
       {mode && step === 'convert' && (
         <div className="max-w-lg space-y-4">
-          <h2 className="text-lg font-bold">{t.convert.title}</h2>
+          <h2 className="font-display text-h2">{t.convert.title}</h2>
           {leadRef ? (
-            <div className="rounded-xl bg-green-50 p-4 text-sm text-green-800">
-              <p>{t.lead.success}</p>
-              <p className="mt-1">{t.lead.ref}: <strong>{leadRef}</strong></p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <a href={`${SITE.whatsappHref}?text=${encodeURIComponent(`Hello Hilty, my design reference is ${leadRef}.`)}`} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-[#25D366] px-4 py-2 text-sm font-semibold text-white">{t.convert.whatsapp}</a>
-                <button type="button" onClick={deleteProject} className="rounded-lg border border-line px-4 py-2 text-sm text-red-600">{t.common.deleteProject}</button>
+            <div className="rounded-md border border-success/20 bg-success-bg p-6 text-[0.9375rem] text-success">
+              <p className="font-display text-h3 font-semibold">{t.lead.success}</p>
+              <p className="tabular mt-2">{t.lead.ref}: <strong className="font-display font-bold">{leadRef}</strong></p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a href={`${SITE.whatsappHref}?text=${encodeURIComponent(`Hello Hilty, my design reference is ${leadRef}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center rounded-md bg-whatsapp px-4 font-display text-sm font-semibold text-white transition-colors hover:bg-whatsapp-dark">{t.convert.whatsapp}</a>
+                <button type="button" onClick={deleteProject} className="inline-flex h-10 items-center justify-center rounded-md border border-line-strong bg-surface px-4 font-display text-sm font-semibold text-danger transition-colors hover:border-danger">{t.common.deleteProject}</button>
               </div>
             </div>
           ) : (
@@ -449,9 +505,9 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
                 </select>
                 <input placeholder={t.lead.timeline} value={lead.timeline} onChange={(e) => setLead((l) => ({ ...l, timeline: e.target.value }))} className={field} />
               </div>
-              <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={leadConsent} onChange={(e) => setLeadConsent(e.target.checked)} className="mt-0.5" />{dict.forms.consent}</label>
+              <label className="flex cursor-pointer items-start gap-2.5 text-[0.9375rem] leading-relaxed"><input type="checkbox" checked={leadConsent} onChange={(e) => setLeadConsent(e.target.checked)} className="mt-0.5" />{dict.forms.consent}</label>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={submitLead} disabled={busy} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{t.lead.submit}</button>
+                <button type="button" onClick={submitLead} disabled={busy} className="inline-flex h-11 items-center justify-center rounded-md bg-accent-500 px-6 font-display text-[0.9375rem] font-semibold text-white shadow-soft transition-colors hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-55">{t.lead.submit}</button>
                 <button type="button" onClick={deleteProject} className="rounded-lg border border-line px-4 py-2 text-sm text-red-600">{t.common.deleteProject}</button>
               </div>
             </>
