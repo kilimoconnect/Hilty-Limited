@@ -1,28 +1,29 @@
-/* Hilty PWA service worker — minimal, safe runtime cache. Never caches /api or /admin. */
-const CACHE = 'hilty-v1'
-
+/*
+ * Hilty service worker — recovery/kill-switch.
+ * The previous caching SW could serve stale JavaScript after the many early deploys, which broke
+ * interactivity on some browsers. This version caches nothing, clears all old caches, unregisters
+ * itself, and reloads open pages so every visitor gets fresh assets. (Add-to-home-screen still
+ * works via the web manifest.)
+ */
 self.addEventListener('install', () => self.skipWaiting())
-self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))))
-  self.clients.claim()
-})
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url)
-  if (e.request.method !== 'GET') return
-  if (url.pathname.startsWith('/api') || url.pathname.startsWith('/admin')) return
-  e.respondWith(
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
     (async () => {
-      try {
-        const res = await fetch(e.request)
-        if (res.ok && url.origin === self.location.origin) {
-          const cache = await caches.open(CACHE)
-          cache.put(e.request, res.clone())
+      const keys = await caches.keys()
+      await Promise.all(keys.map((k) => caches.delete(k)))
+      await self.registration.unregister()
+      const clients = await self.clients.matchAll({ type: 'window' })
+      for (const client of clients) {
+        try {
+          client.navigate(client.url)
+        } catch {
+          /* ignore */
         }
-        return res
-      } catch {
-        const cached = await caches.match(e.request)
-        return cached || Response.error()
       }
     })(),
   )
 })
+
+// Always go to the network; never serve cached responses.
+self.addEventListener('fetch', () => {})
