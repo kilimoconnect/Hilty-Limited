@@ -261,6 +261,34 @@ const en = {
       register: 'Register',
       apply: 'Send enquiry',
     },
+    about: {
+      title: 'About Hilty',
+      subtitle:
+        'Genuine paint, professional guidance and reliable project delivery — for homes, businesses and contractors across Tanzania.',
+      introTitle: 'Who we are',
+      intro: [
+        'Hilty Limited is a paint and coatings company serving customers across Tanzania. We supply authentic Plascon paint and quality painting materials, and we back every purchase with practical, honest advice on the right system for your surface.',
+        'Beyond the counter, our team delivers professional painting services for residential and commercial projects — from surface preparation and interior and exterior painting to colour consultancy — and supports contractors and developers with reliable supply.',
+      ],
+      doTitle: 'What we do',
+      do: [
+        { title: 'Supply genuine products', body: 'Authentic Plascon paint and painting materials, stocked across our branches.' },
+        { title: 'Give professional guidance', body: 'Practical advice to match the right paint and primer to your surface and project.' },
+        { title: 'Deliver painting services', body: 'Interior and exterior painting, surface preparation and colour consultancy for homes and businesses.' },
+        { title: 'Support trade & projects', body: 'Reliable supply and professional support for painters, contractors and developers.' },
+      ],
+      valuesTitle: 'What you can rely on',
+      values: [
+        { title: 'Authentic products', body: 'Only genuine Plascon paint and quality materials — no substitutes.' },
+        { title: 'Honest advice', body: 'Guidance towards the right system, not the most expensive one.' },
+        { title: 'Multiple branches', body: 'Serving customers across several outlets in Tanzania.' },
+        { title: 'Homes to large projects', body: 'The same standard for a single room or a full development.' },
+      ],
+      ctaTitle: 'Talk to the Hilty team',
+      ctaBody: 'Visit a branch, request a quotation, or ask us anything about your project.',
+      visitBranches: 'Find a branch',
+      requestQuote: 'Request a quotation',
+    },
   },
   calc: {
     title: 'Paint calculator',
@@ -621,6 +649,34 @@ const sw: typeof en = {
       applyBody: 'Omba akaunti ya mkandarasi, omba bei ya mradi, au uliza kuhusu usambazaji wa jumla. Ambatanisha BOQ ikiwa unayo.',
       register: 'Jisajili',
       apply: 'Tuma ombi',
+    },
+    about: {
+      title: 'Kuhusu Hilty',
+      subtitle:
+        'Rangi halisi, ushauri wa kitaalam na utekelezaji wa miradi wa kuaminika — kwa nyumba, biashara na wakandarasi kote Tanzania.',
+      introTitle: 'Sisi ni nani',
+      intro: [
+        'Hilty Limited ni kampuni ya rangi na rangi za kufunika inayohudumia wateja kote Tanzania. Tunauza rangi halisi za Plascon na vifaa bora vya upakaji rangi, na tunaunga mkono kila ununuzi kwa ushauri wa vitendo na wa kweli kuhusu mfumo sahihi wa rangi kwa uso wako.',
+        'Zaidi ya kaunta, timu yetu hutoa huduma za kitaalam za upakaji rangi kwa miradi ya makazi na kibiashara — kuanzia maandalizi ya uso na upakaji rangi wa ndani na nje hadi ushauri wa rangi — na tunasaidia wakandarasi na waendelezaji kwa usambazaji wa kuaminika.',
+      ],
+      doTitle: 'Tunachofanya',
+      do: [
+        { title: 'Kuuza bidhaa halisi', body: 'Rangi halisi za Plascon na vifaa vya upakaji rangi, vinavyopatikana katika matawi yetu.' },
+        { title: 'Kutoa ushauri wa kitaalam', body: 'Ushauri wa vitendo kulinganisha rangi na primer sahihi na uso na mradi wako.' },
+        { title: 'Kutoa huduma za upakaji rangi', body: 'Upakaji rangi wa ndani na nje, maandalizi ya uso na ushauri wa rangi kwa nyumba na biashara.' },
+        { title: 'Kusaidia biashara na miradi', body: 'Usambazaji wa kuaminika na msaada wa kitaalam kwa wapaka rangi, wakandarasi na waendelezaji.' },
+      ],
+      valuesTitle: 'Unachoweza kutegemea',
+      values: [
+        { title: 'Bidhaa halisi', body: 'Rangi halisi za Plascon na vifaa bora pekee — hakuna mbadala.' },
+        { title: 'Ushauri wa kweli', body: 'Ushauri kuelekea mfumo sahihi, si ghali zaidi.' },
+        { title: 'Matawi mengi', body: 'Tunahudumia wateja katika matawi kadhaa Tanzania.' },
+        { title: 'Nyumba hadi miradi mikubwa', body: 'Kiwango kile kile kwa chumba kimoja au maendeleo kamili.' },
+      ],
+      ctaTitle: 'Wasiliana na timu ya Hilty',
+      ctaBody: 'Tembelea tawi, omba nukuu, au tuulize chochote kuhusu mradi wako.',
+      visitBranches: 'Tafuta tawi',
+      requestQuote: 'Omba nukuu',
     },
   },
   calc: {

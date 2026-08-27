@@ -109,7 +109,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
         <Container className="flex flex-col gap-4 py-8 text-[0.8125rem] leading-relaxed text-brand-300">
           <p className="max-w-3xl">{dict.footer.disclaimer}</p>
           <p>
-            © {new Date().getFullYear()} Hilty Company Limited. {dict.footer.rights}
+            © {new Date().getFullYear()} Hilty Limited. {dict.footer.rights}
           </p>
         </Container>
       </div>
