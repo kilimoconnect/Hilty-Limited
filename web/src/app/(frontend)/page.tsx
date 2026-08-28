@@ -14,7 +14,7 @@ import { Container } from '../../components/ui/Container'
 import { Section, SectionHeading } from '../../components/ui/Section'
 import { Panel } from '../../components/ui/Panel'
 import { EmptyState } from '../../components/ui/EmptyState'
-import { categoryTone, Swatch } from '../../components/ui/Swatch'
+import { categoryTone } from '../../components/ui/Swatch'
 import {
   ArrowRight,
   ArrowUpRight,
@@ -72,8 +72,6 @@ export default async function HomePage() {
     },
   ]
 
-  const cardCategories = categories.slice(0, 4)
-
   return (
     <>
       {/* ─── 1. HERO ─────────────────────────────────────────────────────── */}
@@ -126,28 +124,22 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Colour card — the physical object a paint shop hands you, on screen. */}
+          {/* Animated logo — the brand mark assembling itself, in the hero. */}
           <div className="rise rise-4 lg:col-span-5">
             <div className="relative mx-auto max-w-sm lg:ml-auto lg:mr-0">
-              <div aria-hidden className="absolute -right-3 -top-3 h-full w-full rounded-xl bg-white/10" />
-              <div className="relative rounded-xl bg-surface p-5 text-ink shadow-panel sm:p-6">
-                <div className="flex items-baseline justify-between gap-4 border-b border-line pb-4">
-                  <p className="font-display text-base font-semibold">{t.home.cardTitle}</p>
-                  <p className="font-display text-[0.625rem] font-semibold uppercase tracking-[0.14em] text-muted">
-                    Hilty
-                  </p>
-                </div>
-                <ul className="mt-5 grid grid-cols-2 gap-4">
-                  {(cardCategories.length > 0 ? cardCategories : [null, null, null, null]).map((c, i) => (
-                    <li key={c?.id ?? i}>
-                      <Swatch tone={categoryTone(c?.key, i)} className="aspect-[5/4] w-full" />
-                      <p className="mt-2.5 font-display text-[0.8125rem] font-medium leading-snug text-ink-soft">
-                        {c?.name ?? ' '}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-5 border-t border-line pt-4 text-[0.8125rem] text-muted">{t.home.cardNote}</p>
+              <div aria-hidden className="absolute -right-3 -top-3 h-full w-full rounded-2xl bg-white/10" />
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-brand-900 shadow-panel">
+                <video
+                  className="aspect-square w-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={`${t.home.cardTitle} — Hilty`}
+                >
+                  <source src="/brand/hilty-logo-animation.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>
