@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPaths = ['', '/products', '/paint-calculator', '/painting-services', '/projects', '/painters-contractors', '/branches', '/about', '/request-quotation', '/design-studio', '/ai-advisor']
+  const staticPaths = ['', '/products', '/paint-calculator', '/painting-services', '/projects', '/painters-contractors', '/branches', '/about', '/kibaba-cooking-oil', '/request-quotation', '/design-studio', '/ai-advisor']
   const entries: MetadataRoute.Sitemap = staticPaths.map((p) => ({ url: `${BASE}${p}`, changeFrequency: 'weekly', priority: p === '' ? 1 : 0.7 }))
 
   try {

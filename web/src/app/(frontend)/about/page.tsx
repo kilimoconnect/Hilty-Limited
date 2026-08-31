@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getDictionary } from '../../../i18n/dictionaries'
 import { getLocale } from '../../../i18n/locale'
 import { Button } from '../../../components/ui/Button'
@@ -7,6 +8,7 @@ import { Container } from '../../../components/ui/Container'
 import { PageHeader } from '../../../components/ui/PageHeader'
 import { Panel } from '../../../components/ui/Panel'
 import {
+  ArrowRight,
   BottleIcon,
   BrushIcon,
   GrainIcon,
@@ -26,6 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const doIcons = [ShieldCheckIcon, PaletteIcon, BrushIcon, TruckIcon]
 const valueIcons = [ShieldCheckIcon, PaletteIcon, LayersIcon, UsersIcon]
 const businessIcons = [PaletteIcon, GrainIcon, SackIcon, BottleIcon]
+const businessHrefs: (string | undefined)[] = ['/products', undefined, undefined, '/kibaba-cooking-oil']
 
 export default async function AboutPage() {
   const t = getDictionary(await getLocale())
@@ -65,8 +68,9 @@ export default async function AboutPage() {
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
             {a.businesses.map((b, i) => {
               const Icon = businessIcons[i % businessIcons.length]
-              return (
-                <Panel key={b.title} className="flex flex-col gap-4 p-6 sm:p-7">
+              const href = businessHrefs[i]
+              const card = (
+                <Panel interactive={!!href} className="flex h-full flex-col gap-4 p-6 sm:p-7">
                   <div className="flex items-center justify-between gap-3">
                     <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
                       <Icon width={24} height={24} />
@@ -77,7 +81,26 @@ export default async function AboutPage() {
                     <h3 className="font-display text-[1.0625rem] font-semibold">{b.title}</h3>
                     <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{b.body}</p>
                   </div>
+                  {href && (
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-1 font-display text-[0.8125rem] font-semibold text-brand-700">
+                      {t.home.open}
+                      <ArrowRight
+                        width={14}
+                        height={14}
+                        className="transition-transform duration-200 group-hover:translate-x-1"
+                      />
+                    </span>
+                  )}
                 </Panel>
+              )
+              return href ? (
+                <Link key={b.title} href={href} className="group block h-full">
+                  {card}
+                </Link>
+              ) : (
+                <div key={b.title} className="h-full">
+                  {card}
+                </div>
               )
             })}
           </div>

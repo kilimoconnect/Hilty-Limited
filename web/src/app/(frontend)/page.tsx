@@ -37,6 +37,7 @@ const mediaUrl = (m: unknown): string | null =>
   m && typeof m === 'object' && 'url' in m ? ((m as { url?: string }).url ?? null) : null
 
 const businessIcons = [PaletteIcon, GrainIcon, SackIcon, BottleIcon]
+const businessHrefs: (string | undefined)[] = ['/products', undefined, undefined, '/kibaba-cooking-oil']
 
 export default async function HomePage() {
   const locale = await getLocale()
@@ -170,8 +171,9 @@ export default async function HomePage() {
         <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {t.pages.about.businesses.map((b, i) => {
             const Icon = businessIcons[i % businessIcons.length]
-            return (
-              <Panel key={b.title} className="flex flex-col gap-4 p-6">
+            const href = businessHrefs[i]
+            const card = (
+              <Panel interactive={!!href} className="flex h-full flex-col gap-4 p-6">
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
                     <Icon width={22} height={22} />
@@ -182,7 +184,26 @@ export default async function HomePage() {
                   <h3 className="font-display text-[1.0625rem] font-semibold leading-snug">{b.title}</h3>
                   <p className="mt-2 text-[0.875rem] leading-relaxed text-muted">{b.body}</p>
                 </div>
+                {href && (
+                  <span className="mt-auto inline-flex items-center gap-1.5 pt-1 font-display text-[0.8125rem] font-semibold text-brand-700">
+                    {t.home.open}
+                    <ArrowRight
+                      width={14}
+                      height={14}
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
+                  </span>
+                )}
               </Panel>
+            )
+            return href ? (
+              <Link key={b.title} href={href} className="group block h-full">
+                {card}
+              </Link>
+            ) : (
+              <div key={b.title} className="h-full">
+                {card}
+              </div>
             )
           })}
         </div>
