@@ -31,7 +31,7 @@ const en = {
   hero: {
     title: 'Genuine products and dependable supply across Tanzania.',
     subtitle:
-      'Hilty Limited spans paint & coatings, agricultural commodity and fertilizer trading, and Kibaba cooking oil. Our flagship supplies authentic Plascon paint and painting materials — shop, calculate your requirements and request a quotation below.',
+      'Hilty Limited spans paint & coatings, agricultural commodity and fertilizer trading, and Kibaba cooking oil. Our flagship supplies authentic Plascon paint and painting materials. Shop, calculate your requirements and request a quotation below.',
     quotation: 'Request a quotation',
     calculate: 'Calculate paint',
     browse: 'Browse products',
@@ -448,7 +448,7 @@ const en = {
     contact: 'Contact',
     rights: 'All rights reserved.',
     disclaimer:
-      'Hilty is a retailer, project supplier and painting-services company — not a paint manufacturer. Plascon and other brand names, products and colours belong to their respective owners.',
+      'Hilty Limited is a retailer, project supplier and trading company. In paint and coatings we supply authentic products and are not a paint manufacturer. Plascon and other brand names, products and colours belong to their respective owners.',
     hours: 'Mon–Fri 08:30–18:00 · Sat 08:30–17:30 · Sun closed',
   },
 }
@@ -477,7 +477,7 @@ const sw: typeof en = {
   hero: {
     title: 'Bidhaa halisi na usambazaji wa kuaminika kote Tanzania.',
     subtitle:
-      'Hilty Limited inajumuisha rangi & rangi za kufunika, biashara ya mazao ya kilimo na mbolea, na mafuta ya kupikia Kibaba. Biashara yetu kuu inauza rangi halisi za Plascon na vifaa vya upakaji rangi — nunua, kokotoa mahitaji yako na uombe nukuu hapa chini.',
+      'Hilty Limited inajumuisha rangi & rangi za kufunika, biashara ya mazao ya kilimo na mbolea, na mafuta ya kupikia Kibaba. Biashara yetu kuu inauza rangi halisi za Plascon na vifaa vya upakaji rangi. Nunua, kokotoa mahitaji yako na uombe nukuu hapa chini.',
     quotation: 'Omba nukuu',
     calculate: 'Kokotoa rangi',
     browse: 'Tazama bidhaa',
@@ -894,7 +894,7 @@ const sw: typeof en = {
     contact: 'Mawasiliano',
     rights: 'Haki zote zimehifadhiwa.',
     disclaimer:
-      'Hilty ni muuzaji, msambazaji wa miradi na kampuni ya huduma za upakaji rangi — si mtengenezaji wa rangi. Plascon na majina mengine ya chapa, bidhaa na rangi ni mali ya wenyewe.',
+      'Hilty Limited ni kampuni ya rejareja, usambazaji wa miradi na biashara. Katika rangi na rangi za kufunika tunauza bidhaa halisi na si mtengenezaji wa rangi. Plascon na majina mengine ya chapa, bidhaa na rangi ni mali ya wenyewe.',
     hours: 'Jumatatu–Ijumaa 08:30–18:00 · Jumamosi 08:30–17:30 · Jumapili imefungwa',
   },
 }
