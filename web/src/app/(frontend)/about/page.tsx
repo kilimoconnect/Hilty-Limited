@@ -2,10 +2,21 @@ import type { Metadata } from 'next'
 import { getDictionary } from '../../../i18n/dictionaries'
 import { getLocale } from '../../../i18n/locale'
 import { Button } from '../../../components/ui/Button'
+import { Badge } from '../../../components/ui/Badge'
 import { Container } from '../../../components/ui/Container'
 import { PageHeader } from '../../../components/ui/PageHeader'
 import { Panel } from '../../../components/ui/Panel'
-import { BrushIcon, LayersIcon, PaletteIcon, ShieldCheckIcon, TruckIcon, UsersIcon } from '../../../components/ui/icons'
+import {
+  BottleIcon,
+  BrushIcon,
+  GrainIcon,
+  LayersIcon,
+  PaletteIcon,
+  SackIcon,
+  ShieldCheckIcon,
+  TruckIcon,
+  UsersIcon,
+} from '../../../components/ui/icons'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = getDictionary(await getLocale())
@@ -14,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const doIcons = [ShieldCheckIcon, PaletteIcon, BrushIcon, TruckIcon]
 const valueIcons = [ShieldCheckIcon, PaletteIcon, LayersIcon, UsersIcon]
+const businessIcons = [PaletteIcon, GrainIcon, SackIcon, BottleIcon]
 
 export default async function AboutPage() {
   const t = getDictionary(await getLocale())
@@ -42,6 +54,36 @@ export default async function AboutPage() {
           </div>
         </div>
       </Container>
+
+      {/* Our businesses — the Hilty Limited divisions */}
+      <div className="border-y border-line">
+        <Container className="py-14 lg:py-20">
+          <div className="max-w-2xl">
+            <h2 className="font-display text-h2 font-semibold">{a.businessesTitle}</h2>
+            <p className="mt-4 text-lead leading-relaxed text-muted">{a.businessesLead}</p>
+          </div>
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {a.businesses.map((b, i) => {
+              const Icon = businessIcons[i % businessIcons.length]
+              return (
+                <Panel key={b.title} className="flex flex-col gap-4 p-6 sm:p-7">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+                      <Icon width={24} height={24} />
+                    </span>
+                    <Badge tone={i === 0 ? 'brand' : b.tag === 'Kibaba' ? 'accent' : 'neutral'}>{b.tag}</Badge>
+                  </div>
+                  <div>
+                    <h3 className="font-display text-[1.0625rem] font-semibold">{b.title}</h3>
+                    <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{b.body}</p>
+                  </div>
+                </Panel>
+              )
+            })}
+          </div>
+          <p className="mt-8 text-[0.9375rem] leading-relaxed text-muted">{a.businessesNote}</p>
+        </Container>
+      </div>
 
       {/* What we do */}
       <div className="border-y border-line bg-surface-2">

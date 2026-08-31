@@ -181,3 +181,29 @@ export const StarIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="m12 4 2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.7L6.9 19.4l1-5.6-4-3.9 5.6-.8L12 4Z" />
   </svg>
 )
+
+// Agricultural commodities — a wheat stalk.
+export const GrainIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...s(p)}>
+    <path d="M12 21V9" />
+    <path d="M12 9c0-2.2-1.6-3.8-3.8-3.8C8.2 7.4 9.8 9 12 9Zm0 0c0-2.2 1.6-3.8 3.8-3.8C15.8 7.4 14.2 9 12 9Z" />
+    <path d="M12 14.5c0-2.2-1.6-3.8-3.8-3.8C8.2 12.9 9.8 14.5 12 14.5Zm0 0c0-2.2 1.6-3.8 3.8-3.8C15.8 12.9 14.2 14.5 12 14.5Z" />
+  </svg>
+)
+
+// Fertilizer — a tied sack.
+export const SackIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...s(p)}>
+    <path d="M9.5 3h5l-1.2 3h-2.6L9.5 3Z" />
+    <path d="M10.7 6C7.9 7.4 6 10.4 6 14a5 5 0 0 0 5 5h2a5 5 0 0 0 5-5c0-3.6-1.9-6.6-4.7-8" />
+    <path d="M8.5 13h7" />
+  </svg>
+)
+
+// Cooking oil — a bottle.
+export const BottleIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...s(p)}>
+    <path d="M10 2.5h4V5l1.3 2.6c.5 1 .7 2 .7 3.1V19a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-8.3c0-1.1.2-2.1.7-3.1L10 5V2.5Z" />
+    <path d="M8 12.5h8" />
+  </svg>
+)

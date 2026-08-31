@@ -267,9 +267,34 @@ const en = {
         'Genuine paint, professional guidance and reliable project delivery — for homes, businesses and contractors across Tanzania.',
       introTitle: 'Who we are',
       intro: [
-        'Hilty Limited is a paint and coatings company serving customers across Tanzania. We supply authentic Plascon paint and quality painting materials, and we back every purchase with practical, honest advice on the right system for your surface.',
-        'Beyond the counter, our team delivers professional painting services for residential and commercial projects — from surface preparation and interior and exterior painting to colour consultancy — and supports contractors and developers with reliable supply.',
+        'Hilty Limited is a Tanzanian company built around genuine products and dependable supply. Our flagship business supplies authentic Plascon paint and quality painting materials, backed by professional guidance and painting services for homes, businesses and contractors.',
+        'Alongside paint and coatings, the company trades agricultural commodities and fertilizer, and packages cooking oil under our own brand, Kibaba. Every division shares the same commitment: authentic products, fair dealing and reliable supply.',
       ],
+      businessesTitle: 'Our businesses',
+      businessesLead: 'One company, four divisions — united by genuine products and dependable supply.',
+      businesses: [
+        {
+          tag: 'Flagship',
+          title: 'Paint & Coatings',
+          body: 'Authentic Plascon paint, painting materials and professional painting services for homes, businesses and contractors — the flagship Hilty business.',
+        },
+        {
+          tag: 'Trade',
+          title: 'Agricultural Commodity Trading',
+          body: 'Sourcing and trading agricultural commodities, with reliable supply and fair dealing for buyers and producers.',
+        },
+        {
+          tag: 'Trade',
+          title: 'Fertilizer Trading',
+          body: 'Supply and trade of fertilizer to support farmers, agro-dealers and agricultural projects.',
+        },
+        {
+          tag: 'Kibaba',
+          title: 'Kibaba Cooking Oil',
+          body: 'Cooking oil packaged and supplied under our own brand, Kibaba.',
+        },
+      ],
+      businessesNote: 'For agricultural commodity, fertilizer or Kibaba cooking oil enquiries, get in touch with our team.',
       doTitle: 'What we do',
       do: [
         { title: 'Supply genuine products', body: 'Authentic Plascon paint and painting materials, stocked across our branches.' },
@@ -656,9 +681,34 @@ const sw: typeof en = {
         'Rangi halisi, ushauri wa kitaalam na utekelezaji wa miradi wa kuaminika — kwa nyumba, biashara na wakandarasi kote Tanzania.',
       introTitle: 'Sisi ni nani',
       intro: [
-        'Hilty Limited ni kampuni ya rangi na rangi za kufunika inayohudumia wateja kote Tanzania. Tunauza rangi halisi za Plascon na vifaa bora vya upakaji rangi, na tunaunga mkono kila ununuzi kwa ushauri wa vitendo na wa kweli kuhusu mfumo sahihi wa rangi kwa uso wako.',
-        'Zaidi ya kaunta, timu yetu hutoa huduma za kitaalam za upakaji rangi kwa miradi ya makazi na kibiashara — kuanzia maandalizi ya uso na upakaji rangi wa ndani na nje hadi ushauri wa rangi — na tunasaidia wakandarasi na waendelezaji kwa usambazaji wa kuaminika.',
+        'Hilty Limited ni kampuni ya Kitanzania iliyojengwa juu ya bidhaa halisi na usambazaji wa kuaminika. Biashara yetu kuu inauza rangi halisi za Plascon na vifaa bora vya upakaji rangi, ikiungwa mkono na ushauri wa kitaalam na huduma za upakaji rangi kwa nyumba, biashara na wakandarasi.',
+        'Mbali na rangi na rangi za kufunika, kampuni hufanya biashara ya mazao ya kilimo na mbolea, na hufungasha mafuta ya kupikia chini ya chapa yetu wenyewe, Kibaba. Kila idara inashiriki dhamira ile ile: bidhaa halisi, biashara ya haki na usambazaji wa kuaminika.',
       ],
+      businessesTitle: 'Biashara zetu',
+      businessesLead: 'Kampuni moja, idara nne — zimeunganishwa na bidhaa halisi na usambazaji wa kuaminika.',
+      businesses: [
+        {
+          tag: 'Kuu',
+          title: 'Rangi & Rangi za Kufunika',
+          body: 'Rangi halisi za Plascon, vifaa vya upakaji rangi na huduma za kitaalam za upakaji rangi kwa nyumba, biashara na wakandarasi — biashara kuu ya Hilty.',
+        },
+        {
+          tag: 'Biashara',
+          title: 'Biashara ya Mazao ya Kilimo',
+          body: 'Kutafuta na kufanya biashara ya mazao ya kilimo, kwa usambazaji wa kuaminika na biashara ya haki kwa wanunuzi na wazalishaji.',
+        },
+        {
+          tag: 'Biashara',
+          title: 'Biashara ya Mbolea',
+          body: 'Usambazaji na biashara ya mbolea kusaidia wakulima, mawakala wa pembejeo na miradi ya kilimo.',
+        },
+        {
+          tag: 'Kibaba',
+          title: 'Mafuta ya Kupikia Kibaba',
+          body: 'Mafuta ya kupikia yaliyofungashwa na kusambazwa chini ya chapa yetu, Kibaba.',
+        },
+      ],
+      businessesNote: 'Kwa maswali ya mazao ya kilimo, mbolea au mafuta ya kupikia Kibaba, wasiliana na timu yetu.',
       doTitle: 'Tunachofanya',
       do: [
         { title: 'Kuuza bidhaa halisi', body: 'Rangi halisi za Plascon na vifaa vya upakaji rangi, vinavyopatikana katika matawi yetu.' },
