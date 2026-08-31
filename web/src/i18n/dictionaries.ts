@@ -29,16 +29,16 @@ const en = {
     language: 'Language',
   },
   hero: {
-    title: 'Paint, coatings and expert support for every project.',
+    title: 'Genuine products and dependable supply across Tanzania.',
     subtitle:
-      'Shop genuine Plascon paint and painting materials, calculate your requirements, request professional guidance and obtain a project quotation from Hilty.',
+      'Hilty Limited spans paint & coatings, agricultural commodity and fertilizer trading, and Kibaba cooking oil. Our flagship supplies authentic Plascon paint and painting materials — shop, calculate your requirements and request a quotation below.',
     quotation: 'Request a quotation',
     calculate: 'Calculate paint',
     browse: 'Browse products',
     advisor: 'Ask the AI Paint Advisor',
   },
   home: {
-    heroEyebrow: 'Paint & coatings · Tanzania',
+    heroEyebrow: 'Hilty Limited · Tanzania',
     toolsLabel: 'Or start with a tool',
     cardTitle: 'Colour card',
     cardNote: 'Categories stocked at Hilty',
@@ -443,9 +443,9 @@ const sw: typeof en = {
     language: 'Lugha',
   },
   hero: {
-    title: 'Rangi, coatings na msaada wa kitaalam kwa kila mradi.',
+    title: 'Bidhaa halisi na usambazaji wa kuaminika kote Tanzania.',
     subtitle:
-      'Nunua rangi halisi za Plascon na vifaa vya upakaji rangi, kokotoa mahitaji yako, omba mwongozo wa kitaalam na upate nukuu ya mradi kutoka Hilty.',
+      'Hilty Limited inajumuisha rangi & rangi za kufunika, biashara ya mazao ya kilimo na mbolea, na mafuta ya kupikia Kibaba. Biashara yetu kuu inauza rangi halisi za Plascon na vifaa vya upakaji rangi — nunua, kokotoa mahitaji yako na uombe nukuu hapa chini.',
     quotation: 'Omba nukuu',
     calculate: 'Kokotoa rangi',
     browse: 'Tazama bidhaa',

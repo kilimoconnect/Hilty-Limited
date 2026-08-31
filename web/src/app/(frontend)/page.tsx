@@ -14,15 +14,19 @@ import { Container } from '../../components/ui/Container'
 import { Section, SectionHeading } from '../../components/ui/Section'
 import { Panel } from '../../components/ui/Panel'
 import { EmptyState } from '../../components/ui/EmptyState'
+import { Badge } from '../../components/ui/Badge'
 import { categoryTone } from '../../components/ui/Swatch'
 import {
   ArrowRight,
   ArrowUpRight,
+  BottleIcon,
   BrushIcon,
+  GrainIcon,
   LayersIcon,
   PaletteIcon,
   PinIcon,
   RulerIcon,
+  SackIcon,
   ShieldCheckIcon,
   SparkIcon,
   UsersIcon,
@@ -31,6 +35,8 @@ import {
 
 const mediaUrl = (m: unknown): string | null =>
   m && typeof m === 'object' && 'url' in m ? ((m as { url?: string }).url ?? null) : null
+
+const businessIcons = [PaletteIcon, GrainIcon, SackIcon, BottleIcon]
 
 export default async function HomePage() {
   const locale = await getLocale()
@@ -145,6 +151,42 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* ─── 1b. OUR BUSINESSES ──────────────────────────────────────────── */}
+      <Section tone="alt">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="eyebrow">{t.pages.about.businessesTitle}</p>
+            <h2 className="mt-3 text-h2">{t.pages.about.businessesLead}</h2>
+          </div>
+          <Link
+            href="/about"
+            className="group inline-flex items-center gap-2 font-display text-[0.9375rem] font-medium text-brand-700 hover:text-brand-800"
+          >
+            <span className="link-quiet">{t.nav.about}</span>
+            <ArrowRight width={16} height={16} className="transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+        </div>
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {t.pages.about.businesses.map((b, i) => {
+            const Icon = businessIcons[i % businessIcons.length]
+            return (
+              <Panel key={b.title} className="flex flex-col gap-4 p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+                    <Icon width={22} height={22} />
+                  </span>
+                  <Badge tone={i === 0 ? 'brand' : b.tag === 'Kibaba' ? 'accent' : 'neutral'}>{b.tag}</Badge>
+                </div>
+                <div>
+                  <h3 className="font-display text-[1.0625rem] font-semibold leading-snug">{b.title}</h3>
+                  <p className="mt-2 text-[0.875rem] leading-relaxed text-muted">{b.body}</p>
+                </div>
+              </Panel>
+            )
+          })}
+        </div>
+      </Section>
 
       {/* ─── 2. WHY HILTY ────────────────────────────────────────────────── */}
       <Section padded={false}>
