@@ -271,7 +271,7 @@ const en = {
         'Alongside paint and coatings, the company trades agricultural commodities and fertilizer, and packages cooking oil under our own brand, Kibaba. Every division shares the same commitment: authentic products, fair dealing and reliable supply.',
       ],
       businessesTitle: 'Our businesses',
-      businessesLead: 'One company, four divisions — united by genuine products and dependable supply.',
+      businessesLead: 'One company, four divisions, united by genuine products and dependable supply.',
       businesses: [
         {
           tag: 'Flagship',
@@ -719,7 +719,7 @@ const sw: typeof en = {
         'Mbali na rangi na rangi za kufunika, kampuni hufanya biashara ya mazao ya kilimo na mbolea, na hufungasha mafuta ya kupikia chini ya chapa yetu wenyewe, Kibaba. Kila idara inashiriki dhamira ile ile: bidhaa halisi, biashara ya haki na usambazaji wa kuaminika.',
       ],
       businessesTitle: 'Biashara zetu',
-      businessesLead: 'Kampuni moja, idara nne — zimeunganishwa na bidhaa halisi na usambazaji wa kuaminika.',
+      businessesLead: 'Kampuni moja, idara nne, zimeunganishwa na bidhaa halisi na usambazaji wa kuaminika.',
       businesses: [
         {
           tag: 'Kuu',
