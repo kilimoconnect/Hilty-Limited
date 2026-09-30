@@ -38,6 +38,12 @@ const mediaUrl = (m: unknown): string | null =>
 
 const businessIcons = [PaletteIcon, GrainIcon, SackIcon, BottleIcon]
 const businessHrefs: (string | undefined)[] = ['/products', undefined, undefined, '/kibaba-cooking-oil']
+const businessImages = [
+  '/photos/painting-roller.webp',
+  '/photos/commodities-grain.webp',
+  '/photos/fertilizer.webp',
+  '/brand/kibaba-box.webp',
+]
 
 export default async function HomePage() {
   const locale = await getLocale()
@@ -172,28 +178,37 @@ export default async function HomePage() {
           {t.pages.about.businesses.map((b, i) => {
             const Icon = businessIcons[i % businessIcons.length]
             const href = businessHrefs[i]
+            const img = businessImages[i % businessImages.length]
             const card = (
-              <Panel interactive={!!href} className="flex h-full flex-col gap-4 p-6">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-                    <Icon width={22} height={22} />
+              <Panel interactive={!!href} className="flex h-full flex-col overflow-hidden">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={img}
+                    alt={b.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  <span className="absolute left-3 top-3">
+                    <Badge tone={i === 0 ? 'brand' : b.tag === 'Kibaba' ? 'accent' : 'neutral'}>{b.tag}</Badge>
                   </span>
-                  <Badge tone={i === 0 ? 'brand' : b.tag === 'Kibaba' ? 'accent' : 'neutral'}>{b.tag}</Badge>
                 </div>
-                <div>
-                  <h3 className="font-display text-[1.0625rem] font-semibold leading-snug">{b.title}</h3>
-                  <p className="mt-2 text-[0.875rem] leading-relaxed text-muted">{b.body}</p>
+                <div className="flex flex-1 flex-col gap-2 p-5">
+                  <h3 className="flex items-center gap-2 font-display text-[1.0625rem] font-semibold leading-snug">
+                    <Icon width={18} height={18} className="shrink-0 text-brand-500" />
+                    {b.title}
+                  </h3>
+                  <p className="text-[0.875rem] leading-relaxed text-muted">{b.body}</p>
+                  {href && (
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-1 font-display text-[0.8125rem] font-semibold text-brand-700">
+                      {t.home.open}
+                      <ArrowRight
+                        width={14}
+                        height={14}
+                        className="transition-transform duration-200 group-hover:translate-x-1"
+                      />
+                    </span>
+                  )}
                 </div>
-                {href && (
-                  <span className="mt-auto inline-flex items-center gap-1.5 pt-1 font-display text-[0.8125rem] font-semibold text-brand-700">
-                    {t.home.open}
-                    <ArrowRight
-                      width={14}
-                      height={14}
-                      className="transition-transform duration-200 group-hover:translate-x-1"
-                    />
-                  </span>
-                )}
               </Panel>
             )
             return href ? (
@@ -201,7 +216,7 @@ export default async function HomePage() {
                 {card}
               </Link>
             ) : (
-              <div key={b.title} className="h-full">
+              <div key={b.title} className="group h-full">
                 {card}
               </div>
             )
