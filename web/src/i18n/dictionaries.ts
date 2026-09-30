@@ -347,6 +347,9 @@ const en = {
       ctaContact: 'Request a quotation',
       boxAlt: 'Kibaba Cooking Oil — carton of 144 × 50 ml pouches',
       pouchAlt: 'Kibaba Cooking Oil — 50 ml pouch',
+      galleryTitle: 'Kibaba in the market',
+      galleryLead: 'Kibaba Cooking Oil on shelves and reaching customers in shops and markets across Tanzania.',
+      galleryAlt: 'Kibaba Cooking Oil in a Tanzanian shop',
     },
   },
   calc: {
@@ -795,6 +798,9 @@ const sw: typeof en = {
       ctaContact: 'Omba nukuu',
       boxAlt: 'Mafuta ya Kupikia Kibaba — katoni ya pouch 144 × 50 ml',
       pouchAlt: 'Mafuta ya Kupikia Kibaba — pouch ya 50 ml',
+      galleryTitle: 'Kibaba sokoni',
+      galleryLead: 'Mafuta ya Kupikia Kibaba yakiwa dukani na yakiwafikia wateja katika maduka na masoko kote Tanzania.',
+      galleryAlt: 'Mafuta ya Kupikia Kibaba katika duka la Tanzania',
     },
   },
   calc: {

@@ -9,6 +9,8 @@ import { Panel } from '../../../components/ui/Panel'
 import { Badge } from '../../../components/ui/Badge'
 import { CheckIcon, WhatsAppIcon } from '../../../components/ui/icons'
 
+const marketImages = Array.from({ length: 8 }, (_, i) => `/photos/kibaba-market-${i + 1}.webp`)
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = getDictionary(await getLocale())
   return {
@@ -137,9 +139,31 @@ export default async function KibabaPage() {
         </Container>
       </div>
 
-      {/* CTA */}
+      {/* In the market */}
       <Container className="py-14 lg:py-20">
-        <Panel tone="dark" className="p-8 text-center sm:p-12">
+        <div className="max-w-2xl">
+          <h2 className="font-display text-h2 font-semibold">{k.galleryTitle}</h2>
+          <p className="mt-4 text-lead leading-relaxed text-muted">{k.galleryLead}</p>
+        </div>
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+          {marketImages.map((src) => (
+            <div key={src} className="aspect-[3/4] overflow-hidden rounded-lg border border-line bg-surface-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={k.galleryAlt}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+          ))}
+        </div>
+      </Container>
+
+      {/* CTA */}
+      <div className="border-t border-line">
+        <Container className="py-14 lg:py-20">
+          <Panel tone="dark" className="p-8 text-center sm:p-12">
           <h2 className="font-display text-h2 font-semibold text-white">{k.ctaTitle}</h2>
           <p className="mx-auto mt-4 max-w-xl text-lead leading-relaxed text-brand-100/85">{k.ctaBody}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -151,7 +175,8 @@ export default async function KibabaPage() {
             </Button>
           </div>
         </Panel>
-      </Container>
+        </Container>
+      </div>
     </>
   )
 }
