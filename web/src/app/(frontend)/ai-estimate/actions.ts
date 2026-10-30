@@ -23,13 +23,12 @@ export async function quoteDraftAction(input: {
   const desc = input.description.trim().slice(0, 1500)
 
   const seeded =
-    `The customer wants a DRAFT painting estimate. Project description: "${desc}". ` +
-    'Produce an itemised recommendation: fill recommended_system_steps in order (surface preparation, primer/undercoat, topcoat and number of coats); ' +
-    'recommend suitable catalogue products in recommended_products, each with a short "why"; ' +
-    'if room measurements are provided, call calculate_paint_requirements and summarise the estimated litres per component in customer_message. ' +
-    'Put anything still required to finalise pricing in missing_information. ' +
-    'Do NOT create a lead, quotation, appointment or sample request — this is a draft only. ' +
-    'Keep customer_message a concise, professional estimate summary and state that Hilty confirms final pricing and stock.'
+    `Draft a professional painting estimate for this project: "${desc}". ` +
+    'If room sizes are given, call calculate_paint_requirements ONCE and state the estimated area (m²) and litres in customer_message. ' +
+    'Fill recommended_system_steps in order (surface preparation, primer/undercoat, topcoat and number of coats). ' +
+    'Only include recommended_products if the catalogue returns a match — do not search more than once. ' +
+    'List anything still needed to finalise pricing in missing_information. ' +
+    'Do not create any lead, quotation or appointment. Keep customer_message concise and note that Hilty confirms final pricing and stock.'
 
   await trackSiteEvent('ai_conversation_started')
   const outcome = await runAdvisor({
