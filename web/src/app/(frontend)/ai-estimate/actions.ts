@@ -24,7 +24,7 @@ export async function quoteDraftAction(input: {
 
   const seeded =
     `Draft a professional painting estimate for this project: "${desc}". ` +
-    'If room sizes are given, call calculate_paint_requirements ONCE and state the estimated area (m²) and litres in customer_message. ' +
+    'If room sizes are given, call calculate_paint_requirements ONCE and state the estimated area (m²). State litres only if the tool returns a number; if coverage is unknown, say the litres depend on the chosen product’s coverage — never write a placeholder like "X litres". ' +
     'Fill recommended_system_steps in order (surface preparation, primer/undercoat, topcoat and number of coats). ' +
     'Only include recommended_products if the catalogue returns a match — do not search more than once. ' +
     'List anything still needed to finalise pricing in missing_information. ' +
