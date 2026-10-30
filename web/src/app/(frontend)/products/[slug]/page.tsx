@@ -61,6 +61,8 @@ const stockTone = (status: string | null | undefined): 'success' | 'warning' | '
   return 'neutral'
 }
 
+export const maxDuration = 60
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const locale = await getLocale()

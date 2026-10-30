@@ -17,7 +17,9 @@ const intOr = (v: string | undefined, d: number) => {
 export function getAiConfig(): AiConfig {
   return {
     primary: process.env.AI_PRIMARY_PROVIDER === 'gemini' ? 'gemini' : 'openai',
-    timeoutMs: intOr(process.env.AI_TIMEOUT_MS, 30_000),
+    // Floor at 40s: GPT-4o + catalogue/calculator tool round-trips on serverless
+    // can take ~25s; a too-small env value caused premature failover to the safe reply.
+    timeoutMs: Math.max(intOr(process.env.AI_TIMEOUT_MS, 45_000), 40_000),
     maxInputChars: intOr(process.env.AI_MAX_INPUT_CHARACTERS, 4_000),
     rateLimitPerIp: intOr(process.env.AI_RATE_LIMIT_PER_IP, 20),
     retentionDays: intOr(process.env.AI_CONVERSATION_RETENTION_DAYS, 30),

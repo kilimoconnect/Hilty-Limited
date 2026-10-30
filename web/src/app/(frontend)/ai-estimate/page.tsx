@@ -10,6 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t.pages.estimate.title, description: t.pages.estimate.subtitle }
 }
 
+export const maxDuration = 60
+
 export default async function AiEstimatePage() {
   const locale = await getLocale()
   const t = getDictionary(locale)

@@ -10,6 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t.advisor.title, description: t.advisor.body }
 }
 
+export const maxDuration = 60
+
 export default async function AiAdvisorPage() {
   const locale = await getLocale()
   const t = getDictionary(locale)

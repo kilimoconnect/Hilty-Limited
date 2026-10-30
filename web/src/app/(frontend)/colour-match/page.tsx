@@ -10,6 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t.pages.colourMatch.title, description: t.pages.colourMatch.subtitle }
 }
 
+export const maxDuration = 60
+
 export default async function ColourMatchPage() {
   const locale = await getLocale()
   const t = getDictionary(locale)
