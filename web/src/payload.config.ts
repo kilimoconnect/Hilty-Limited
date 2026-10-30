@@ -22,10 +22,9 @@ const dbAdapter = postgresUrl
       // transaction, which needs a second connection; max:1 deadlocks every write.
       pool: {
         connectionString: postgresUrl,
-        max: Number(process.env.PG_POOL_MAX) || 4,
-        idleTimeoutMillis: 5_000,
+        max: Number(process.env.PG_POOL_MAX) || 3,
+        idleTimeoutMillis: 10_000,
         connectionTimeoutMillis: 15_000,
-        allowExitOnIdle: true, // release connections back to the pooler promptly on serverless
       },
       push: process.env.NODE_ENV !== 'production',
     })
