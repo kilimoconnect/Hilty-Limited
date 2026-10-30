@@ -360,6 +360,28 @@ const en = {
       galleryLead: 'Kibaba Cooking Oil on shelves and reaching customers in shops and markets across Tanzania.',
       galleryAlt: 'Kibaba Cooking Oil in a Tanzanian shop',
     },
+    estimate: {
+      eyebrow: 'Instant estimate',
+      title: 'Get an instant AI estimate',
+      subtitle:
+        'Describe your painting project and the Paint Advisor drafts an itemised estimate and a recommended paint system. Final pricing is confirmed by Hilty.',
+      label: 'Describe your project',
+      placeholder:
+        'e.g. Repaint a 4×5 m bedroom and a 3×3 m bathroom, interior, walls previously painted and in fair condition. Include ceilings.',
+      hint: 'Include room sizes (length × width × height), interior or exterior, surface condition, and the finish you want.',
+      generate: 'Generate estimate',
+      generating: 'Preparing your estimate…',
+      draftTitle: 'Draft estimate',
+      summaryLabel: 'Project',
+      planLabel: 'Recommended system',
+      productsLabel: 'Suggested products',
+      missingLabel: 'To finalise your quotation, please provide',
+      disclaimer:
+        'Indicative AI draft based on the catalogue and your description. Quantities are estimates requiring site verification; prices and stock are confirmed by Hilty.',
+      sendWhatsapp: 'Send to Hilty on WhatsApp',
+      requestQuote: 'Request a full quotation',
+      error: 'Sorry, the estimate could not be generated. Please try again or request a quotation.',
+    },
   },
   calc: {
     title: 'Paint calculator',
@@ -819,6 +841,28 @@ const sw: typeof en = {
       galleryTitle: 'Kibaba sokoni',
       galleryLead: 'Mafuta ya Kupikia Kibaba yakiwa dukani na yakiwafikia wateja katika maduka na masoko kote Tanzania.',
       galleryAlt: 'Mafuta ya Kupikia Kibaba katika duka la Tanzania',
+    },
+    estimate: {
+      eyebrow: 'Makadirio ya papo hapo',
+      title: 'Pata makadirio ya papo hapo ya AI',
+      subtitle:
+        'Eleza mradi wako wa upakaji rangi na Mshauri wa Rangi atatayarisha makadirio yaliyoorodheshwa na mfumo wa rangi unaopendekezwa. Bei ya mwisho huthibitishwa na Hilty.',
+      label: 'Eleza mradi wako',
+      placeholder:
+        'mf. Paka upya chumba cha 4×5 m na bafu la 3×3 m, ndani, kuta zilizopakwa awali na hali ya wastani. Jumuisha dari.',
+      hint: 'Jumuisha vipimo vya chumba (urefu × upana × kimo), ndani au nje, hali ya uso, na mwonekano unaotaka.',
+      generate: 'Tengeneza makadirio',
+      generating: 'Inatayarisha makadirio yako…',
+      draftTitle: 'Rasimu ya makadirio',
+      summaryLabel: 'Mradi',
+      planLabel: 'Mfumo unaopendekezwa',
+      productsLabel: 'Bidhaa zinazopendekezwa',
+      missingLabel: 'Ili kukamilisha nukuu yako, tafadhali toa',
+      disclaimer:
+        'Rasimu ya AI kwa kutumia katalogi na maelezo yako. Kiasi ni makadirio yanayohitaji uhakiki wa eneo; bei na hisa huthibitishwa na Hilty.',
+      sendWhatsapp: 'Tuma kwa Hilty kwa WhatsApp',
+      requestQuote: 'Omba nukuu kamili',
+      error: 'Samahani, makadirio hayakuweza kutengenezwa. Tafadhali jaribu tena au omba nukuu.',
     },
   },
   calc: {

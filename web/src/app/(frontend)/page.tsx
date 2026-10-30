@@ -78,6 +78,12 @@ export default async function HomePage() {
       icon: <SparkIcon width={22} height={22} />,
     },
     {
+      href: '/ai-estimate',
+      title: t.pages.estimate.title,
+      body: t.pages.estimate.subtitle,
+      icon: <RulerIcon width={22} height={22} />,
+    },
+    {
       href: '/design-studio',
       title: t.studio.title,
       body: t.studio.subtitle,
