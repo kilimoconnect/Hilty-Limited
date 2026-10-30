@@ -11,6 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t.studio.title, description: t.studio.subtitle }
 }
 
+export const maxDuration = 60
+
 export default async function DesignStudioPage() {
   const locale = await getLocale()
   const t = getDictionary(locale)

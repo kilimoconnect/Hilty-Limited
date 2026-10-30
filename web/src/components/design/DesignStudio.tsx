@@ -136,6 +136,8 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       setSpaceId(res.spaceId)
       setSurfaces(res.suggestions.map((s) => ({ type: s.type, confirmedByUser: false, strokes: [] })))
       nextStep()
+    } catch {
+      setError(genericError)
     } finally {
       setBusy(false)
     }
@@ -155,6 +157,8 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       const res = await makePalettesAction(pid, { temperature: prefs.temperature, interiorExterior, preferredFinish: prefs.preferredFinish })
       setPalettes(res.palettes.map((p) => ({ id: p.id, key: p.key, title: p.title, explanation: p.explanation, roles: p.roles.map((r) => ({ role: r.role, name: r.name, hex: r.hex, productName: r.productName, finish: r.finish })) })))
       nextStep()
+    } catch {
+      setError(genericError)
     } finally {
       setBusy(false)
     }
@@ -164,9 +168,13 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
     if (!spaceId || !selectedPalette) return
     setVariant({ status: 'loading' })
     const confirmed = surfaces.filter((s) => s.confirmedByUser).map((s) => ({ type: s.type, confirmedByUser: true }))
-    const res = await makeVariantAction({ spaceId, paletteId: selectedPalette, surfaces: confirmed, disclaimerAccepted: true, sessionId: sessionIdRef.current || 'anon' })
-    if (res.ok) setVariant({ status: 'done', url: res.imageDataUrl })
-    else setVariant({ status: 'fallback' })
+    try {
+      const res = await makeVariantAction({ spaceId, paletteId: selectedPalette, surfaces: confirmed, disclaimerAccepted: true, sessionId: sessionIdRef.current || 'anon' })
+      if (res.ok) setVariant({ status: 'done', url: res.imageDataUrl })
+      else setVariant({ status: 'fallback' })
+    } catch {
+      setVariant({ status: 'fallback' })
+    }
   }
 
   const runCalc = async () => {
@@ -176,6 +184,8 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
       const res = await convertPlanAction({ projectId, spaceId: spaceId ?? undefined, paletteId: selectedPalette ?? undefined, rooms: [{ ...rooms, includeCeiling: true }], coats: 2, wastePct: 10 })
       const comp = res.calc.components[0]
       setCalc({ litres: comp?.litres ?? null })
+    } catch {
+      setError(genericError)
     } finally {
       setBusy(false)
     }
@@ -193,6 +203,8 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
         setLeadRef(res.reference)
         if (typeof window !== 'undefined') window.localStorage.removeItem(LS_KEY)
       } else setError(res.error)
+    } catch {
+      setError(genericError)
     } finally {
       setBusy(false)
     }
@@ -206,6 +218,7 @@ export function DesignStudio({ dict, locale, branches }: { dict: Dictionary; loc
   }
 
   const canRender = surfaces.some((s) => s.confirmedByUser)
+  const genericError = locale === 'sw' ? 'Hitilafu imetokea. Tafadhali jaribu tena.' : 'Something went wrong. Please try again.'
   const field =
     'w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-[0.9375rem] outline-none transition-colors focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10'
 

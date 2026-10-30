@@ -17,13 +17,14 @@ import sharp from 'sharp'
 const postgresUrl = process.env.DATABASE_URI?.startsWith('postgres') ? process.env.DATABASE_URI : process.env.POSTGRES_URL
 const dbAdapter = postgresUrl
   ? postgresAdapter({
-      // Serverless + Supabase pooler: keep each instance to a single connection and
-      // release it quickly, so concurrent lambdas don't exhaust the pooler (EMAXCONNSESSION).
+      // Serverless + Supabase pooler: keep the pool small so concurrent lambdas don't
+      // exhaust the pooler (EMAXCONNSESSION), but >1 — Payload runs writes inside a
+      // transaction, which needs a second connection; max:1 deadlocks every write.
       pool: {
         connectionString: postgresUrl,
-        max: Number(process.env.PG_POOL_MAX) || 1,
+        max: Number(process.env.PG_POOL_MAX) || 4,
         idleTimeoutMillis: 10_000,
-        connectionTimeoutMillis: 10_000,
+        connectionTimeoutMillis: 15_000,
       },
       push: process.env.NODE_ENV !== 'production',
     })
