@@ -14,7 +14,15 @@ import sharp from 'sharp'
  * SQLite for local development otherwise. Set DATABASE_URI (or POSTGRES_URL) to a
  * postgres:// connection string on the host. `push` auto-syncs schema outside production.
  */
-const postgresUrl = process.env.DATABASE_URI?.startsWith('postgres') ? process.env.DATABASE_URI : process.env.POSTGRES_URL
+const rawPostgresUrl = process.env.DATABASE_URI?.startsWith('postgres') ? process.env.DATABASE_URI : process.env.POSTGRES_URL
+// Supabase + serverless: the Session pooler (:5432) holds a connection per client and
+// exhausts its 15-connection limit under concurrent lambdas (EMAXCONNSESSION). The
+// Transaction pooler (:6543) is built for serverless, so switch to it automatically.
+// Opt out with PG_KEEP_SESSION_POOLER=1.
+const postgresUrl =
+  rawPostgresUrl && process.env.PG_KEEP_SESSION_POOLER !== '1' && /pooler\.supabase\.com:5432/.test(rawPostgresUrl)
+    ? rawPostgresUrl.replace('pooler.supabase.com:5432', 'pooler.supabase.com:6543')
+    : rawPostgresUrl
 const dbAdapter = postgresUrl
   ? postgresAdapter({
       // Serverless + Supabase pooler: keep the pool small so concurrent lambdas don't
