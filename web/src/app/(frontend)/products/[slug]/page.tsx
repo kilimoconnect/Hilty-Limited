@@ -13,6 +13,7 @@ import { Badge } from '../../../../components/ui/Badge'
 import { Panel } from '../../../../components/ui/Panel'
 import { Rich } from '../../../../components/RichText'
 import { AddToQuoteButton } from '../../../../components/catalogue/AddToQuoteButton'
+import { ProductAsk } from '../../../../components/catalogue/ProductAsk'
 import { DesignCta } from '../../../../components/design/DesignCta'
 import { TrackEvent } from '../../../../components/TrackEvent'
 import { ArrowRight, ChevronRight, WhatsAppIcon } from '../../../../components/ui/icons'
@@ -197,12 +198,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <AddToQuoteButton slug={p.slug ?? ''} name={p.name} label={t.product.addToQuote} addedLabel={t.product.added} />
-                <Link
-                  href={`/ai-advisor?product=${p.slug ?? ''}`}
+                <a
+                  href="#ask"
                   className="inline-flex h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-5 font-display text-[0.9375rem] font-semibold transition-colors hover:border-brand-600 hover:text-brand-700"
                 >
                   {t.product.askAi}
-                </Link>
+                </a>
                 <a
                   href={`${SITE.whatsappHref}?text=${waText}`}
                   target="_blank"
@@ -247,6 +248,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {p.surfacePreparation ? <RichSection title={t.product.surfacePrep} data={p.surfacePreparation} /> : null}
             {p.applicationInstructions ? <RichSection title={t.product.application} data={p.applicationInstructions} /> : null}
             {p.safetyNotes ? <RichSection title={t.product.safety} data={p.safetyNotes} /> : null}
+
+            <div id="ask" className="scroll-mt-28">
+              <ProductAsk productId={p.id} productName={p.name} dict={t} locale={locale} />
+            </div>
           </div>
 
           <div className="lg:col-span-5">
