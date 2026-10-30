@@ -14,7 +14,7 @@ type Resp = {
 // The SDK's param types are intentionally bypassed here (Responses API shape is stable at runtime).
 type CreateFn = (params: Record<string, unknown>, opts?: { signal?: AbortSignal }) => Promise<Resp>
 
-const MAX_TOOL_ITERATIONS = 6
+const MAX_TOOL_ITERATIONS = 4
 
 export class OpenAiProvider implements AiProvider {
   readonly name = 'openai' as const
@@ -55,8 +55,29 @@ export class OpenAiProvider implements AiProvider {
         const result = await executor({ name: call.name || '', arguments: args })
         outputs.push({ type: 'function_call_output', call_id: call.call_id, output: JSON.stringify(result) })
       }
-      resp = await create({ model: this.model, previous_response_id: resp.id, input: outputs, tools, text }, { signal })
+      // On the final allowed round, disable tools so the model MUST return the answer
+      // (prevents runaway tool loops, e.g. repeated empty catalogue searches).
+      const forceFinal = i === MAX_TOOL_ITERATIONS - 1
+      resp = await create(
+        { model: this.model, previous_response_id: resp.id, input: outputs, tools, text, ...(forceFinal ? { tool_choice: 'none' } : {}) },
+        { signal },
+      )
       usage = resp.usage ?? usage
+    }
+
+    // Safety net: if the loop ended still wanting tools, force one tool-free completion.
+    if (!resp.output_text && (resp.output ?? []).some((o) => o.type === 'function_call')) {
+      resp = await create(
+        {
+          model: this.model,
+          previous_response_id: resp.id,
+          input: [{ role: 'system', content: 'Return ONLY the final advisor_response JSON now. Do not call any tools.' }],
+          tools,
+          text,
+          tool_choice: 'none',
+        },
+        { signal },
+      )
     }
 
     const parsed = safeParse(resp.output_text)

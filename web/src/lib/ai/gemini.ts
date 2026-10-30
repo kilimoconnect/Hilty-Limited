@@ -11,7 +11,7 @@ type GenResp = {
 }
 type GenerateFn = (params: Record<string, unknown>) => Promise<GenResp>
 
-const MAX_TOOL_ITERATIONS = 6
+const MAX_TOOL_ITERATIONS = 4
 
 export class GeminiProvider implements AiProvider {
   readonly name = 'gemini' as const
@@ -40,6 +40,13 @@ export class GeminiProvider implements AiProvider {
       parts: [{ text: m.content }],
     }))
 
+    // Tool-free config forces the model to emit the final JSON instead of more calls.
+    const noToolsConfig: Record<string, unknown> = {
+      ...config,
+      tools: undefined,
+      toolConfig: { functionCallingConfig: { mode: 'NONE' } },
+    }
+
     let resp = await generate({ model: this.model, contents, config })
     let usage = resp.usageMetadata
 
@@ -53,7 +60,14 @@ export class GeminiProvider implements AiProvider {
         responseParts.push({ functionResponse: { name: call.name, response: result } })
       }
       contents.push({ role: 'user', parts: responseParts })
-      resp = await generate({ model: this.model, contents, config })
+      const forceFinal = i === MAX_TOOL_ITERATIONS - 1
+      resp = await generate({ model: this.model, contents, config: forceFinal ? noToolsConfig : config })
+      usage = resp.usageMetadata ?? usage
+    }
+
+    // Safety net: if it still wants tools, force one tool-free completion.
+    if (!resp.text && (resp.functionCalls ?? []).length > 0) {
+      resp = await generate({ model: this.model, contents, config: noToolsConfig })
       usage = resp.usageMetadata ?? usage
     }
 
