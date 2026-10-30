@@ -92,18 +92,64 @@ export function AiAdvisorChat({ dict, locale }: { dict: Dictionary; locale: Loca
           </div>
         )}
 
-        {/* Suggestions after the latest assistant reply */}
+        {/* Structured recommendation after the latest assistant reply */}
         {last && !pending && (
-          <div className="space-y-3 border-t border-line pt-4">
+          <div className="space-y-5 border-t border-line pt-5">
+            {last.recommended_system_steps?.length > 0 && (
+              <div>
+                <p className="font-display text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-muted">
+                  {t.approach}
+                </p>
+                <ol className="mt-3 space-y-2.5">
+                  {last.recommended_system_steps.map((step, i) => (
+                    <li key={i} className="flex gap-3 text-[0.875rem] leading-relaxed text-ink-soft">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 font-display text-[0.6875rem] font-semibold text-brand-700">
+                        {i + 1}
+                      </span>
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
             {last.recommended_products?.length > 0 && (
-              <p className="text-[0.8125rem] text-muted">
-                <span className="font-display font-semibold text-ink-soft">{t.recommended}:</span>{' '}
-                {last.recommended_products.map((p) => p.name).join(', ')}
+              <div>
+                <p className="font-display text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-muted">
+                  {t.recommended}
+                </p>
+                <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  {last.recommended_products.map((p, i) => (
+                    <a
+                      key={i}
+                      href={`/products?q=${encodeURIComponent(p.name)}`}
+                      className="group flex items-start gap-3 rounded-md border border-line bg-surface-2 p-3.5 transition-colors hover:border-brand-300 hover:bg-surface"
+                    >
+                      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-brand-50 text-brand-600">
+                        <PaletteIcon width={16} height={16} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-display text-[0.875rem] font-semibold leading-snug text-ink">{p.name}</span>
+                        {p.why && <span className="mt-0.5 block text-[0.8125rem] leading-relaxed text-muted">{p.why}</span>}
+                      </span>
+                      <ArrowRight
+                        width={14}
+                        height={14}
+                        className="mt-1 shrink-0 text-brand-400 transition-transform duration-200 group-hover:translate-x-0.5"
+                      />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {last.safety_or_uncertainty_note && (
+              <p className="flex items-start gap-2 rounded-md bg-warning-bg px-3.5 py-2.5 text-[0.8125rem] leading-relaxed text-warning">
+                <InfoIcon width={15} height={15} className="mt-0.5 shrink-0" />
+                {last.safety_or_uncertainty_note}
               </p>
             )}
-            {last.safety_or_uncertainty_note && (
-              <p className="text-[0.8125rem] leading-relaxed text-warning">{last.safety_or_uncertainty_note}</p>
-            )}
+
             <div className="flex flex-wrap gap-2">
               {action && nextHref[action] && (
                 <a

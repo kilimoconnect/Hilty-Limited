@@ -22,7 +22,7 @@ export function getAiConfig(): AiConfig {
     rateLimitPerIp: intOr(process.env.AI_RATE_LIMIT_PER_IP, 20),
     retentionDays: intOr(process.env.AI_CONVERSATION_RETENTION_DAYS, 30),
     maxRetries: 2,
-    openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-    geminiModel: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
+    openaiModel: process.env.OPENAI_MODEL || 'gpt-4o',
+    geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
   }
 }

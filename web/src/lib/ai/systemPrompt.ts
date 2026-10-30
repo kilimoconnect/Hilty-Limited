@@ -61,5 +61,7 @@ export function buildSystemPrompt(locale: AdvisorLanguage): string {
     '',
     'OUTPUT:',
     '- Always return the required structured response. customer_message must read as professional, written consultative advice.',
+    '- When you make a recommendation, populate recommended_system_steps with the concise paint-system plan in order (surface preparation, primer/undercoat, topcoat and number of coats).',
+    '- For each item in recommended_products, give a short, specific "why" (why it suits this surface, use or finish). Recommend only products returned by the catalogue tools.',
   ].join('\n')
 }
