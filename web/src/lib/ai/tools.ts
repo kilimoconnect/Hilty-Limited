@@ -151,6 +151,7 @@ async function loadVerifiedCoverage(payload: Awaited<ReturnType<typeof getClient
 export function createToolExecutor(ctx: ToolExecutorContext = {}): ToolExecutor {
   return async (call: ToolCall): Promise<Record<string, unknown>> => {
     const a = call.arguments ?? {}
+    try {
     const payload = await getClient()
 
     switch (call.name) {
@@ -381,6 +382,14 @@ export function createToolExecutor(ctx: ToolExecutorContext = {}): ToolExecutor 
 
       default:
         return { error: 'unknown_tool', tool: call.name }
+    }
+    } catch (e) {
+      console.error('[ai tool]', call.name, e)
+      return {
+        error: 'tool_unavailable',
+        message:
+          'This data is temporarily unavailable. Continue with general professional guidance and suggest confirming details with a Hilty branch.',
+      }
     }
   }
 }
