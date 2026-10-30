@@ -89,6 +89,12 @@ export default async function HomePage() {
       body: t.studio.subtitle,
       icon: <PaletteIcon width={22} height={22} />,
     },
+    {
+      href: '/colour-match',
+      title: t.pages.colourMatch.title,
+      body: t.pages.colourMatch.subtitle,
+      icon: <SparkIcon width={22} height={22} />,
+    },
   ]
 
   return (

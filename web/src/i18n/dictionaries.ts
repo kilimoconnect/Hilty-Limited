@@ -382,6 +382,26 @@ const en = {
       requestQuote: 'Request a full quotation',
       error: 'Sorry, the estimate could not be generated. Please try again or request a quotation.',
     },
+    colourMatch: {
+      eyebrow: 'Colour match',
+      title: 'Match colours from a photo',
+      subtitle:
+        'Upload an inspiration photo and we will pull out its main colours as a palette. Our team matches them to Plascon shades with a physical sample.',
+      upload: 'Upload a photo',
+      change: 'Choose another photo',
+      extracting: 'Reading the colours…',
+      paletteTitle: 'Your palette',
+      guidanceTitle: 'How to use these colours',
+      guidance: 'Get AI guidance',
+      guidanceLoading: 'Thinking…',
+      copied: 'Copied',
+      hint: 'A clear, well-lit photo works best. JPG or PNG, up to 10 MB.',
+      disclaimer:
+        'Colours are extracted from your photo and are indicative only. Screens vary; confirm the exact Plascon shade with a physical sample before buying.',
+      sendWhatsapp: 'Send palette to Hilty',
+      tryStudio: 'Try it in the Design Studio',
+      error: 'Sorry, that image could not be processed. Please try another photo.',
+    },
   },
   calc: {
     title: 'Paint calculator',
@@ -863,6 +883,26 @@ const sw: typeof en = {
       sendWhatsapp: 'Tuma kwa Hilty kwa WhatsApp',
       requestQuote: 'Omba nukuu kamili',
       error: 'Samahani, makadirio hayakuweza kutengenezwa. Tafadhali jaribu tena au omba nukuu.',
+    },
+    colourMatch: {
+      eyebrow: 'Ulinganishaji wa rangi',
+      title: 'Linganisha rangi kutoka kwenye picha',
+      subtitle:
+        'Pakia picha ya mwongozo nasi tutatoa rangi zake kuu kama paleti. Timu yetu italinganisha na rangi za Plascon kwa sampuli halisi.',
+      upload: 'Pakia picha',
+      change: 'Chagua picha nyingine',
+      extracting: 'Inasoma rangi…',
+      paletteTitle: 'Paleti yako',
+      guidanceTitle: 'Jinsi ya kutumia rangi hizi',
+      guidance: 'Pata mwongozo wa AI',
+      guidanceLoading: 'Inafikiri…',
+      copied: 'Imenakiliwa',
+      hint: 'Picha iliyo wazi na yenye mwanga hufaa zaidi. JPG au PNG, hadi 10 MB.',
+      disclaimer:
+        'Rangi zimetolewa kwenye picha yako na ni za kukisia tu. Skrini hutofautiana; thibitisha rangi kamili ya Plascon kwa sampuli halisi kabla ya kununua.',
+      sendWhatsapp: 'Tuma paleti kwa Hilty',
+      tryStudio: 'Ijaribu kwenye Design Studio',
+      error: 'Samahani, picha hiyo haikuweza kuchakatwa. Tafadhali jaribu picha nyingine.',
     },
   },
   calc: {
