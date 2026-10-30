@@ -16,7 +16,17 @@ import sharp from 'sharp'
  */
 const postgresUrl = process.env.DATABASE_URI?.startsWith('postgres') ? process.env.DATABASE_URI : process.env.POSTGRES_URL
 const dbAdapter = postgresUrl
-  ? postgresAdapter({ pool: { connectionString: postgresUrl }, push: process.env.NODE_ENV !== 'production' })
+  ? postgresAdapter({
+      // Serverless + Supabase pooler: keep each instance to a single connection and
+      // release it quickly, so concurrent lambdas don't exhaust the pooler (EMAXCONNSESSION).
+      pool: {
+        connectionString: postgresUrl,
+        max: Number(process.env.PG_POOL_MAX) || 1,
+        idleTimeoutMillis: 10_000,
+        connectionTimeoutMillis: 10_000,
+      },
+      push: process.env.NODE_ENV !== 'production',
+    })
   : sqliteAdapter({ client: { url: process.env.DATABASE_URI || 'file:./hilty.db' } })
 
 import { Users } from './collections/Users'
