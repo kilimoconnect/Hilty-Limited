@@ -1,115 +1,433 @@
 /**
- * CSV catalogue import. Upserts products from a CSV that follows
- * import-templates/products-template.csv.
+ * One-off catalogue import from the POS export. Creates Brands + ProductCategories
+ * as needed, then products. Prices are STORED but hidden (priceVerified: true,
+ * showPricePublicly: false). Idempotent: skips a product whose (name, brand) exists.
  *
- *   npm run import:products -- ./import-templates/sample-products.csv
- *
- * Rules honoured: prices stay private unless show_price_publicly=true AND price_verified=true;
- * technical info stays unverified unless the CSV says otherwise; no data is fabricated here —
- * it only loads what the CSV provides.
+ *   NODE_ENV=production PG_KEEP_SESSION_POOLER=1 DATABASE_URI=postgres://... \
+ *   PAYLOAD_SECRET=xxx S3... npx tsx src/import-products.ts
  */
 import 'dotenv/config'
-import { readFileSync } from 'fs'
-import { parse } from 'csv-parse/sync'
 import { getPayload } from 'payload'
 import config from './payload.config'
+import { slugify } from './fields/slug'
 
-const bool = (v: string | undefined) => ['true', '1', 'yes', 'y'].includes((v ?? '').trim().toLowerCase())
-const num = (v: string | undefined) => {
-  const n = Number((v ?? '').trim())
-  return Number.isFinite(n) && v?.trim() ? n : undefined
+// name | sku | brand | sellingPriceVATIncl
+const RAW = `
+ALKALI PRIMER 20LT|UI528418|PLASCON|70000
+ANDIKA C W PROOF AD|UI528419|ANDIKA|3000
+ANDIKA W PROOF|UI528420|ANDIKA|3000
+ART BRUSH|UI528422|SUNDRIES|500
+ART BRUSH NEW|UI528423|SUNDRIES|2500
+BINDER 10LT|UI528424|PLASCON|65000
+BINDER 20LT|UI528425|PLASCON|110000
+BINDER 4LT|UI528426|MAGIC BUILDING|25000
+BINDER 4LT|UI528427|PLASCON|27000
+BINDER READY TO USE 20LT|UI528428|PLASCON|61950
+BLACK BOARD PAINT 4LT|UI528429|PLASCON|40267.5
+BRUSH 1.5inch|UI528430|TBP|2000
+BRUSH 1inch|UI528431|TBP|1500
+BRUSH 2inch|UI528432|TBP|2500
+BRUSH 3inch|UI528433|TBP|3500
+BRUSH 4inch|UI528434|TBP|5000
+BRUSH WIRE BLACK|UI528435|SUNDRIES|1250
+BRUSH WIRE SCREPER|UI528436|SUNDRIES|2187.5
+BRUSH WIRE YELLOW|UI528437|SUNDRIES|2187.5
+CORAL STONE CRETE 1.5MM-25KG|UI799616|CORAL|25000
+E PAINT CREAM 10LT|UI528455|KOPRU|17500
+E PAINT WILD LILAC 10LT|UI528456|PLASCON|20000
+E PAINTS 10LT|UI528457|PLASCON|20000
+E PAINTS 20LT|UI528458|PLASCON|30000
+E PAINTS 4LT|UI528459|PLASCON|12000
+E PAINTS A GREY 20LT|UI528460|PLASCON|30000
+E PAINTS ASCOT GREY 10LT|UI528461|PLASCON|20000
+E PAINTS ASCOT GREY 4LT|UI528462|PLASCON|10625.31
+E PAINTS BROKEN WHITE 10LT|UI528463|PLASCON|23747.5
+E PAINTS BROKEN WHITE 20LT|UI528464|PLASCON|30000
+E PAINTS BROKEN WHITE 4LT|UI528465|PLASCON|10625.31
+E PAINTS CREAM 10LT|UI528466|PLASCON|23747.5
+E PAINTS CREAM 20LT|UI528467|KOPRU|28000
+E PAINTS CREAM 20LT|UI528468|PLASCON|30000
+E PAINTS CREAM 4LT|UI528469|PLASCON|10000
+E PAINTS RIPPLE GREEN 4LT|UI528470|PLASCON|10000
+E PAINTS RIPPLE GREEN 10LT|UI528471|PLASCON|20000
+E PAINTS RIPPLE GREEN 20LT|UI528472|PLASCON|30000
+E PAINTS SOFT WHITE 20LT|UI528473|PLASCON|32501.25
+E PAINTS STRAWBERRY 10LT|UI528474|PLASCON|20000
+E PAINTS STRAWBERRY 4LT|UI528475|PLASCON|10000
+E PAINTS STROWBERRY 20LT|UI528476|PLASCON|30000
+E PAINTS SUMMER BLUE 10LT|UI528477|PLASCON|20000
+E PAINTS SUMMER BLUE 20LT|UI528478|PLASCON|30000
+E PAINTS SUMMER BLUE 4LT|UI528479|PLASCON|10000
+E PAINTS WHITE 10LT|UI528480|PLASCON|20000
+E PAINTS WILD LILAC 10LT|UI528481|PLASCON|20000
+E PAINTS WILD LILAC 20LT|UI528482|PLASCON|30000
+F TAPE 45|UI528488|SUNDRIES|3000
+F TAPE 90|UI528489|SUNDRIES|6000
+G SCREW|UI528490|ANDIKA|12000
+G SCREW 1.5inch|UI528491|ANDIKA|10000
+GLITTER GOLD|UI528492|ANDIKA|8000
+GLITTER SILVER|UI528493|ANDIKA|8000
+GROUGHT GREY|UI528494|ORCHEM|3000
+GROUGHT S.GREY|UI528495|ORCHEM|3000
+GROUGHT WHITE|UI528496|ORCHEM|3000
+H SUPER GLOSS BASE E 4LT|UI528497|PLASCON|45000
+HI COVER WHITE 18LT PLS|UI528498|PLASCON|32000
+HI GROSS TINNER 1LT|UI528499|MAMBA|8000
+HI GROSS TINNER 5LT|UI528500|MAMBA|32000
+KAMBA|UI528505|SUNDRIES|4500
+M TAPE 1 inch|UI528510|SUNDRIES|3000
+M TAPE 2 inch|UI528511|SUNDRIES|5000
+M TAPE SMALL|UI528512|SUNDRIES|1500
+MATT FINISH BLACK 4LT|UI528517|PLASCON|51625
+MONTANIA 25KG|UI528520|MONTANIA|38000
+MSASA 100|UI528521|SUNDRIES|2000
+MSASA 120|UI528522|SUNDRIES|2000
+MSASA 150|UI528523|SUNDRIES|2000
+MSASA 180|UI528524|SUNDRIES|2000
+MSASA 40|UI528525|SUNDRIES|2000
+MSASA 60|UI528526|SUNDRIES|1250
+MSASA 80|UI528527|SUNDRIES|2000
+MSASA MAJI|UI528528|SUNDRIES|375
+O PAINT A GREY 0.5LT|UI528530|PLASCON|4793.75
+O PAINT A GREY 1LT|UI528531|PLASCON|8149.38
+O PAINT A GREY 4LT|UI528532|PLASCON|26000
+O PAINT A GREY 4LT|UI528533|SADOLINE|26562.5
+O PAINT ALLUMINIUM SILVER 4LT|UI528534|PLASCON|47495
+O PAINT BLACK 0.5LT|UI528535|PLASCON|4793.75
+O PAINT BLACK 0.5 LT|UI528536|CORAL|6000
+O PAINT BLACK 1LT|UI528537|PLASCON|10000
+O PAINT BLACK 4LT|UI528538|PLASCON|26000
+O PAINT BROWN 0.5 LT|UI528539|CORAL|5000
+O PAINT BROWN 4LT|UI528540|PLASCON|26000
+O PAINT BURLEY BROWN 0.5LT|UI528541|PLASCON|4793.75
+O PAINT BURLEY BROWN 1LT|UI528542|PLASCON|8149.38
+O PAINT CHARCOAL GREY 0.5LT|UI528543|PLASCON|4793.75
+O PAINT CHARCOAL GREY 1LT|UI528544|PLASCON|8149.38
+O PAINT CHARCOAL GREY 4LT|UI528545|PLASCON|27877.5
+O PAINT CREAM 4LT|UI528546|PLASCON|25000
+O PAINT D BLUE 4LT|UI528547|PLASCON|31250
+O PAINT DARK GREY 4LT|UI528548|PLASCON|27877.5
+O PAINT G YELLOW 4LT|UI528549|PLASCON|26000
+O PAINT L GREY 4LT|UI528550|PLASCON|26000
+O PAINT L GREY 4LT|UI528551|SADOLINE|26562.5
+O PAINT MAST PINK 4LT|UI528552|PLASCON|26000
+O PAINT POST RED 0.5LT|UI528553|PLASCON|4793.75
+O PAINT POST RED 1LT|UI528554|PLASCON|8149.38
+O PAINT RIPPLE GREEN 4LT|UI528555|PLASCON|25000
+O PAINT S GREY 4LT|UI528556|PLASCON|25000
+O PAINT SERVICE GREY 4LT|UI528557|PLASCON|27877.5
+O PAINT TOBACCO 4LT|UI528558|PLASCON|26000
+O PAINT WHITE 0.5LT|UI528559|PLASCON|4793.75
+O PAINT WHITE 0.5 LT|UI528560|CORAL|5000
+O PAINT WHITE 1LT|UI528561|CORAL|8000
+O PAINT WHITE 1LT|UI528562|PLASCON|8149.38
+O PAINT WHITE 4LT|UI528563|PLASCON|26000
+PASS UJENZI ACCA|UI528564|SUNDRIES|8000
+PASS UJENZI GARAM|UI528565|SUNDRIES|6000
+PASS UJENZI MBAO|UI528566|SUNDRIES|5000
+PASS UJENZI PVC|UI528567|SUNDRIES|6000
+R BRUSH 9|UI528568|ROBISON|4000
+R BRUSH 9 TZ|UI528569|TBP|7000
+R BRUSH 2inch|UI528570|TBP|2000
+R BRUSH 4inch|UI528571|SUNDRIES|2000
+R BRUSH CHUMA|UI528572|SUNDRIES|3000
+R BRUSH CHUMA 9|UI528573|SUNDRIES|3000
+R BRUSH PVC|UI528574|SUNDRIES|3385.92
+RED OXIDE 1LT|UI528575|PLASCON|10000
+RED OXIDE PRIMER 0.5LT|UI528576|PLASCON|4852.75
+RED OXIDE PRIMER 4LT|UI528577|PLASCON|29632.75
+REFLECTOR GREEN|UI528578|SUNDRIES|5000
+ROAD MARKING 4LT|UI528579|PLASCON|55000
+ROOF (PVA) CHARCOAL GREY 20LT|UI528580|PLASCON|185850
+ROOF (PVA) PAINT BASE E 10LT|UI528581|PLASCON|65000
+ROOF (PVA) PAINT BASE E 20LT|UI528582|PLASCON|175000
+ROOF (PVA) PAINT BASE E 4LT|UI528583|PLASCON|65000
+ROOF (PVA) PAINT BASE W2 10LT|UI528584|PLASCON|80000
+ROOF (PVA) PAINT BASE W2 20LT|UI528585|PLASCON|175000
+ROOF (PVA) PAINT BASE W2 4LT|UI528586|PLASCON|65000
+ROOF (PVA) PAINT BASE WO 10LT|UI528587|PLASCON|85000
+ROOF (PVA) PAINT BASE WO 20LT|UI528588|PLASCON|170000
+ROOF (PVA) PAINT BASE WO 4LT|UI528589|PLASCON|35000
+ROOF (PVA) PAINT BLACK 10LT|UI528590|PLASCON|100152.5
+ROOF (PVA) PAINT BLACK 20LT|UI528591|CORAL|165000
+ROOF (PVA) PAINT BLACK 20LT|UI528592|PLASCON|185850
+ROOF (PVA) PAINT BLUE 10LT|UI528593|CORAL|130000
+ROOF (PVA) PAINT CHARCOAL GREY 4LT|UI528594|PLASCON|42000
+ROOF (PVA) PAINT DUTCH BLUE 20LT|UI528595|PLASCON|175525
+ROOF (PVA) PAINT GREEN 10LT|UI528596|PLASCON|88795
+ROOF (PVA) PAINT GREEN 20LT|UI528597|PLASCON|175525
+ROOF (PVA) PAINT GREEN 4LT|UI528598|CORAL|35000
+ROOF (PVA) PAINT RED 10LT|UI528599|PLASCON|88795
+ROOF (PVA) PAINT RED 20LT|UI528600|PLASCON|175000
+ROOF (PVA) PAINT CHARCOAL GREY 10LT|UI528601|PLASCON|100152.5
+ROOF (PVA) PAINT RED 4LT|UI528602|PLASCON|36137.5
+ROOF (PVA) PAINT BLACK 4LT|UI528603|PLASCON|41300
+ROOF (PVA) PAINT GREEN 4LT|UI528604|PLASCON|36137.5
+SANDING SEALER 1LT|UI528610|PLASCON|14750
+SANDING SEALER 4LT|UI528611|PLASCON|53100
+SCREPER 2inch|UI528612|SUNDRIES|2500
+SCREPER 3inch|UI528613|SUNDRIES|2500
+SCREPER 4inch|UI528614|SUNDRIES|2500
+SENDING SEALER 1LT|UI528615|GOLDSTAR|15000
+SIKAGARD 90W 5LT|UI528616|SIKAPEX|116250
+SIKALITE 1KG|UI528617|SIKAPEX|7500
+SILICONE|UI528618|SUNDRIES|4166.68
+SILK 10LT|UI528619|PLASCON|90000
+SILK 4LT|UI528620|PLASCON|40000
+SILK ASCOT GREY 4LT|UI528621|PLASCON|46462.5
+SILK BASE E 10LT|UI528622|PLASCON|88500
+SILK BASE E 1LT|UI528623|PLASCON|18000
+SILK BASE E 20LT|UI528624|PLASCON|171100
+SILK BASE E 4LT|UI528625|PLASCON|36137.5
+SILK BASE W2 10LT|UI528626|PLASCON|92925
+SILK BASE W2 1LT|UI528627|PLASCON|13662.19
+SILK BASE W2 20LT|UI528628|PLASCON|179950
+SILK BASE W2 4LT|UI528629|PLASCON|35000
+SILK BASE WO 10LT|UI528630|PLASCON|90000
+SILK BASE WO 1LT|UI528631|PLASCON|14012.5
+SILK BASE WO 20LT|UI528632|PLASCON|170000
+SILK BASE WO 4LT|UI528633|PLASCON|38000
+SILK BROKEN WHITE 4LT|UI528634|PLASCON|40000
+SILK CREAM 4LT|UI528635|PLASCON|46462.5
+SILK RIPPLE GREEN 4LT|UI528636|PLASCON|46462.5
+SILK STRAWBERRY 4LT|UI528637|PLASCON|40000
+SILK SUMMER BLUE 4LT|UI528638|PLASCON|46462.5
+SILK WHITE 10LT|UI528639|PLASCON|83558.75
+SILK WHITE 20LT|UI528640|PLASCON|162250
+SILK WHITE 4LT|UI528641|PLASCON|36506.25
+SMART DECORATIVE PLASTER 25KG|UI167271|SMART|25000
+SOFT BROOM|UI528642|TBP|3500
+SOLE TAPE|UI528643|SUNDRIES|4000
+SOLVENT 1LT|UI528644|MAMBA|6000
+SOLVENT 5LT|UI528645|MAMBA|25000
+SPATULA JUKO 10 inch|UI528646|SUNDRIES|2500
+SPATULA JUKO 8 inch|UI528647|SUNDRIES|2500
+SPRAY PAINT 400ml|UI528648|SUNDRIES|3500
+STANDARD TINNER 1LT|UI528649|MAMBA|5000
+STANDARD TINNER 5LT|UI528650|MAMBA|22000
+SUPER GLOSS BASE E 4LT|UI528652|PLASCON|40000
+SUPER GLOSS BASE W2 4LT|UI528653|PLASCON|40000
+SUPER GLOSS BASE W3 4LT|UI528654|PLASCON|45000
+SUPER GLOSS BASE WO 4LT|UI528655|PLASCON|38350
+TINNER 1LT|UI528677|MAMBA|8000
+TONER PB|UI528678|PLASCON|38000
+TONER PC|UI528679|PLASCON|38000
+TONER PD|UI528680|PLASCON|46462.5
+TONER PE|UI528681|PLASCON|38000
+TONER PF|UI528682|PLASCON|48675
+TONER PG|UI528683|PLASCON|106052.5
+TONER PH|UI528684|PLASCON|113575
+TONER PI|UI528685|PLASCON|85000
+TONER PJ|UI528686|PLASCON|42000
+TONER PK|UI528687|PLASCON|48000
+TONER PL|UI528688|PLASCON|33925
+TONER PP|UI528689|PLASCON|183047.5
+TONER PQ|UI528690|PLASCON|182015
+TONER PR|UI528691|PLASCON|87910
+TONER PU|UI528692|PLASCON|130685
+TONER PV|UI528693|PLASCON|111067.5
+TRADE WALL 20LT|UI528695|PLASCON|145000
+VARNISH CLEAR 4LT|UI528698|PLASCON|40000
+VARNISH LIGHT OAK 0.5LT|UI528699|PLASCON|7021
+VARNISH LIGHT OAK 1LT|UI528700|PLASCON|12390
+WALL COVER BASE E 20LT|UI528701|PLASCON|140000
+WALL COVER BASE WO 10LT|UI528702|PLASCON|70062.5
+WALL COVER BASE WO 20LT|UI528703|PLASCON|145000
+WALLPUTTY 20KG PLASCON|UI528704|PLASCON|21000
+WALLPUTTY 25KG|UI528391|MAGIC BUILDING|21000
+WEATHER GUARD 10LT|UI528705|PLASCON|80000
+WEATHER GUARD 20LT|UI528706|PLASCON|155000
+WEATHER GUARD ASCOT GREY 20LT|UI528707|PLASCON|155000
+WEATHER GUARD ASCOT GREY 4LT|UI528708|PLASCON|38000
+WEATHER GUARD BASE E 10LT|UI528709|PLASCON|87000
+WEATHER GUARD BASE E 1LT|UI528710|PLASCON|11910.63
+WEATHER GUARD BASE E 20LT|UI528711|PLASCON|180000
+WEATHER GUARD BASE E 4LT|UI528712|PLASCON|40000
+WEATHER GUARD BASE W2 10LT|UI528713|PLASCON|85550
+WEATHER GUARD BASE W2 1LT|UI528714|PLASCON|12260.94
+WEATHER GUARD BASE W2 20LT|UI528715|PLASCON|175000
+WEATHER GUARD BASE W2 4LT|UI528716|PLASCON|37000
+WEATHER GUARD BASE WO 10LT|UI528717|PLASCON|88000
+WEATHER GUARD BASE WO 1LT|UI528718|PLASCON|12611.25
+WEATHER GUARD BASE WO 20LT|UI528719|PLASCON|177000
+WEATHER GUARD BASE WO 4LT|UI528720|PLASCON|36875
+WEATHER GUARD BLACK 10LT|UI528721|PLASCON|80000
+WEATHER GUARD BROKEN WHITE 4LT|UI528722|PLASCON|41300
+WEATHER GUARD CINNAMON 20LT|UI528723|PLASCON|155000
+WEATHER GUARD CREAM 4LT|UI528724|PLASCON|38000
+WEATHER GUARD RIPPLE GREEN 4LT|UI528725|PLASCON|38000
+WEATHER GUARD SANDSTONE 20LT|UI528726|PLASCON|155000
+WEATHER GUARD STRAWBERRY 4LT|UI528727|PLASCON|41300
+WEATHER GUARD WHITE 10LT|UI528728|PLASCON|78691.25
+WEATHER GUARD WHITE 20LT|UI528729|PLASCON|146025
+WEATHER GUARD WHITE 4LT|UI528730|PLASCON|32450
+WEATHER GUARD SUMMER BLUE 4LT|UI528731|PLASCON|41300
+WHITE CEMENT|UI528732|CIMSA|38000
+WONING TAPE|UI528733|SUNDRIES|10000
+`
+
+type Row = { name: string; sku: string; brand: string; price: number }
+
+const CATEGORIES: { key: string; name: string }[] = [
+  { key: 'interior_paint', name: 'Interior paint' },
+  { key: 'exterior_paint', name: 'Exterior paint' },
+  { key: 'roof_paint', name: 'Roof paint' },
+  { key: 'primer_undercoat', name: 'Primer & undercoat' },
+  { key: 'wood_metal_coatings', name: 'Wood & metal coatings' },
+  { key: 'wall_preparation', name: 'Wall preparation' },
+  { key: 'thinners_solvents', name: 'Thinners & solvents' },
+  { key: 'brushes_rollers_tools', name: 'Brushes, rollers & tools' },
+  { key: 'waterproofing_protective', name: 'Waterproofing & protective coatings' },
+]
+
+function categoryKeyFor(name: string, brand: string): string {
+  const n = name.toUpperCase()
+  if (/\bROOF\b/.test(n)) return 'roof_paint'
+  if (/WEATHER\s*GU?RA?D|WEATHERGUARD|WALL COVER|TRADE WALL|HI COVER/.test(n)) return 'exterior_paint'
+  if (/SIKAGARD|SIKALITE|W PROOF|WPROOF|WATERPROOF|SILICONE/.test(n)) return 'waterproofing_protective'
+  if (/ALKALI|PRIMER|BINDER|SEALER|RED OXIDE/.test(n)) return 'primer_undercoat'
+  if (/VARNISH|O PAINT|SUPER GLOSS|GLOSS|MATT FINISH|ROAD MARKING/.test(n)) return 'wood_metal_coatings'
+  if (/SILK|E PAINT|BLACK BOARD|TONER/.test(n)) return 'interior_paint'
+  if (/TINNER|THINNER|SOLVENT/.test(n)) return 'thinners_solvents'
+  if (/PUTTY|CEMENT|PLASTER|GROUGHT|GROUT|MONTANIA|CORAL STONE|CRETE|DECORATIVE/.test(n)) return 'wall_preparation'
+  if (/BRUSH|ROLLER|SPATULA|SCREPER|SCRAPER|MSASA|TAPE|BROOM|KAMBA|SPRAY PAINT|REFLECTOR|GLITTER|G SCREW|PASS UJENZI|WONING|SOLE/.test(n))
+    return 'brushes_rollers_tools'
+  return brand === 'SUNDRIES' ? 'brushes_rollers_tools' : 'interior_paint'
 }
-const list = (v: string | undefined, sep = ';') =>
-  (v ?? '')
-    .split(sep)
-    .map((s) => s.trim())
-    .filter(Boolean)
 
-async function run() {
-  const file = process.argv[2]
-  if (!file) {
-    console.error('Usage: npm run import:products -- <path-to-csv>')
-    process.exit(1)
+function useTypesFor(catKey: string): string[] {
+  switch (catKey) {
+    case 'roof_paint':
+      return ['roof']
+    case 'exterior_paint':
+      return ['exterior']
+    case 'interior_paint':
+      return ['interior']
+    case 'wood_metal_coatings':
+      return ['wood', 'metal']
+    default:
+      return []
   }
-  const rows = parse(readFileSync(file), { columns: true, skip_empty_lines: true, trim: true }) as Record<string, string>[]
+}
+
+function finishFor(name: string, catKey: string): string | undefined {
+  const n = name.toUpperCase()
+  if (/GLOSS/.test(n)) return 'gloss'
+  if (/MATT/.test(n)) return 'matt'
+  if (/SILK/.test(n)) return 'silk'
+  if (/SATIN/.test(n)) return 'satin'
+  if (/VARNISH/.test(n)) return 'gloss'
+  if (catKey === 'interior_paint' && /E PAINT|EMULSION/.test(n)) return 'matt'
+  if (catKey === 'roof_paint' || catKey === 'exterior_paint') return 'matt'
+  return undefined
+}
+
+function litresFor(name: string): number | undefined {
+  const lt = /(\d+(?:\.\d+)?)\s*LT\b/i.exec(name)
+  if (lt) return Number(lt[1])
+  const ml = /(\d+)\s*ml\b/i.exec(name)
+  if (ml) return Number(ml[1]) / 1000
+  return undefined
+}
+
+const run = async () => {
   const payload = await getPayload({ config })
-  let created = 0
-  let updated = 0
-  let skipped = 0
 
-  for (const row of rows) {
-    const name = row.name?.trim()
-    if (!name) {
-      skipped++
-      continue
-    }
+  const rows: Row[] = RAW.trim()
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => {
+      const [name, sku, brand, price] = l.split('|')
+      return { name: name.trim(), sku: sku.trim(), brand: brand.trim(), price: Number(price) }
+    })
 
-    // Category (must exist — seeded taxonomy)
-    const catKey = row.category_key?.trim()
-    const catRes = await payload.find({ collection: 'product-categories', where: { key: { equals: catKey } }, limit: 1 })
-    const category = catRes.docs[0]
-    if (!category) {
-      console.warn(`  ! skip "${name}": unknown category_key "${catKey}"`)
-      skipped++
-      continue
-    }
+  // Disambiguate duplicate display names (same name, different brand) so slugs are unique.
+  const nameCounts = new Map<string, number>()
+  for (const r of rows) nameCounts.set(r.name, (nameCounts.get(r.name) ?? 0) + 1)
 
-    // Brand (create if missing)
-    let brandId: number | undefined
-    const brandName = row.brand?.trim()
-    if (brandName) {
-      const b = await payload.find({ collection: 'brands', where: { name: { equals: brandName } }, limit: 1 })
-      brandId = b.docs[0]?.id ?? (await payload.create({ collection: 'brands', data: { name: brandName } })).id
-    }
-
-    const data: Record<string, unknown> = {
-      name,
-      category: category.id,
-      brand: brandId,
-      useTypes: list(row.use_types, '|'),
-      finish: row.finish?.trim() || undefined,
-      surfaceCompatibility: list(row.surface_compatibility).map((surface) => ({ surface })),
-      colourAvailability: row.colour_availability || undefined,
-      coveragePerLitre: num(row.coverage_per_litre),
-      recommendedCoats: num(row.recommended_coats),
-      recommendedPrimer: row.recommended_primer || undefined,
-      recommendedUndercoat: row.recommended_undercoat || undefined,
-      recommendedTopcoat: row.recommended_topcoat || undefined,
-      dryingTime: { touchDry: row.drying_touch_dry || undefined, recoat: row.drying_recoat || undefined },
-      packSizes: list(row.pack_sizes_litres).map((l) => ({ litres: Number(l) })).filter((p) => Number.isFinite(p.litres)),
-      tdsUrl: row.tds_url || undefined,
-      technicalSource: row.technical_source || undefined,
-      featured: bool(row.featured),
-      popular: bool(row.popular),
-      active: row.active === undefined ? true : bool(row.active),
-      quotationEligible: row.quotation_eligible === undefined ? true : bool(row.quotation_eligible),
-      pricing: {
-        price: num(row.price),
-        currency: row.currency?.trim() || 'TZS',
-        priceVerified: bool(row.price_verified),
-        // Never public unless BOTH verified and explicitly enabled.
-        showPricePublicly: bool(row.show_price_publicly) && bool(row.price_verified),
-      },
-      verification: { status: row.verification_status?.trim() || 'unverified' },
-    }
-
-    const existing = await payload.find({ collection: 'products', where: { name: { equals: name } }, limit: 1 })
-    if (existing.docs[0]) {
-      await payload.update({ collection: 'products', id: existing.docs[0].id, data: data as never })
-      updated++
-      console.log(`  ~ updated: ${name}`)
-    } else {
-      await payload.create({ collection: 'products', data: data as never })
-      created++
-      console.log(`  + created: ${name}`)
+  // 1) Categories — match existing by key, else create
+  const catId = new Map<string, number>()
+  const allCats = await payload.find({ collection: 'product-categories', limit: 200, overrideAccess: true })
+  const catByKey = new Map<string, number>()
+  for (const c of allCats.docs) if (c.key) catByKey.set(String(c.key), c.id as number)
+  for (const c of CATEGORIES) {
+    if (catByKey.has(c.key)) catId.set(c.key, catByKey.get(c.key)!)
+    else {
+      const created = await payload.create({ collection: 'product-categories', data: { name: c.name, key: c.key, active: true } as never, overrideAccess: true })
+      catId.set(c.key, (created as { id: number }).id)
     }
   }
 
-  console.log(`\nImport complete — created ${created}, updated ${updated}, skipped ${skipped}.`)
-  process.exit(0)
+  // 2) Brands — match existing case-insensitively (by slug), else create
+  const brandId = new Map<string, number>()
+  const allBrands = await payload.find({ collection: 'brands', limit: 500, overrideAccess: true })
+  const brandBySlug = new Map<string, number>()
+  for (const b of allBrands.docs) brandBySlug.set(slugify(String(b.name ?? '')), b.id as number)
+  for (const b of [...new Set(rows.map((r) => r.brand))]) {
+    const s = slugify(b)
+    if (brandBySlug.has(s)) brandId.set(b, brandBySlug.get(s)!)
+    else {
+      const created = await payload.create({ collection: 'brands', data: { name: b } as never, overrideAccess: true })
+      const id = (created as { id: number }).id
+      brandId.set(b, id)
+      brandBySlug.set(s, id)
+    }
+  }
+  payload.logger.info(`Categories: ${catId.size}, Brands: ${brandId.size}`)
+
+  // 3) Existing products (dedupe by displayName|brandId)
+  const existing = new Set<string>()
+  const all = await payload.find({ collection: 'products', limit: 1000, depth: 0, overrideAccess: true })
+  for (const p of all.docs) {
+    const bId = typeof p.brand === 'object' && p.brand ? (p.brand as { id: number }).id : (p.brand as number | null)
+    existing.add(`${p.name}|${bId ?? ''}`)
+  }
+
+  let created = 0
+  let skipped = 0
+  const errors: string[] = []
+  for (const r of rows) {
+    const bId = brandId.get(r.brand)!
+    const displayName = (nameCounts.get(r.name) ?? 0) > 1 ? `${r.name} (${r.brand})` : r.name
+    if (existing.has(`${displayName}|${bId}`)) {
+      skipped++
+      continue
+    }
+    const key = categoryKeyFor(r.name, r.brand)
+    const litres = litresFor(r.name)
+    const finish = finishFor(r.name, key)
+    try {
+      await payload.create({
+        collection: 'products',
+        data: {
+          name: displayName,
+          brand: bId,
+          category: catId.get(key)!,
+          useTypes: useTypesFor(key),
+          ...(finish ? { finish } : {}),
+          packSizes: [litres != null ? { litres, sku: r.sku } : { sku: r.sku }],
+          pricing: { price: r.price, currency: 'TZS', priceVerified: true, showPricePublicly: false },
+          active: true,
+          quotationEligible: true,
+          verification: { status: 'verified' },
+        } as never,
+        overrideAccess: true,
+      })
+      created++
+    } catch (e) {
+      errors.push(`${displayName}: ${e instanceof Error ? e.message : String(e)}`)
+    }
+  }
+
+  payload.logger.info(`✓ Import complete — created ${created}, skipped ${skipped}, errors ${errors.length}`)
+  errors.slice(0, 10).forEach((e) => payload.logger.error(e))
+  const total = await payload.count({ collection: 'products', overrideAccess: true })
+  payload.logger.info(`Products in catalogue: ${total.totalDocs}`)
+  process.exit(errors.length ? 1 : 0)
 }
 
-run().catch((err) => {
-  console.error(err)
+run().catch((e) => {
+  console.error('Import failed:', e)
   process.exit(1)
 })
