@@ -94,6 +94,8 @@ export async function quotationAction(_prev: FormState, fd: FormData): Promise<F
         projectType: str(fd, 'projectType'),
         interiorExterior: (str(fd, 'interiorExterior') as 'interior' | 'exterior' | undefined) ?? undefined,
         budget: str(fd, 'budget'),
+        description: str(fd, 'description'),
+        area: num('estimatedArea'),
         branchId: num('branchId'),
         rooms,
         topcoatProductId: num('topcoatProductId'),

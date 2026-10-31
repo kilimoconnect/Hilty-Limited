@@ -221,6 +221,14 @@ const en = {
     successGeneric: 'Thank you — we have received your request and our team will be in touch.',
     successRef: 'Your reference is',
     requiredNote: 'Fields marked * are required.',
+    projectType: 'Project type',
+    projectTypeHint: 'e.g. new house, repaint, office, roof',
+    interiorExterior: 'Interior or exterior',
+    either: 'Either / not sure',
+    budget: 'Budget (optional)',
+    quoteLead:
+      'Tell us about your project and our team will prepare a quotation. Attach a BOQ or photos if you have them. For a quick material estimate first, use the paint calculator.',
+    quoteSubmit: 'Request quotation',
   },
   pages: {
     services: {
@@ -723,6 +731,14 @@ const sw: typeof en = {
     successGeneric: 'Asante — tumepokea ombi lako na timu yetu itawasiliana nawe.',
     successRef: 'Kumbukumbu yako ni',
     requiredNote: 'Sehemu zenye alama ya * zinahitajika.',
+    projectType: 'Aina ya mradi',
+    projectTypeHint: 'mf. nyumba mpya, kupaka upya, ofisi, paa',
+    interiorExterior: 'Ndani au nje',
+    either: 'Yoyote / sina uhakika',
+    budget: 'Bajeti (hiari)',
+    quoteLead:
+      'Tueleze kuhusu mradi wako na timu yetu itaandaa nukuu. Ambatanisha BOQ au picha ukiwa nazo. Kwa makadirio ya haraka ya vifaa kwanza, tumia kikokotoo cha rangi.',
+    quoteSubmit: 'Omba nukuu',
   },
   pages: {
     services: {

@@ -13,7 +13,9 @@ export type QuotationInput = {
   interiorExterior?: 'interior' | 'exterior'
   budget?: string
   branchId?: number
-  rooms: RoomInput[]
+  rooms?: RoomInput[]
+  description?: string
+  area?: number
   topcoatProductId?: number
   topcoatCoats?: number
   includePrimer?: boolean
@@ -58,20 +60,24 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
   if (input.honeypot && input.honeypot.trim() !== '') return { ok: false, error: 'Submission blocked.' }
   if (!input.customerName?.trim() || !input.phone?.trim()) return { ok: false, error: 'Name and phone are required.' }
   if (!input.consent) return { ok: false, error: 'Please accept the consent to be contacted.' }
-  if (!input.rooms?.length) return { ok: false, error: 'Add at least one room.' }
 
   const payload = await getClient()
 
-  // Recompute authoritatively (never trust client numbers).
-  const components: ComponentInput[] = []
-  const topcoat = await buildComponent(payload, 'topcoat', 'Topcoat', input.topcoatProductId, input.topcoatCoats ?? 2, 'both')
-  if (topcoat) components.push(topcoat)
-  if (input.includePrimer) {
-    const primer = await buildComponent(payload, 'primer', 'Primer / undercoat', input.primerProductId, input.primerCoats ?? 1, 'both')
-    if (primer) components.push(primer)
+  // Calculator is OPTIONAL — only runs when room measurements are provided.
+  // A general quotation request (just a project description / BOQ) is valid too.
+  const rooms = input.rooms ?? []
+  let calc: ReturnType<typeof calculate> | null = null
+  if (rooms.length) {
+    const components: ComponentInput[] = []
+    const topcoat = await buildComponent(payload, 'topcoat', 'Topcoat', input.topcoatProductId, input.topcoatCoats ?? 2, 'both')
+    if (topcoat) components.push(topcoat)
+    if (input.includePrimer) {
+      const primer = await buildComponent(payload, 'primer', 'Primer / undercoat', input.primerProductId, input.primerCoats ?? 1, 'both')
+      if (primer) components.push(primer)
+    }
+    calc = calculate(rooms, components, { wastePct: input.wastePct })
+    if (calc.issues.length) return { ok: false, error: calc.issues[0].message }
   }
-  const calc = calculate(input.rooms, components, { wastePct: input.wastePct })
-  if (calc.issues.length) return { ok: false, error: calc.issues[0].message }
 
   // Uploads (BOQ / images / documents)
   let boqFiles: { file: number }[] = []
@@ -84,7 +90,7 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
     }
   }
 
-  const totalArea = Math.round((calc.totals.wallArea + calc.totals.ceilingArea) * 100) / 100
+  const totalArea = calc ? Math.round((calc.totals.wallArea + calc.totals.ceilingArea) * 100) / 100 : null
   const productsInterested = [input.topcoatProductId, input.includePrimer ? input.primerProductId : undefined].filter(
     (v): v is number => typeof v === 'number',
   )
@@ -99,9 +105,10 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
       email: input.email,
       projectType: input.projectType,
       interiorExterior: input.interiorExterior,
-      area: totalArea,
+      area: totalArea ?? input.area ?? undefined,
       budget: input.budget,
-      calculation: calc as unknown as Record<string, unknown>,
+      description: input.description,
+      calculation: (calc ?? undefined) as unknown as Record<string, unknown>,
       boqFiles,
       productsInterested,
       preferredBranch: input.branchId,
@@ -123,7 +130,7 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
         email: input.email,
         source: 'quotation',
         interest: input.projectType || 'Paint quotation',
-        message: `Quotation ${ref ?? ''} — approx ${totalArea} m². See quotation request for the full calculation.`,
+        message: `Quotation ${ref ?? ''}${totalArea != null ? ` — approx ${totalArea} m²` : ''}${input.description ? ` — ${input.description.slice(0, 200)}` : ''}`,
         branch: input.branchId,
         consent,
         retention,
@@ -133,12 +140,17 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
     .catch((e) => payload.logger.error(`[quotation] lead create failed: ${e}`))
 
   // Notify staff
-  const summary = calc.components.map((c) => `${c.label}: ${c.litres == null ? 'coverage not verified' : c.litres + ' L'}`)
+  const summary = calc ? calc.components.map((c) => `${c.label}: ${c.litres == null ? 'coverage not verified' : c.litres + ' L'}`) : []
   const notified = await notifyStaff(payload, `New quotation request ${ref ?? ''}`, [
     `Customer: ${input.customerName}`,
     `Phone: ${input.phone}`,
     input.email ? `Email: ${input.email}` : '',
-    `Area: ${totalArea} m²`,
+    input.location ? `Location: ${input.location}` : '',
+    input.projectType ? `Project type: ${input.projectType}` : '',
+    input.interiorExterior ? `Interior/Exterior: ${input.interiorExterior}` : '',
+    input.budget ? `Budget: ${input.budget}` : '',
+    (totalArea ?? input.area) != null ? `Area: ${totalArea ?? input.area} m²` : '',
+    input.description ? `Details: ${input.description}` : '',
     ...summary,
     boqFiles.length ? `Documents: ${boqFiles.length}` : '',
     'NOTE: figures are estimates requiring site verification.',
@@ -154,7 +166,7 @@ export async function submitQuotation(input: QuotationInput, files: UploadInput[
           `Hi ${input.customerName},`,
           '',
           `Thank you for your quotation request. Your reference is ${ref ?? ''}.`,
-          `Estimated area: ${totalArea} m².`,
+          totalArea != null ? `Estimated area: ${totalArea} m².` : '',
           ...summary,
           '',
           'These figures are estimates and require confirmation after a site inspection.',

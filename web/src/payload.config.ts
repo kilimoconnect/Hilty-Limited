@@ -7,6 +7,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 
 /**
@@ -69,7 +70,26 @@ import { AiLeadSummaries } from './collections/AiLeadSummaries'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
+// Email: real SMTP delivery when configured (staff notifications + customer
+// confirmations go to/from info@hilty.co.tz). Without SMTP env, Payload logs to console.
+const emailAdapter = process.env.SMTP_HOST
+  ? nodemailerAdapter({
+      defaultFromAddress: process.env.EMAIL_FROM || 'info@hilty.co.tz',
+      defaultFromName: process.env.EMAIL_FROM_NAME || 'Hilty',
+      transportOptions: {
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_SECURE === 'true' || Number(process.env.SMTP_PORT) === 465,
+        auth:
+          process.env.SMTP_USER && process.env.SMTP_PASS
+            ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+            : undefined,
+      },
+    })
+  : undefined
+
 export default buildConfig({
+  email: emailAdapter,
   admin: {
     user: Users.slug,
     meta: {
