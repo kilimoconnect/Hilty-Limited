@@ -5,7 +5,6 @@ import {
   getActiveBranches,
   getActiveServices,
   getCategories,
-  getCompletedProjects,
   getFeaturedProducts,
 } from '../../lib/payload'
 import { SITE } from '../../lib/site'
@@ -49,12 +48,11 @@ export default async function HomePage() {
   const locale = await getLocale()
   const t = getDictionary(locale)
 
-  const [categories, featured, services, branches, projects] = await Promise.all([
+  const [categories, featured, services, branches] = await Promise.all([
     getCategories(),
     getFeaturedProducts(),
     getActiveServices(3),
     getActiveBranches(),
-    getCompletedProjects(),
   ])
 
   const trust = [
@@ -455,45 +453,8 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* ─── 8. COMPLETED PROJECTS ───────────────────────────────────────── */}
+      {/* ─── 8. BRANCHES ─────────────────────────────────────────────────── */}
       <Section tone="alt">
-        <SectionHeading eyebrow={t.home.projectsEyebrow} title={t.projects.title} subtitle={t.projects.subtitle} />
-        {projects.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((pr) => {
-              const cover = mediaUrl(Array.isArray(pr.images) && pr.images[0] ? pr.images[0].image : null)
-              return (
-                <li key={pr.id} className="overflow-hidden rounded-lg border border-line bg-surface">
-                  <div className="aspect-[4/3] bg-surface-3">
-                    {cover && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={cover} alt={pr.title} className="h-full w-full object-cover" />
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-h3 font-semibold">{pr.title}</h3>
-                    {pr.location && <p className="mt-1.5 text-[0.9375rem] text-muted">{pr.location}</p>}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        ) : (
-          <EmptyState
-            icon={<LayersIcon width={22} height={22} />}
-            title={t.projects.empty}
-            body={t.servicesIntro.body}
-            action={
-              <Button href="/painting-services" variant="outline">
-                {t.servicesIntro.cta}
-              </Button>
-            }
-          />
-        )}
-      </Section>
-
-      {/* ─── 9. BRANCHES ─────────────────────────────────────────────────── */}
-      <Section>
         <SectionHeading
           eyebrow={t.home.branchesEyebrow}
           title={t.branches.title}

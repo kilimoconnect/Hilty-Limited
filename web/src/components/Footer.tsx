@@ -18,7 +18,6 @@ export function Footer({ dict }: { dict: Dictionary }) {
     { label: dict.nav.products, href: '/products' },
     { label: dict.nav.calculator, href: '/paint-calculator' },
     { label: dict.nav.studio, href: '/design-studio' },
-    { label: dict.nav.projects, href: '/projects' },
     { label: dict.nav.quotation, href: '/request-quotation' },
   ]
 

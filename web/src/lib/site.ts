@@ -21,7 +21,6 @@ export type NavKey =
   | 'products'
   | 'calculator'
   | 'services'
-  | 'projects'
   | 'painters'
   | 'branches'
   | 'about'
@@ -33,7 +32,6 @@ export const NAV_ITEMS: { key: NavKey; href: string }[] = [
   { key: 'products', href: '/products' },
   { key: 'calculator', href: '/paint-calculator' },
   { key: 'services', href: '/painting-services' },
-  { key: 'projects', href: '/projects' },
   { key: 'painters', href: '/painters-contractors' },
   { key: 'branches', href: '/branches' },
   { key: 'about', href: '/about' },
@@ -50,7 +48,6 @@ export const PRIMARY_NAV: { key: NavKey; href: string }[] = [
   { key: 'calculator', href: '/paint-calculator' },
   { key: 'services', href: '/painting-services' },
   { key: 'studio', href: '/design-studio' },
-  { key: 'projects', href: '/projects' },
   { key: 'branches', href: '/branches' },
 ]
 
