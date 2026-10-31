@@ -1,8 +1,24 @@
 import type { PaginatedDocs, Where } from 'payload'
 import type { Brand, Product } from '../payload-types'
-import { getClient } from './payload'
+import { getClient, safe } from './payload'
 
 export const PAGE_SIZE = 12
+
+/** Empty paginated result — used as a graceful fallback when the DB is unreachable. */
+function emptyPage<T>(): PaginatedDocs<T> {
+  return {
+    docs: [],
+    totalDocs: 0,
+    totalPages: 0,
+    page: 1,
+    pagingCounter: 0,
+    hasPrevPage: false,
+    hasNextPage: false,
+    prevPage: null,
+    nextPage: null,
+    limit: PAGE_SIZE,
+  } as PaginatedDocs<T>
+}
 
 export const FINISH_OPTIONS = [
   { label: 'Matt', value: 'matt' },
@@ -40,12 +56,18 @@ export const hasActiveFilters = (f: ProductFilters): boolean =>
   Boolean(f.q || f.category || f.brand || f.use || f.surface || f.finish || f.pack)
 
 export async function getBrands(): Promise<Brand[]> {
-  const p = await getClient()
-  const res = await p.find({ collection: 'brands', limit: 100, sort: 'name', overrideAccess: true })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({ collection: 'brands', limit: 100, sort: 'name', overrideAccess: true })
+    return res.docs
+  }, [])
 }
 
 export async function queryProducts(f: ProductFilters): Promise<PaginatedDocs<Product>> {
+  return safe(async () => queryProductsInner(f), emptyPage<Product>())
+}
+
+async function queryProductsInner(f: ProductFilters): Promise<PaginatedDocs<Product>> {
   const p = await getClient()
   const and: Where[] = [{ active: { equals: true } }]
 
@@ -94,27 +116,31 @@ export async function queryProducts(f: ProductFilters): Promise<PaginatedDocs<Pr
 }
 
 export async function getPopularProducts(limit = 6): Promise<Product[]> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'products',
-    where: { and: [{ active: { equals: true } }, { popular: { equals: true } }] },
-    limit,
-    depth: 1,
-    overrideAccess: true,
-  })
-  return res.docs
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({
+      collection: 'products',
+      where: { and: [{ active: { equals: true } }, { popular: { equals: true } }] },
+      limit,
+      depth: 1,
+      overrideAccess: true,
+    })
+    return res.docs
+  }, [])
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const p = await getClient()
-  const res = await p.find({
-    collection: 'products',
-    where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] },
-    limit: 1,
-    depth: 2,
-    overrideAccess: true,
-  })
-  return res.docs[0] ?? null
+  return safe(async () => {
+    const p = await getClient()
+    const res = await p.find({
+      collection: 'products',
+      where: { and: [{ slug: { equals: slug } }, { active: { equals: true } }] },
+      limit: 1,
+      depth: 2,
+      overrideAccess: true,
+    })
+    return res.docs[0] ?? null
+  }, null)
 }
 
 /** Decide whether a verified public price can be shown; otherwise "Request current price". */

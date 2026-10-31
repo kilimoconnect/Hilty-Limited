@@ -55,7 +55,7 @@ export async function getClient() {
  * Run a Payload read and degrade gracefully: if the database is unreachable/misconfigured
  * (e.g. before a production DB is attached), return a safe fallback instead of throwing a 500.
  */
-async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
+export async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
     return await fn()
   } catch (e) {
