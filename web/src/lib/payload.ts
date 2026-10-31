@@ -68,7 +68,10 @@ export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
   return safe(async () => {
     const p = await getClient()
     const res = await p.find({ collection: 'products', where: { and: [{ active: { equals: true } }, { featured: { equals: true } }] }, limit, depth: 1, overrideAccess: true })
-    return res.docs
+    if (res.docs.length > 0) return res.docs
+    // Fallback: no products flagged featured — show active products so the section isn't empty.
+    const any = await p.find({ collection: 'products', where: { active: { equals: true } }, limit, sort: 'name', depth: 1, overrideAccess: true })
+    return any.docs
   }, [])
 }
 
